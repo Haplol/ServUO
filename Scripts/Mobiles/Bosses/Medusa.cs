@@ -177,9 +177,8 @@ namespace Server.Mobiles
 
                 //Pets
                 if (m is BaseCreature && (((BaseCreature)m).GetMaster() is PlayerMobile))
-
                     list.Add(m);
-                }
+                
 
                 if (m != null && m != from && !(m is MedusaClone) && !(m is StoneMonster) && !(Medusa.AffectedMobiles.Contains(m)) && (m is BaseCreature))
                 {
