@@ -59,7 +59,7 @@ namespace Server.Mobiles
         {
             get
             {
-				return new Type[] { typeof(BraceletOfHealthplus), typeof(CrownOfTalKeesh) };
+                return new Type[] { typeof(CrownOfTalKeesh) };
             }
         }
         public override Type[] SharedList

@@ -1,115 +1,85 @@
 using System;
-using Server;
 using Server.Engines.Craft;
 
 namespace Server.Items
 {
-	[FlipableAttribute( 0x13E4, 0x13E3 )]
-	public class RunicHammer : BaseRunicTool
-	{
-		public override CraftSystem CraftSystem{ get{ return DefBlacksmithy.CraftSystem; } }
+    [FlipableAttribute(0x13E4, 0x13E3)]
+    public class RunicHammer : BaseRunicTool
+    {
+        [Constructable]
+        public RunicHammer(CraftResource resource)
+            : base(resource, 0x13E3)
+        {
+            this.Weight = 8.0;
+            this.Layer = Layer.OneHanded;
+            this.Hue = CraftResources.GetHue(resource);
+        }
 
-		public override int LabelNumber
-		{
-			get
-			{
-				int index = CraftResources.GetIndex( Resource );
+        [Constructable]
+        public RunicHammer(CraftResource resource, int uses)
+            : base(resource, uses, 0x13E3)
+        {
+            this.Weight = 8.0;
+            this.Layer = Layer.OneHanded;
+            this.Hue = CraftResources.GetHue(resource);
+        }
 
-				if ( index >= 1 && index <= 8 )
-					return 1049019 + index;
+        public RunicHammer(Serial serial)
+            : base(serial)
+        {
+        }
 
-				return 1045128; // runic smithy hammer
-			}
-		}
+        public override CraftSystem CraftSystem
+        {
+            get
+            {
+                return DefBlacksmithy.CraftSystem;
+            }
+        }
+        public override int LabelNumber
+        {
+            get
+            {
+                int index = CraftResources.GetIndex(this.Resource);
 
-		public override void AddNameProperties( ObjectPropertyList list )
-		{
-			base.AddNameProperties( list );
+                if (index >= 1 && index <= 8)
+                    return 1049019 + index;
 
-			int index = CraftResources.GetIndex( Resource );
+                return 1045128; // runic smithy hammer
+            }
+        }
+        public override void AddNameProperties(ObjectPropertyList list)
+        {
+            base.AddNameProperties(list);
 
-			if ( index >= 1 && index <= 8 )
-				return;
+            int index = CraftResources.GetIndex(this.Resource);
 
-			if ( !CraftResources.IsStandard( Resource ) )
-			{
-				int num = CraftResources.GetLocalizationNumber( Resource );
+            if (index >= 1 && index <= 8)
+                return;
 
-				if ( num > 0 )
-					list.Add( num );
-				else
-					list.Add( CraftResources.GetName( Resource ) );
-			}
-		} 
+            if (!CraftResources.IsStandard(this.Resource))
+            {
+                int num = CraftResources.GetLocalizationNumber(this.Resource);
 
-		[Constructable]
-		public RunicHammer( CraftResource resource ) : base( resource, 0x13E3 )
-		{
-			Weight = 8.0;
-			Layer = Layer.OneHanded;
-			Hue = CraftResources.GetHue( resource );
-		}
+                if (num > 0)
+                    list.Add(num);
+                else
+                    list.Add(CraftResources.GetName(this.Resource));
+            }
+        }
 
-		[Constructable]
-		public RunicHammer( CraftResource resource, int uses ) : base( resource, uses, 0x13E3 )
-		{
-			Weight = 8.0;
-			Layer = Layer.OneHanded;
-			Hue = CraftResources.GetHue( resource );
-		}
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
 
-		public RunicHammer( Serial serial ) : base( serial )
-		{
-		}
+            writer.Write((int)0); // version
+        }
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
 
-			writer.Write( (int) 0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-		//daat99 OWTLR start - runic storage
-		public override Type GetCraftableType()
-		{
-			switch (Resource)
-			{
-				case CraftResource.DullCopper:
-					return typeof(DullCopperRunicHammer);
-				case CraftResource.ShadowIron:
-					return typeof(ShadowIronRunicHammer);
-				case CraftResource.Copper:
-					return typeof(CopperRunicHammer);
-				case CraftResource.Bronze:
-					return typeof(BronzeRunicHammer);
-				case CraftResource.Gold:
-					return typeof(GoldRunicHammer);
-				case CraftResource.Agapite:
-					return typeof(AgapiteRunicHammer);
-				case CraftResource.Verite:
-					return typeof(VeriteRunicHammer);
-				case CraftResource.Valorite:
-					return typeof(ValoriteRunicHammer);
-				case CraftResource.Blaze:
-					return typeof(BlazeRunicHammer);
-				case CraftResource.Ice:
-					return typeof(IceRunicHammer);
-				case CraftResource.Toxic:
-					return typeof(ToxicRunicHammer);
-				case CraftResource.Electrum:
-					return typeof(ElectrumRunicHammer);
-				case CraftResource.Platinum:
-					return typeof(PlatinumRunicHammer);
-				default:
-					return null;
-			}
-		} 
-		//daat99 OWLTR end - runic storage
-	}
+            int version = reader.ReadInt();
+        }
+    }
 }

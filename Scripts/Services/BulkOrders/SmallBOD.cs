@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
-using Server;
-using Server.Items;
 using System.Collections.Generic;
+using Server.Items;
 using Server.Mobiles;
 
 namespace Server.Engines.BulkOrders
@@ -163,6 +161,37 @@ namespace Server.Engines.BulkOrders
             return BulkMaterialType.None;
         }
 
+        public static BulkMaterialType GetMaterial(CraftResource resource)
+        {
+            switch ( resource )
+            {
+                case CraftResource.DullCopper:
+                    return BulkMaterialType.DullCopper;
+                case CraftResource.ShadowIron:
+                    return BulkMaterialType.ShadowIron;
+                case CraftResource.Copper:
+                    return BulkMaterialType.Copper;
+                case CraftResource.Bronze:
+                    return BulkMaterialType.Bronze;
+                case CraftResource.Gold:
+                    return BulkMaterialType.Gold;
+                case CraftResource.Agapite:
+                    return BulkMaterialType.Agapite;
+                case CraftResource.Verite:
+                    return BulkMaterialType.Verite;
+                case CraftResource.Valorite:
+                    return BulkMaterialType.Valorite;
+                case CraftResource.SpinedLeather:
+                    return BulkMaterialType.Spined;
+                case CraftResource.HornedLeather:
+                    return BulkMaterialType.Horned;
+                case CraftResource.BarbedLeather:
+                    return BulkMaterialType.Barbed;
+            }
+
+            return BulkMaterialType.None;
+        }
+
         public override void GetProperties(ObjectPropertyList list)
         {
             base.GetProperties(list);
@@ -173,9 +202,7 @@ namespace Server.Engines.BulkOrders
                 list.Add(1045141); // All items must be exceptional.
 
             if (this.m_Material != BulkMaterialType.None)
-                //daat99 OWLTR start - custom resource
-                list.Add("All items must be crafted with " + SmallBODGump.GetMaterialStringFor(m_Material));
-            //daat99 OWLTR end - custom resource
+                list.Add(SmallBODGump.GetMaterialNumberFor(this.m_Material)); // All items must be made with x material.
 
             list.Add(1060656, this.m_AmountMax.ToString()); // amount to make: ~1_val~
             list.Add(1060658, "#{0}\t{1}", this.m_Number, this.m_AmountCur); // ~1_val~: ~2_val~
@@ -237,50 +264,7 @@ namespace Server.Engines.BulkOrders
                 }
             }
         }
-        public static BulkMaterialType GetMaterial(CraftResource resource)
-        {
-            switch (resource)
-            {
-                //daat99 OWLTR start - custom resources
-                case CraftResource.DullCopper: return BulkMaterialType.DullCopper;
-                case CraftResource.ShadowIron: return BulkMaterialType.ShadowIron;
-                case CraftResource.Copper: return BulkMaterialType.Copper;
-                case CraftResource.Bronze: return BulkMaterialType.Bronze;
-                case CraftResource.Gold: return BulkMaterialType.Gold;
-                case CraftResource.Agapite: return BulkMaterialType.Agapite;
-                case CraftResource.Verite: return BulkMaterialType.Verite;
-                case CraftResource.Valorite: return BulkMaterialType.Valorite;
-                case CraftResource.Blaze: return BulkMaterialType.Blaze;
-                case CraftResource.Ice: return BulkMaterialType.Ice;
-                case CraftResource.Toxic: return BulkMaterialType.Toxic;
-                case CraftResource.Electrum: return BulkMaterialType.Electrum;
-                case CraftResource.Platinum: return BulkMaterialType.Platinum;
-                case CraftResource.SpinedLeather: return BulkMaterialType.Spined;
-                case CraftResource.HornedLeather: return BulkMaterialType.Horned;
-                case CraftResource.BarbedLeather: return BulkMaterialType.Barbed;
-                case CraftResource.PolarLeather: return BulkMaterialType.Polar;
-                case CraftResource.SyntheticLeather: return BulkMaterialType.Synthetic;
-                case CraftResource.BlazeLeather: return BulkMaterialType.BlazeL;
-                case CraftResource.DaemonicLeather: return BulkMaterialType.Daemonic;
-                case CraftResource.ShadowLeather: return BulkMaterialType.Shadow;
-                case CraftResource.FrostLeather: return BulkMaterialType.Frost;
-                case CraftResource.EtherealLeather: return BulkMaterialType.Ethereal;
-                case CraftResource.OakWood: return BulkMaterialType.OakWood;
-                case CraftResource.AshWood: return BulkMaterialType.AshWood;
-                case CraftResource.YewWood: return BulkMaterialType.YewWood;
-                case CraftResource.Heartwood: return BulkMaterialType.Heartwood;
-                case CraftResource.Bloodwood: return BulkMaterialType.Bloodwood;
-                case CraftResource.Frostwood: return BulkMaterialType.Frostwood;
-                case CraftResource.Ebony: return BulkMaterialType.Ebony;
-                case CraftResource.Bamboo: return BulkMaterialType.Bamboo;
-                case CraftResource.PurpleHeart: return BulkMaterialType.PurpleHeart;
-                case CraftResource.Redwood: return BulkMaterialType.Redwood;
-                case CraftResource.Petrified: return BulkMaterialType.Petrified;
-                //daat99 OWLTR end - custom resources
-            }
 
-            return BulkMaterialType.None;
-        }
         public void EndCombine(Mobile from, object o)
         {
             if (o is Item && ((Item)o).IsChildOf(from.Backpack))
@@ -291,7 +275,7 @@ namespace Server.Engines.BulkOrders
                 {
                     from.SendLocalizedMessage(1045166); // The maximum amount of requested items have already been combined to this deed.
                 }
-                else if (this.m_Type == null || (objectType != this.m_Type && !objectType.IsSubclassOf(this.m_Type)) || (!(o is BaseWeapon) && !(o is BaseArmor) && !(o is BaseClothing) && !(o is BaseInstrument)))
+                else if (this.m_Type == null || (objectType != this.m_Type && !objectType.IsSubclassOf(this.m_Type)) || (!(o is BaseWeapon) && !(o is BaseArmor) && !(o is BaseClothing)))
                 {
                     from.SendLocalizedMessage(1045169); // The item is not in the request.
                 }
@@ -305,24 +289,15 @@ namespace Server.Engines.BulkOrders
                         material = GetMaterial(((BaseArmor)o).Resource);
                     else if (o is BaseClothing)
                         material = GetMaterial(((BaseClothing)o).Resource);
-                    else if (o is BaseInstrument)
-                        material = GetMaterial(((BaseInstrument)o).Resource);
 
-
-                    //daat99 OWLTR start - custom resource
-                    if (m_Material >= BulkMaterialType.DullCopper && m_Material <= BulkMaterialType.Platinum && material != m_Material)
+                    if (this.m_Material >= BulkMaterialType.DullCopper && this.m_Material <= BulkMaterialType.Valorite && material != this.m_Material)
                     {
                         from.SendLocalizedMessage(1045168); // The item is not made from the requested ore.
                     }
-                    else if (m_Material >= BulkMaterialType.Spined && m_Material <= BulkMaterialType.Ethereal && material != m_Material)
+                    else if (this.m_Material >= BulkMaterialType.Spined && this.m_Material <= BulkMaterialType.Barbed && material != this.m_Material)
                     {
                         from.SendLocalizedMessage(1049352); // The item is not made from the requested leather type.
                     }
-                    else if (m_Material >= BulkMaterialType.OakWood && m_Material <= BulkMaterialType.Petrified && material != m_Material)
-                    {
-                        from.SendMessage("The item is not made from the requested wood type."); // The item is not made from the requested leather type.
-                    }
-                    //daat99 OWLTR end - custom resource
                     else
                     {
                         bool isExceptional = false;
@@ -333,8 +308,6 @@ namespace Server.Engines.BulkOrders
                             isExceptional = (((BaseArmor)o).Quality == ArmorQuality.Exceptional);
                         else if (o is BaseClothing)
                             isExceptional = (((BaseClothing)o).Quality == ClothingQuality.Exceptional);
-                        else if (o is BaseInstrument)
-                            isExceptional = (((BaseInstrument)o).Quality == InstrumentQuality.Exceptional);
 
                         if (this.m_RequireExceptional && !isExceptional)
                         {

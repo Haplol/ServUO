@@ -275,6 +275,11 @@ namespace Server.Items
         }
 
         [Constructable]
+        public TreasureMap()
+        {
+        }
+
+        [Constructable]
         public TreasureMap(int level, Map map)
         {
             m_Level = level;
@@ -1335,13 +1340,13 @@ namespace Server.Items
                     switch (m_TreasureMap.Level)
                     {
                         case 0:
-                            spawns = 6;
+                            spawns = 3;
                             break;
                         case 1:
-                            spawns = 2;
+                            spawns = 0;
                             break;
                         default:
-                            spawns = 8;
+                            spawns = 4;
                             break;
                     }
 

@@ -3,12 +3,12 @@ using Server.Items;
 
 namespace Server.Engines.Quests
 { 
-    public class BrokenBowQuest : BaseQuest
+    public class BrokenShaftQuest : BaseQuest
     { 
-        public BrokenBowQuest()
+        public BrokenShaftQuest()
             : base()
         { 
-            this.AddObjective(new ObtainObjective(typeof(CompositeBow), "Composite Bow", 8, 0x26C2));
+            this.AddObjective(new ObtainObjective(typeof(Arrow), "arrows", 10, 0xF3F));
 			
             this.AddReward(new BaseReward(typeof(FletcherCraftsmanSatchel), 1074282));
         }
@@ -22,7 +22,7 @@ namespace Server.Engines.Quests
             }
         }
         /* What do humans know of archery? Humans can barely shoot straight. Why, your efforts are 
-        absurd. In fact, I will make a wager - if these so called human Composite Bows I've heard about are 
+        absurd. In fact, I will make a wager - if these so called human arrows I've heard about are 
         really as effective and innovative as human braggarts would have me believe, then I'll trade 
         you something useful.  I might even teach you something of elven craftsmanship. */
         public override object Description
@@ -357,7 +357,7 @@ namespace Server.Engines.Quests
             {
                 return new Type[] 
                 {
-                    typeof(BrokenBowQuest),
+                    typeof(BrokenShaftQuest),
                     typeof(BendingTheBowQuest),
                     typeof(ArmsRaceQuest),
                     typeof(ImprovedCrossbowsQuest),

@@ -3,7 +3,6 @@ using Server.Factions;
 using Server.Items;
 using Server.Mobiles;
 using Server.Targeting;
-using daat99;
 
 namespace Server.Engines.Craft
 {
@@ -189,7 +188,41 @@ namespace Server.Engines.Craft
         {
             int index = -1;
 
+            #region Jewelry
+            this.AddCraft(typeof(GoldRing), 1044049, 1024234, 65.0, 115.0, typeof(IronIngot), 1044036, 3, 1044037);
+            this.AddCraft(typeof(GoldBracelet), 1044049, 1024230, 55.0, 105.0, typeof(IronIngot), 1044036, 3, 1044037);
+
+            index = this.AddCraft(typeof(GargishNecklace), 1044049, 1095784, 60.0, 110.0, typeof(IronIngot), 1044036, 3, 1044037);
+            SetNeededExpansion(index, Expansion.SA);
+
+            index = this.AddCraft(typeof(GargishBracelet), 1044049, 1095785, 55.0, 105.0, typeof(IronIngot), 1044036, 3, 1044037);
+            SetNeededExpansion(index, Expansion.SA);
+
+            index = this.AddCraft(typeof(GargishRing), 1044049, 1095786, 65.0, 115.0, typeof(IronIngot), 1044036, 3, 1044037);
+            SetNeededExpansion(index, Expansion.SA);
+
+            index = this.AddCraft(typeof(GargishEarrings), 1044049, 1095787, 55.0, 105.0, typeof(IronIngot), 1044036, 3, 1044037);
+            SetNeededExpansion(index, Expansion.SA);
+
+            this.AddJewelrySet(GemType.StarSapphire, typeof(StarSapphire));
+            this.AddJewelrySet(GemType.Emerald, typeof(Emerald));
+            this.AddJewelrySet(GemType.Sapphire, typeof(Sapphire));
+            this.AddJewelrySet(GemType.Ruby, typeof(Ruby));
+            this.AddJewelrySet(GemType.Citrine, typeof(Citrine));
+            this.AddJewelrySet(GemType.Amethyst, typeof(Amethyst));
+            this.AddJewelrySet(GemType.Tourmaline, typeof(Tourmaline));
+            this.AddJewelrySet(GemType.Amber, typeof(Amber));
+            this.AddJewelrySet(GemType.Diamond, typeof(Diamond));
+            #endregion
+
             #region Wooden Items
+            if (Core.SE)
+            {
+                index = this.AddCraft(typeof(Nunchaku), 1044042, 1030158, 70.0, 120.0, typeof(IronIngot), 1044036, 3, 1044037);
+                this.AddRes(index, typeof(Board), 1044041, 8, 1044351);
+                this.SetNeededExpansion(index, Expansion.SE);
+            }
+
             this.AddCraft(typeof(JointingPlane), 1044042, 1024144, 0.0, 50.0, typeof(Board), 1044041, 4, 1044351);
             this.AddCraft(typeof(MouldingPlane), 1044042, 1024140, 0.0, 50.0, typeof(Board), 1044041, 4, 1044351);
             this.AddCraft(typeof(SmoothingPlane), 1044042, 1024146, 0.0, 50.0, typeof(Board), 1044041, 4, 1044351);
@@ -197,12 +230,94 @@ namespace Server.Engines.Craft
             this.AddCraft(typeof(Axle), 1044042, 1024187, -25.0, 25.0, typeof(Board), 1044041, 2, 1044351);
             this.AddCraft(typeof(RollingPin), 1044042, 1024163, 0.0, 50.0, typeof(Board), 1044041, 5, 1044351);
 
-            if (Core.SE)
+            #region High Seas
+            if (Core.HS)
             {
-                index = this.AddCraft(typeof(Nunchaku), 1044042, 1030158, 70.0, 120.0, typeof(IronIngot), 1044036, 3, 1044037);
-                this.AddRes(index, typeof(Board), 1044041, 8, 1044351);
-                this.SetNeededExpansion(index, Expansion.SE);
+                AddCraft(typeof(Ramrod), 1044042, 1095839, 0.0, 50.0, typeof(Board), 1044041, 8, 1044253);
+                SetNeededExpansion(index, Expansion.HS);
+
+                index = AddCraft(typeof(Swab), 1044042, 1095840, 0.0, 50.0, typeof(Cloth), 1044286, 1, 1044253);
+                AddRes(index, typeof(Board), 1044041, 4, 1044253);
+                SetNeededExpansion(index, Expansion.HS);
             }
+            #endregion
+
+            #region SA
+            if (Core.SA)
+            {
+                index = AddCraft(typeof(SoftenedReeds), 1044042, 1112249, 75.0, 100.0, typeof(DryReeds), 1112248, 1, 1112250);
+                AddRes(index, typeof(ScouringToxin), 1112292, 2, 1112326);
+                SetRequiresBasketWeaving(index);
+                SetRequireResTarget(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(RoundBasket), 1044042, 1112293, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 2, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 3, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(RoundBasketHandles), 1044042, 1112357, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 2, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 3, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(SmallBushel), 1044042, 1112337, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 1, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 2, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(PicnicBasket2), 1044042, 1023706, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 1, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 2, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(WinnowingBasket), 1044042, 1026274, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 2, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 3, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(SquareBasket), 1044042, 1112295, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 2, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 3, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(BasketCraftable), 1044042, 1022448, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 2, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 3, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(TallRoundBasket), 1044042, 1112297, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 3, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 4, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(SmallSquareBasket), 1044042, 1112296, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 1, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 2, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(TallBasket), 1044042, 1112299, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 3, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 4, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+
+                index = AddCraft(typeof(SmallRoundBasket), 1044042, 1112298, 75.0, 100.0, typeof(SoftenedReeds), 1112249, 1, 1112251);
+                AddRes(index, typeof(Shaft), 1027125, 2, 1044351);
+                SetRequireResTarget(index);
+                SetRequiresBasketWeaving(index);
+                SetNeededExpansion(index, Expansion.SA);
+            }
+            #endregion
             #endregion
 
             #region Tools
@@ -261,15 +376,6 @@ namespace Server.Engines.Craft
                 this.AddRes(index, typeof(Ruby), 1044234, 1, 1044253);
                 this.SetNeededExpansion(index, Expansion.ML);
             }
-
-	        if (Core.SA)
-	        {
-				index = this.AddCraft(typeof(VoidOrb), 1044051, 1113354, 90.0, 104.3, typeof(DarkSapphire), 1032690, 1, 1044253);
-				this.AddSkill(index, SkillName.Magery, 80.0, 100.0);
-				this.AddRes(index, typeof(BlackPearl), 1015001, 50, 1044253);
-				this.SetNeededExpansion(index, Expansion.SA);
-				this.ForceNonExceptional(index);
-			}
             
             #endregion
 
@@ -318,6 +424,15 @@ namespace Server.Engines.Craft
                 index = this.AddCraft(typeof(FancyWindChimes), 1044050, 1030291, 80.0, 130.0, typeof(IronIngot), 1044036, 15, 1044037);
                 this.SetNeededExpansion(index, Expansion.SE);
             }
+
+            #region High Seas
+            if (Core.HS)
+            {
+                index = AddCraft(typeof(Matches), 1044050, 1096648, 15.0, 70.0, typeof(Matchcord), 1095184, 10, 1044367);
+                AddRes(index, typeof(Board), 1044041, 4, 1044351);
+                SetNeededExpansion(index, Expansion.HS);
+            }
+            #endregion
             #endregion
 
             #region Stygian Abyss
@@ -327,17 +442,12 @@ namespace Server.Engines.Craft
             SetItemHue(index, 1266);
             #endregion
 
-            #region Jewelry
-            this.AddJewelrySet(GemType.StarSapphire, typeof(StarSapphire));
-            this.AddJewelrySet(GemType.Emerald, typeof(Emerald));
-            this.AddJewelrySet(GemType.Sapphire, typeof(Sapphire));
-            this.AddJewelrySet(GemType.Ruby, typeof(Ruby));
-            this.AddJewelrySet(GemType.Citrine, typeof(Citrine));
-            this.AddJewelrySet(GemType.Amethyst, typeof(Amethyst));
-            this.AddJewelrySet(GemType.Tourmaline, typeof(Tourmaline));
-            this.AddJewelrySet(GemType.Amber, typeof(Amber));
-            this.AddJewelrySet(GemType.Diamond, typeof(Diamond));
-            #endregion
+            if (Core.TOL)
+            {
+                index = AddCraft(typeof(WallSafeDeed), 1044050, 1155860, 0.0, 0.0, typeof(IronIngot), 1044036, 20, 1044253);
+                ForceNonExceptional(index);
+                SetNeededExpansion(index, Expansion.TOL);
+            }
 
             #region Multi-Component Items
             index = this.AddCraft(typeof(AxleGears), 1044051, 1024177, 0.0, 0.0, typeof(Axle), 1044169, 1, 1044253);
@@ -400,6 +510,37 @@ namespace Server.Engines.Craft
             }
             #endregion
 
+            if (Core.SA)
+            {
+                index = this.AddCraft(typeof(VoidOrb), 1044051, 1113354, 90.0, 104.3, typeof(DarkSapphire), 1032690, 1, 1044253);
+                this.AddSkill(index, SkillName.Magery, 80.0, 100.0);
+                this.AddRes(index, typeof(BlackPearl), 1015001, 50, 1044253);
+                this.SetNeededExpansion(index, Expansion.SA);
+                this.ForceNonExceptional(index);
+            }
+
+            index = AddCraft(typeof(AdvancedTrainingDummyEastDeed), 1044051, 1150596, 90.0, 120.0, typeof(TrainingDummyEastDeed), 1044335, 1, 1044253);
+            AddRes(index, typeof(PlateChest), 1025141, 1, 1044253);
+            AddRes(index, typeof(CloseHelm), 1025128, 1, 1044253);
+            AddRes(index, typeof(Broadsword), 1015055, 1, 1044253);
+            ForceNonExceptional(index);
+
+            index = AddCraft(typeof(AdvancedTrainingDummySouthDeed), 1044051, 1150595, 90.0, 120.0, typeof(TrainingDummySouthDeed), 1044336, 1, 1044253);
+            AddRes(index, typeof(PlateChest), 1025141, 1, 1044253);
+            AddRes(index, typeof(CloseHelm), 1025128, 1, 1044253);
+            AddRes(index, typeof(Broadsword), 1015055, 1, 1044253);
+            ForceNonExceptional(index);
+
+            index = AddCraft(typeof(DistilleryEastAddonDeed), 1044051, 1150664, 90.0, 120.0, typeof(MetalKeg), 1150675, 2, 1044253);
+            AddRes(index, typeof(HeatingStand), 1011224, 4, 1044253);
+            AddRes(index, typeof(CopperWire), 1026265, 1, 1044253);
+            ForceNonExceptional(index);
+
+            index = AddCraft(typeof(DistillerySouthAddonDeed), 1044051, 1150663, 90.0, 120.0, typeof(MetalKeg), 1150675, 2, 1044253);
+            AddRes(index, typeof(HeatingStand), 1011224, 4, 1044253);
+            AddRes(index, typeof(CopperWire), 1026265, 1, 1044253);
+            ForceNonExceptional(index);
+
             #endregion
 
             #region Traps
@@ -440,126 +581,6 @@ namespace Server.Engines.Craft
             this.AddRes(index, typeof(IronIngot), 1044036, 10, 1044037);
             #endregion
 
-//daat99 OWLTR start - custom craftables
-            #region Customs
-
-            //bank hive
-            index = AddCraft(typeof(BankHive), "Customs", "Bank Hive", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Carpentry, 100.0, 150.0);
-            AddSkill(index, SkillName.Blacksmith, 100.0, 150.0);
-            AddSkill(index, SkillName.Tailoring, 100.0, 150.0);
-            AddRes(index, typeof(Gold), "Gold", 6000, "You need more Gold");
-            AddRes(index, typeof(PlatinumIngot), "Platinum Ingots", 100, "You need more Platinum Ingots");
-            AddRes(index, typeof(PetrifiedBoard), "Petrified Boards", 20, "You need more Petrified Boards");
-
-            //mobile forge
-            index = AddCraft(typeof(MobileForge), "Customs", "Mobile Forge", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Blacksmith, 100.0, 150.0);
-            AddSkill(index, SkillName.Mining, 100.0, 150.0);
-            AddRes(index, typeof(PlatinumIngot), "Platinum Ingots", 150, "You need more Platinum Ingots");
-            AddRes(index, typeof(PlatinumGranite), "Platinum Granite", 20, "You need more Platinum Granite");
-            AddRes(index, typeof(PetrifiedBoard), "Petrified Boards", 50, "You need more Petrified Boards");
-
-            //Tool Storage
-            index = AddCraft(typeof(ToolStorageDeed), "Customs", "Tool Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Carpentry, 100.0, 150.0);
-            AddSkill(index, SkillName.Blacksmith, 100.0, 150.0);
-            AddSkill(index, SkillName.Tailoring, 100.0, 150.0);
-            AddRes(index, typeof(PlatinumIngot), "Platinum Ingots", 100, "You need more Platinum Ingots");
-            AddRes(index, typeof(SpinedLeather), "Spined Leather", 100, "You need more Spined Leather");
-            AddRes(index, typeof(PetrifiedBoard), "Petrified Boards", 20, "You need more Petrified Boards");
-
-            //Runic Storage
-            index = AddCraft(typeof(RunicStorageDeed), "Customs", "Runic Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Carpentry, 100.0, 150.0);
-            AddSkill(index, SkillName.Blacksmith, 100.0, 150.0);
-            AddSkill(index, SkillName.Tailoring, 100.0, 150.0);
-            AddRes(index, typeof(PlatinumIngot), "Platinum Ingots", 100, "You need more Platinum Ingots");
-            AddRes(index, typeof(SpinedLeather), "Spined Leather", 100, "You need more Spined Leather");
-            AddRes(index, typeof(PetrifiedBoard), "Petrified Boards", 20, "You need more Petrified Boards");
-
-            // Alchemist Storage
-            index = AddCraft(typeof(AlchemistStorageDeed), "Customs", "Alchemist Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Alchemy, 100.0, 150.0);
-            AddSkill(index, SkillName.Carpentry, 100.0, 150.0);
-            AddSkill(index, SkillName.ItemID, 100.0, 150.0);
-            AddRes(index, typeof(Bottle), "Empty Bottles", 150, "You need more Empty Bottles");
-            AddRes(index, typeof(BlazeIngot), "Blaze Ingots", 180, "You need more Blaze Ingots");
-            AddRes(index, typeof(EbonyBoard), "Ebony Boards", 345, "You need more Ebony Boards");
-
-
-            // Bards Storage
-            index = AddCraft(typeof(BardStorageDeed), "Customs", "Bard Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Discordance, 100.0, 150.0);
-            AddSkill(index, SkillName.Provocation, 100.0, 150.0);
-            AddRes(index, typeof(OilCloth), "Oil Cloth", 200, "You need more Oil Cloth");
-            AddRes(index, typeof(DaemonicLeather), "Daemonic Leather", 100, "You need more Daemonic Leather");
-            AddRes(index, typeof(BambooBoard), "Bamboo Boards", 100, "You need more Bamboo Boards");
-
-            // Miner Storage				
-            index = AddCraft(typeof(MinerStorageDeed), "Customs", "Miner Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Blacksmith, 100.0, 150.0);
-            AddSkill(index, SkillName.Mining, 100.0, 150.0);
-            AddRes(index, typeof(PlatinumIngot), "Platinum Ingots", 150, "You need more Platinum Ingots");
-            AddRes(index, typeof(PlatinumGranite), "Platinum Granite", 25, "You need more Platinum Granite");
-            AddRes(index, typeof(PetrifiedBoard), "Petrified Boards", 50, "You need more Petrified Boards");
-
-            // Scriber Storage
-            index = AddCraft(typeof(ScriberStorageDeed), "Customs", "Scriber Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Magery, 100.0, 150.0);
-            AddSkill(index, SkillName.Inscribe, 100.0, 150.0);
-            AddRes(index, typeof(BlankScroll), "Blank Scrolls", 150, "You need more Blank Scrolls");
-            AddRes(index, typeof(FrostLeather), "Frost Leather", 50, "You need more Frost Leather");
-            AddRes(index, typeof(PetrifiedBoard), "Petrified Boards", 50, "You need more Petrified Boards");
-
-            // Mage Storage
-            index = AddCraft(typeof(MageStorageDeed), "Customs", "Mage Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Magery, 100.0, 150.0);
-            AddSkill(index, SkillName.Necromancy, 100.0, 150.0);
-            AddRes(index, typeof(SpringWater), "Spring Water", 10, "You need more Spring Water"); // this line use druidic reagent, if you have it then remove the // from //AddRes
-            AddRes(index, typeof(BlankScroll), "Blank Scrolls", 50, "You need more Blank Scrolls");
-            AddRes(index, typeof(Sand), "Sand", 15, "You need more Sand");
-
-            // Tailor Storage
-            index = AddCraft(typeof(TailorStorageDeed), "Customs", "Tailor Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Tailoring, 100.0, 150.0);
-            AddRes(index, typeof(Cloth), "Cloth", 125, "You need more Cloth");
-            AddRes(index, typeof(BarbedLeather), "Barbed Leather", 150, "You need more Barbed Leather");
-            AddRes(index, typeof(OilCloth), "Oil Cloth", 20, "You need more Oil Cloth");
-
-            // Woodworker Storage				
-            index = AddCraft(typeof(WoodworkerStorageDeed), "Customs", "Woodworker Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Carpentry, 100.0, 150.0);
-            AddSkill(index, SkillName.Lumberjacking, 100.0, 150.0);
-            AddRes(index, typeof(PetrifiedBoard), "Petrified Boards", 250, "You need more Petrified Boards");
-            AddRes(index, typeof(Shaft), "Shafts", 150, "You need more Shafts");
-            AddRes(index, typeof(FertileDirt), "Fertile Dirt", 50, "You need more Fertile Dirt");
-
-            // MLResource Storage				
-            index = AddCraft(typeof(MLResourceStorageDeed), "Customs", "MLResource Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Blacksmith, 100.0, 150.0);
-            AddSkill(index, SkillName.Mining, 100.0, 150.0);
-            AddRes(index, typeof(PlatinumIngot), "Platinum Ingots", 150, "You need more Platinum Ingots");
-            AddRes(index, typeof(PlatinumGranite), "Platinum Granite", 25, "You need more Platinum Granite");
-            AddRes(index, typeof(PetrifiedBoard), "Petrified Boards", 50, "You need more Petrified Boards");
-
-            // Gem Storage
-            index = AddCraft(typeof(JewelerStorageDeed), "Customs", "Jeweler Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Mining, 100.0, 150.0);
-            AddSkill(index, SkillName.ItemID, 100.0, 150.0);
-            AddRes(index, typeof(ElectrumIngot), "Electrum Ingots", 150, "You need more Electrum Ingots");
-            AddRes(index, typeof(SyntheticLeather), "Synthetic Leather", 50, "You need more Synthetic Leather");
-            AddRes(index, typeof(EbonyBoard), "Ebony Boards", 50, "You need more Ebony Boards");
-
-            // Cook Storage
-            index = AddCraft(typeof(CookStorageDeed), "Customs", "Cook Storage", 100.0, 150.0, typeof(KeyRing), "KeyRing", 2, "You need more Key Rings");
-            AddSkill(index, SkillName.Mining, 100.0, 150.0);
-            AddSkill(index, SkillName.Cooking, 100.0, 150.0);
-            AddRes(index, typeof(BlazeIngot), "Blaze Ingots", 150, "You need more Blaze Ingots");
-            AddRes(index, typeof(HornedLeather), "Horned Leather", 50, "You need more Horned Leather");
-            AddRes(index, typeof(CopperScales), "Copper Scales", 50, "You need more Copper Scales");
-            //daat99 OWLTR end - custom craftables
-            #endregion Customs
             #region Mondain's Legacy Magic Jewlery
             if (Core.ML)
             {
@@ -650,13 +671,25 @@ namespace Server.Engines.Craft
             }               
             #endregion
 
-             //daat99 OWLTR start - custom ores
-            daat99.ResourceHelper.AddMetalResources(this);
-            //daat99 OWLTR end - custom ores
+            // Set the overridable material
+            this.SetSubRes(typeof(IronIngot), 1044022);
+
+            // Add every material you want the player to be able to choose from
+            // This will override the overridable material
+            this.AddSubRes(typeof(IronIngot), 1044022, 00.0, 1044036, 1044267);
+            this.AddSubRes(typeof(DullCopperIngot), 1044023, 65.0, 1044036, 1044268);
+            this.AddSubRes(typeof(ShadowIronIngot), 1044024, 70.0, 1044036, 1044268);
+            this.AddSubRes(typeof(CopperIngot), 1044025, 75.0, 1044036, 1044268);
+            this.AddSubRes(typeof(BronzeIngot), 1044026, 80.0, 1044036, 1044268);
+            this.AddSubRes(typeof(GoldIngot), 1044027, 85.0, 1044036, 1044268);
+            this.AddSubRes(typeof(AgapiteIngot), 1044028, 90.0, 1044036, 1044268);
+            this.AddSubRes(typeof(VeriteIngot), 1044029, 95.0, 1044036, 1044268);
+            this.AddSubRes(typeof(ValoriteIngot), 1044030, 99.0, 1044036, 1044268);
 
             this.MarkOption = true;
             this.Repair = true;
             this.CanEnhance = Core.AOS;
+            this.CanAlter = Core.SA;
         }
     }
 

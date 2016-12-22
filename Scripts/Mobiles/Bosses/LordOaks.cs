@@ -63,7 +63,7 @@ namespace Server.Mobiles
         {
             get
             {
-				return new Type[] { typeof(AxeOfTheHeavensplus), typeof(OrcChieftainHelm) };
+                return new Type[] { typeof(OrcChieftainHelm) };
             }
         }
         public override Type[] SharedList
@@ -90,7 +90,6 @@ namespace Server.Mobiles
                     typeof(WaterTile),
                     typeof(WindSpirit),
                     typeof(Pier),
-                    typeof(DirtPatch)
                 };
             }
         }

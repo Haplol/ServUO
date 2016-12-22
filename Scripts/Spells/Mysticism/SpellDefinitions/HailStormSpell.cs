@@ -119,9 +119,7 @@ namespace Server.Spells.Mystic
 
                         damage = m_Spell.GetNewAosDamage(51, 1, 5, m is PlayerMobile, m);
 
-                       // if (m_ToEffect.Count > 2)
-                       //     damage = (damage * 2) / m_ToEffect.Count;
-
+                      
                         m_Caster.DoHarmful(m);
                         SpellHelper.Damage(m_Spell, m, damage, 0, 0, 100, 0, 0);
 

@@ -44,6 +44,7 @@ namespace Server.Mobiles
             this.Karma = -22500;
 
             this.VirtualArmor = 40;
+            this.QLPoints = 150;
         }
 
         public AbyssalInfernal(Serial serial)
@@ -62,28 +63,28 @@ namespace Server.Mobiles
         {
             get
             {
-                return new Type[] { typeof(DeathsHead), typeof(WallofHungryMouths), typeof(AbyssalBlade) };
+                return new Type[] { typeof(TongueoftheBeast) };
             }
         }
         public override Type[] SharedList
         {
             get
             {
-                return new Type[] { };
+                return new Type[] { typeof(RoyalGuardInvestigatorsCloak), typeof(JadeArmband), typeof(DetectiveBoots) };
             }
         }
         public override Type[] DecorativeList
         {
             get
             {
-                return new Type[] { };
+                return new Type[] { typeof(MagicalDoor), typeof(MonsterStatuette) };
             }
         }
         public override MonsterStatuetteType[] StatueTypes
         {
             get
             {
-                return new MonsterStatuetteType[] { };
+                return new MonsterStatuetteType[] { MonsterStatuetteType.ArchDemon };
             }
         }
         public override bool AlwaysMurderer

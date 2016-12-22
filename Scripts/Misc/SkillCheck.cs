@@ -41,9 +41,9 @@ namespace Server.Misc
             // true if this skill uses the anti-macro code, false if it does not
             false, // Alchemy = 0,
             true, // Anatomy = 1,
-            false, // AnimalLore = 2,
-            false, // ItemID = 3,
-            false, // ArmsLore = 4,
+            true, // AnimalLore = 2,
+            true, // ItemID = 3,
+            true, // ArmsLore = 4,
             false, // Parry = 5,
             true, // Begging = 6,
             false, // Blacksmith = 7,
@@ -54,10 +54,10 @@ namespace Server.Misc
             false, // Cartography = 12,
             false, // Cooking = 13,
             true, // DetectHidden = 14,
-            false, // Discordance = 15,
+            true, // Discordance = 15,
             true, // EvalInt = 16,
             true, // Healing = 17,
-            false, // Fishing = 18,
+            true, // Fishing = 18,
             true, // Forensics = 19,
             true, // Herding = 20,
             true, // Hiding = 21,
@@ -71,7 +71,7 @@ namespace Server.Misc
             true, // Musicianship = 29,
             true, // Poisoning = 30,
             false, // Archery = 31,
-            false, // SpiritSpeak = 32,
+            true, // SpiritSpeak = 32,
             true, // Stealing = 33,
             false, // Tailoring = 34,
             true, // AnimalTaming = 35,
@@ -167,21 +167,21 @@ namespace Server.Misc
             if (from is BaseCreature && ((BaseCreature)from).Controlled)
                 gc *= 2;
 
-		if( AllowGain(from, skill, amObj) )
-		{
-		        if (from.Alive && (gc >= Utility.RandomDouble() || skill.Base < 10.0))
-		        {
-			        Gain(from, skill);
-			        if (from.SkillsTotal >= 4500 || skill.Base >= 80.0)
-			        {
-						Account acc = from.Account as Account;
-						if (acc != null)
-							acc.RemoveYoungStatus(1019036);
-			        }
-		        }
-		}
+            if (AllowGain(from, skill, amObj))
+            {
+                if (from.Alive && (gc >= Utility.RandomDouble() || skill.Base < 10.0))
+                {
+                    Gain(from, skill);
+                    if (from.SkillsTotal >= 4500 || skill.Base >= 80.0)
+                    {
+                        Account acc = from.Account as Account;
+                        if (acc != null)
+                            acc.RemoveYoungStatus(1019036);
+                    }
+                }
+            }
 
-	        return success;
+            return success;
         }
 
         public static bool Mobile_SkillCheckTarget(Mobile from, SkillName skillName, object target, double minSkill, double maxSkill)
@@ -224,7 +224,10 @@ namespace Server.Misc
                 return false;
 
             #region SA
-          
+            if (from is PlayerMobile && from.Race == Race.Gargoyle && skill.Info.SkillID == (int)SkillName.Archery)
+                return false;
+            else if (from is PlayerMobile && from.Race != Race.Gargoyle && skill.Info.SkillID == (int)SkillName.Throwing)
+                return false;
             #endregion
 
             if (AntiMacroCode && from is PlayerMobile && UseAntiMacro[skill.Info.SkillID])
@@ -260,6 +263,26 @@ namespace Server.Misc
 
                 Skills skills = from.Skills;
 
+                #region Mondain's Legacy
+                if (from is PlayerMobile)
+                    if (Server.Engines.Quests.QuestHelper.EnhancedSkill((PlayerMobile)from, skill))
+                        toGain *= Utility.RandomMinMax(2, 4);
+                #endregion
+
+                #region Scroll of Alacrity
+
+                if (from is PlayerMobile)
+                {
+                    PlayerMobile pm = from as PlayerMobile;
+                    
+                    if (pm != null && skill.SkillName == pm.AcceleratedSkill && pm.AcceleratedStart > DateTime.UtcNow)
+                    {
+                        pm.SendLocalizedMessage(1077956); // You are infused with intense energy. You are under the effects of an accelerated skillgain scroll.
+                        toGain = Utility.RandomMinMax(2, 5);
+                    }
+                }
+                #endregion
+
                 if (from.Player && (skills.Total / skills.Cap) >= Utility.RandomDouble())//( skills.Total >= skills.Cap )
                 {
                     for (int i = 0; i < skills.Length; ++i)
@@ -273,25 +296,6 @@ namespace Server.Misc
                         }
                     }
                 }
-
-                #region Mondain's Legacy
-                if (from is PlayerMobile)
-                    if (Server.Engines.Quests.QuestHelper.EnhancedSkill((PlayerMobile)from, skill))
-                        toGain *= Utility.RandomMinMax(2, 4);
-                #endregion
-
-                #region Scroll of Alacrity
-                PlayerMobile pm = from as PlayerMobile;
-
-                if (from is PlayerMobile)
-                {
-                    if (pm != null && skill.SkillName == pm.AcceleratedSkill && pm.AcceleratedStart > DateTime.UtcNow)
-                    {
-                        pm.SendLocalizedMessage(1077956); // You are infused with intense energy. You are under the effects of an accelerated skillgain scroll.
-                        toGain = Utility.RandomMinMax(2, 5);
-                    }
-                }
-                #endregion
 
                 if (!from.Player || (skills.Total + toGain) <= skills.Cap)
                 {

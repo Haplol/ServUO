@@ -61,6 +61,11 @@ namespace Server.Engines.Harvest
 
             this.m_Current = this.m_Maximum;
 
+            if (this.m_Definition.RandomizeVeins)
+            {
+                this.m_DefaultVein = this.m_Definition.GetVeinFrom(Utility.RandomDouble());
+            }
+
             this.m_Vein = this.m_DefaultVein;
         }
 

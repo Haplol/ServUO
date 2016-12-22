@@ -44,7 +44,7 @@ namespace Server.Mobiles
 
             this.VirtualArmor = 32;
 
-            if (0.25 > Utility.RandomDouble())
+            if (0.025 > Utility.RandomDouble())
                 this.PackItem(new GargoylesPickaxe());
         }
 

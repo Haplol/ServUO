@@ -10,20 +10,26 @@ namespace Server.Items
         {
             this.Hue = Reward.SatchelHue();
 			
-            int count = 2;
+            int count = 1;
 			
-            if (0.055 > Utility.RandomDouble())
-                count = 4;
+            if (0.015 > Utility.RandomDouble())
+                count = 2;
 			
+            bool equipment = false;
             bool jewlery = false;
             bool talisman = false;
 			
             while (this.Items.Count < count)
             { 
-                if (0.50 > Utility.RandomDouble() && !talisman)
+                if (0.25 > Utility.RandomDouble() && !talisman)
                 {
                     this.DropItem(Loot.RandomTalisman());
                     talisman = true;					
+                }
+                else if (0.4 > Utility.RandomDouble() && !equipment)
+                {
+                    this.DropItem(this.RandomItem());		
+                    equipment = true;		
                 }
                 else if (0.88 > Utility.RandomDouble() && !jewlery)
                 {
@@ -64,14 +70,10 @@ namespace Server.Items
         public FletcherCraftsmanSatchel()
             : base()
         { 
-			
-            if (this.Items.Count < 4 && 0.25 > Utility.RandomDouble())
+            if (this.Items.Count < 2 && 0.5 > Utility.RandomDouble())
                 this.DropItem(Reward.FletcherRecipe());
-			if (0.2 > Utility.RandomDouble())
-                this.DropItem(Reward.BagOfBoards());
-			if (0.1 > Utility.RandomDouble())
-                this.DropItem(Reward.BagOfTokens());
-            if (0.05 > Utility.RandomDouble())
+				
+            if (0.01 > Utility.RandomDouble())
                 this.DropItem(Reward.FletcherRunic());
         }
 

@@ -1,13 +1,10 @@
 using System;
 using System.IO;
 using System.Xml;
-using Server;
 using Server.Commands;
-using Server.Engines.XmlSpawner2;
 using Server.Engines.InstancedPeerless;
 using Server.Engines.Quests;
 using Server.Items;
-using Server.Targeting;
 using Server.Mobiles;
 using Server.Gumps;
 using Server.Network;
@@ -349,9 +346,10 @@ namespace Server
         {
             if (!Core.ML)
                 return false;
-			
+
             return Paragon.CheckArtifactChance(m, bc);
-		}
+        }
+
         public static void GiveArtifactTo(Mobile m)
         {
             Item item = Activator.CreateInstance(m_Artifacts[Utility.Random(m_Artifacts.Length)]) as Item;

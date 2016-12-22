@@ -30,8 +30,7 @@ namespace Server.Items
 		Samurai,
 		Arcanist,
 		Mystic,
-		Omni,
-		Bard
+        SkillMasteries
 	}
 
 	public enum BookQuality
@@ -251,9 +250,9 @@ namespace Server.Items
 			{
 				return SpellbookType.Mystic;
 			}
-			else if (spellID >= 700 && spellID < 706)
+            else if (spellID >= 700 && spellID < 746)
             {
-                return SpellbookType.Bard;
+                return SpellbookType.SkillMasteries;
             }
 
 			return SpellbookType.Invalid;
@@ -294,10 +293,6 @@ namespace Server.Items
 			return Find(from, -1, SpellbookType.Mystic);
 		}
 
-		public static Spellbook FindBard(Mobile from)
-        {
-            return Find(from, -1, SpellbookType.Bard);
-        }
 		public static Spellbook Find(Mobile from, int spellID)
 		{
 			return Find(from, spellID, GetTypeForSpell(spellID));
@@ -389,6 +384,7 @@ namespace Server.Items
 			for (int i = 0; i < pack.Items.Count; ++i)
 			{
 				item = pack.Items[i];
+
 				if (item is Spellbook)
 				{
 					list.Add((Spellbook)item);
@@ -553,12 +549,7 @@ namespace Server.Items
 		public bool HasSpell(int spellID)
 		{
 			spellID -= BookOffset;
-			
-			if (BookOffset >= 1000)
-			{
-			return true;
-			}			
-			
+
 			return (spellID >= 0 && spellID < BookCount && (m_Content & ((ulong)1 << spellID)) != 0);
 		}
 
@@ -795,8 +786,14 @@ namespace Server.Items
 				list.Add(1075210, prop.ToString()); // Increased Karma Loss ~1val~%
 			}
 
+            AddProperty(list);
+
 			list.Add(1042886, m_Count.ToString()); // ~1_NUMBERS_OF_SPELLS~ Spells
 		}
+
+        public virtual void AddProperty(ObjectPropertyList list)
+        {
+        }
 
 		public override void OnSingleClick(Mobile from)
 		{
@@ -1075,9 +1072,6 @@ namespace Server.Items
 				case 7:
 					type = SpellbookType.Mystic;
 					break;
-				case 8:
-                    type = SpellbookType.Bard;
-                    break;
 			}
 
 			Spellbook book = Find(from, -1, type);
@@ -1096,74 +1090,15 @@ namespace Server.Items
 			{
 				return; // They are customizing
 			}
+
 			Spellbook book = e.Spellbook as Spellbook;
-			int spellID = e.SpellID; 
-						
+			int spellID = e.SpellID;
+
 			if (book == null || !book.HasSpell(spellID))
 			{
 				book = Find(from, spellID);
 			}
 
-#region Bard Masteries
-			
-			if (book != null && ( spellID == 700 || spellID == 701 ))
-			{
-				if (from is PlayerMobile)
-				{
-					PlayerMobile pm = from as PlayerMobile;
-					
-					if ( pm.BardMastery != BardMastery.ProvocationMastery )					
-					{
-						from.SendLocalizedMessage(1115664); //You are not on the correct path for using this mastery ability.				
-						return;
-					}
-					else if (pm.Skills.Musicianship.Base < 90.0 || pm.Skills.Provocation.Base < 90.0)
-					{
-						from.SendLocalizedMessage(1115709); //Your skills are not high enough to invoke this mastery ability.
-						return;
-					}
-				}
-			}
-			
-			if (book != null && ( spellID == 702 || spellID == 703 ))
-			{
-				if (from is PlayerMobile)
-				{
-					PlayerMobile pm = from as PlayerMobile;
-					
-					if ( pm.BardMastery != BardMastery.PeacemakingMastery )					
-					{
-						from.SendLocalizedMessage(1115664);	//You are not on the correct path for using this mastery ability.			
-						return;
-					}
-					else if (pm.Skills.Musicianship.Base < 90.0 || pm.Skills.Peacemaking.Base < 90.0)
-					{
-						from.SendLocalizedMessage(1115709); //Your skills are not high enough to invoke this mastery ability.
-						return;
-					}
-				}
-			}
-			
-			if (book != null && ( spellID == 704 || spellID == 705 ))
-			{
-				if (from is PlayerMobile)
-				{
-					PlayerMobile pm = from as PlayerMobile;
-					
-					if ( pm.BardMastery != BardMastery.DiscordMastery )					
-					{
-						from.SendLocalizedMessage(1115664);	//You are not on the correct path for using this mastery ability.			
-						return;
-					}
-					else if (pm.Skills.Musicianship.Base < 90.0 || pm.Skills.Discordance.Base < 90.0)
-					{
-						from.SendLocalizedMessage(1115709); //Your skills are not high enough to invoke this mastery ability.
-						return;
-					}
-				}
-			}
-			
-			#endregion
 			if (book != null && book.HasSpell(spellID))
 			{
 				SpecialMove move = SpellRegistry.GetSpecialMove(spellID);
@@ -1180,10 +1115,10 @@ namespace Server.Items
 					{
 						spell.Cast();
 					}
-					else
-					{
-						from.SendLocalizedMessage(502345); // This spell has been temporarily disabled.
-					}
+                    else if ( !Server.Spells.SkillMasteries.MasteryInfo.IsPassiveMastery( spellID ) )
+                    {
+						from.SendLocalizedMessage( 502345 ); // This spell has been temporarily disabled.
+                    }
 				}
 			}
 			else

@@ -2,8 +2,7 @@ using System;
 
 namespace Server.Items
 {
-    	//daat99 OWLTR start - adding  base board class
-	[FlipableAttribute( 0x1BD7, 0x1BDA )]
+    [FlipableAttribute( 0x1BD7, 0x1BDA )]
 	public class BaseWoodBoard : Item, ICommodity
 	{
 		private CraftResource m_Resource;
@@ -120,7 +119,7 @@ namespace Server.Items
 				m_Resource = CraftResource.RegularWood;
 		}
 	}
-
+	
 	public class Board : BaseWoodBoard
 	{
 		[Constructable]
@@ -155,7 +154,7 @@ namespace Server.Items
 			int version = reader.ReadInt();
 		}
 	}
-	//daat99 OWLTR end - adding  base board class
+
     public class HeartwoodBoard : BaseWoodBoard
     {
         [Constructable]
@@ -359,175 +358,4 @@ namespace Server.Items
             int version = reader.ReadInt();
         }
     }
-//daat99 OWLTR start - custom wood
-	public class EbonyBoard : BaseWoodBoard
-	{
-		[Constructable]
-		public EbonyBoard()
-			: this( 1 )
-		{
-		}
-
-		[Constructable]
-		public EbonyBoard( int amount )
-			: base( CraftResource.Ebony, amount )
-		{
-		}
-
-		public EbonyBoard( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-	}
-
-	public class BambooBoard : BaseWoodBoard
-	{
-		[Constructable]
-		public BambooBoard()
-			: this( 1 )
-		{
-		}
-
-		[Constructable]
-		public BambooBoard( int amount )
-			: base( CraftResource.Bamboo, amount )
-		{
-		}
-
-		public BambooBoard( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-	}
-	
-	public class PurpleHeartBoard : BaseWoodBoard
-	{
-		[Constructable]
-		public PurpleHeartBoard()
-			: this( 1 )
-		{
-		}
-
-		[Constructable]
-		public PurpleHeartBoard( int amount )
-			: base( CraftResource.PurpleHeart, amount )
-		{
-		}
-
-		public PurpleHeartBoard( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-	}
-	
-	public class RedwoodBoard : BaseWoodBoard
-	{
-		[Constructable]
-		public RedwoodBoard()
-			: this( 1 )
-		{
-		}
-
-		[Constructable]
-		public RedwoodBoard( int amount )
-			: base( CraftResource.Redwood, amount )
-		{
-		}
-
-		public RedwoodBoard( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-	}
-	
-	public class PetrifiedBoard : BaseWoodBoard
-	{
-		[Constructable]
-		public PetrifiedBoard()
-			: this( 1 )
-		{
-		}
-
-		[Constructable]
-		public PetrifiedBoard( int amount )
-			: base( CraftResource.Petrified, amount )
-		{
-		}
-
-		public PetrifiedBoard( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-	}
-	//daat99 OWLTR end - custom wood
 }

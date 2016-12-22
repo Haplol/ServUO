@@ -43,10 +43,10 @@ namespace Server.Misc
 
                 m.AddItem(pack);
             }
-			PackItem(new Trash4TokensBackpack());
-			PackItem(new SkillBall());
-            PackItem(new Gold(5000)); // Starting gold can be customized here
-			PackItem(new daat99.MasterStorage());
+
+            PackItem(new RedBook("a book", m.Name, 20, true));
+            PackItem(new Gold(1000)); // Starting gold can be customized here
+            PackItem(new Candle());
 
             if (m.Race != Race.Gargoyle)
                 PackItem(new Dagger());
@@ -79,7 +79,7 @@ namespace Server.Misc
             }
             else if (m.Race == Race.Gargoyle)
             {
-                EquipItem(new GargishClothChest(hue));
+                EquipItem(new GargishClothChestArmor(hue));
             }
         }
 
@@ -120,7 +120,7 @@ namespace Server.Misc
             }
             else if (m.Race == Race.Gargoyle)
             {
-                EquipItem(new GargishClothKilt(hue));
+                EquipItem(new GargishClothKiltArmor(hue));
             }
         }
 
@@ -183,8 +183,6 @@ namespace Server.Misc
             newChar.Hue = newChar.Race.ClipSkinHue(args.Hue & 0x3FFF) | 0x8000;
 
             newChar.Hunger = 20;
-			newChar.Skills.Cap = 100000;
-			newChar.StatCap = 600;
 
             bool young = false;
 
@@ -192,8 +190,8 @@ namespace Server.Misc
             {
                 PlayerMobile pm = (PlayerMobile)newChar;
                 pm.AutoRenewInsurance = true;
-				double skillcap = Config.Get("PlayerCaps.SkillCap", 1300.0d) / 10;
-                if (skillcap != 130.0)
+                double skillcap = Config.Get("PlayerCaps.SkillCap", 1000.0d) / 10;
+                if (skillcap != 100.0)
                 {
                     for (int i = 0; i < Enum.GetNames(typeof(SkillName)).Length; ++i)
                         pm.Skills[i].Cap = skillcap;
@@ -202,9 +200,6 @@ namespace Server.Misc
 
                 if (pm.IsPlayer() && ((Account)pm.Account).Young)
                     young = pm.Young = true;
-
-                if (pm.Race == Race.Gargoyle) // Gargoyles start with 2000 loyalty points
-                    pm.Exp = 2000;
             }
 
             SetName(newChar, args.Name);
@@ -723,10 +718,10 @@ namespace Server.Misc
 
                             int hue = hues[Utility.Random(hues.Length)];
 
-                            EquipItem(new GargishClothChest(hue));
-                            EquipItem(new GargishClothArms(hue));
-                            EquipItem(new GargishClothLegs(hue));
-                            EquipItem(new GargishClothKilt(hue));
+                            EquipItem(new GargishClothChestArmor(hue));
+                            EquipItem(new GargishClothArmsArmor(hue));
+                            EquipItem(new GargishClothLegsArmor(hue));
+                            EquipItem(new GargishClothKiltArmor(hue));
                         }
 
                         PackItem(new SmokeBomb());

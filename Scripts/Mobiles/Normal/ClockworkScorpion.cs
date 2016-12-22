@@ -63,7 +63,7 @@ namespace Server.Mobiles
         {
             get
             {
-                return true;
+                return false;
             }
         }
         public override FoodType FavoriteFood

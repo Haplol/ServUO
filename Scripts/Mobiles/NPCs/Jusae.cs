@@ -24,7 +24,7 @@ namespace Server.Engines.Quests
             {
                 return new Type[] 
                 {
-                    typeof(LethalBowQuest),
+                    typeof(LethalDartsQuest),
                     typeof(SimpleBowQuest),
                     typeof(IngeniousArcheryPartOneQuest),
                     typeof(IngeniousArcheryPartTwoQuest),

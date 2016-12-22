@@ -73,9 +73,9 @@ namespace Server.Engines.Quests
 		{
 			if (item != null)
 			{
-				if (Mobiles.RandomItemGenerator.Enabled)
+				if (Core.SA && Mobiles.RandomItemGenerator.Enabled)
 				{
-					RunicReforging.GenerateRandomItem(item, 0, 0, 550);
+					RunicReforging.GenerateRandomItem(item, 0, 0, 700);
 				}
 				else
 				{
@@ -104,21 +104,10 @@ namespace Server.Engines.Quests
 		{
 			return GetRecipe(Enum.GetValues(typeof(BowRecipes)));
 		}
-		
-		public static Item BagOfTokens()
-		{
-			   BagOfTokens tokenBag = new BagOfTokens();
-			   return tokenBag;
-		}
-		public static Item BagOfBoards()
-		{
-			   BagOfBoards BoardBag = new BagOfBoards();
-			   return BoardBag;
-		}
-		
+
 		public static Item FletcherRunic()
 		{
-			switch (Utility.Random(10))
+			switch (Utility.Random(4))
 			{
 				case 0:
 					return new RunicFletcherTool(CraftResource.OakWood, 45);
@@ -128,18 +117,6 @@ namespace Server.Engines.Quests
 					return new RunicFletcherTool(CraftResource.YewWood, 25);
 				case 3:
 					return new RunicFletcherTool(CraftResource.Heartwood, 15);
-                case 4:
-					return new RunicFletcherTool(CraftResource.Bloodwood, 10);
-                case 5:
-					return new RunicFletcherTool(CraftResource.Frostwood, 5);
-                case 6:
-					return new RunicFletcherTool(CraftResource.Ebony, 4);
-                case 7:
-					return new RunicFletcherTool(CraftResource.Bamboo, 3);
-                case 8:
-					return new RunicFletcherTool(CraftResource.PurpleHeart, 2);
-		        case 9:
-					return new RunicFletcherTool(CraftResource.Petrified, 1);
 			}
 
 			return null;

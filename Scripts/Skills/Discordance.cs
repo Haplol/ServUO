@@ -143,6 +143,7 @@ namespace Server.SkillHandlers
 					{
 						double diff = m_Instrument.GetDifficultyFor(targ) - 10.0;
 						double music = from.Skills[SkillName.Musicianship].Value;
+                        int masteryBonus = 0;
 
 						diff += XmlMobFactions.GetScaledFaction(from, targ, -25, 25, -0.001);
 
@@ -150,6 +151,16 @@ namespace Server.SkillHandlers
 						{
 							diff -= (music - 100.0) * 0.5;
 						}
+
+                        if (from is PlayerMobile)
+                        {
+                            masteryBonus = Spells.SkillMasteries.BardSpell.GetMasteryBonus((PlayerMobile)from, SkillName.Discordance);
+                        }
+
+                        if (masteryBonus > 0)
+                        {
+                            diff -= (diff * ((double)masteryBonus / 100));
+                        }
 
 						if (!BaseInstrument.CheckMusicianship(from))
 						{
@@ -163,8 +174,6 @@ namespace Server.SkillHandlers
 							m_Instrument.PlayInstrumentWell(from);
 							m_Instrument.ConsumeUse(from);
 
-				if ( from is PlayerMobile && targ is BaseCreature )
-								QuestHelper.CheckDiscord((PlayerMobile)from, (BaseCreature)targ);
 							ArrayList mods = new ArrayList();
 							int effect;
 							double scalar;
@@ -223,6 +232,19 @@ namespace Server.SkillHandlers
 
 							DiscordanceInfo info = new DiscordanceInfo(from, targ, Math.Abs(effect), mods);
 							info.m_Timer = Timer.DelayCall(TimeSpan.Zero, TimeSpan.FromSeconds(1.25), ProcessDiscordance, info);
+
+                            #region Bard Mastery Quest
+                            if (from is PlayerMobile)
+                            {
+                                BaseQuest quest = QuestHelper.GetQuest((PlayerMobile)from, typeof(WieldingTheSonicBladeQuest));
+
+                                if (quest != null)
+                                {
+                                    foreach (BaseObjective objective in quest.Objectives)
+                                        objective.Update(targ);
+                                }
+                            }
+                            #endregion
 
 							m_Table[targ] = info;
 						}

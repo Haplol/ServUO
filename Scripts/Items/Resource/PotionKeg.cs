@@ -104,47 +104,6 @@ namespace Server.Items
                 Timer.DelayCall(TimeSpan.Zero, new TimerCallback(UpdateWeight));
         }
 
- public override void AddNameProperty(ObjectPropertyList list)
-        {
-            if (m_Held > 0)
-            {
-                if (m_Type == PotionEffect.PetResurrect)
-                {
-                    list.Add("a keg of pet resurrection potions");
-                }
-                else if (m_Type == PotionEffect.PetShrink)
-                {
-                    list.Add("a keg of shrink potions");
-                }
-                else if (m_Type == PotionEffect.PetHeal)
-                {
-                    list.Add("a keg of pet heal potions");
-                }
-                else if (m_Type == PotionEffect.PetGreaterHeal)
-                {
-                    list.Add("a keg of pet greater heal potions");
-                }
-                else if (m_Type == PotionEffect.PetCure)
-                {
-                    list.Add("a keg of pet cure potions");
-                }
-                else if (m_Type == PotionEffect.PetGreaterCure)
-                {
-                    list.Add("a keg of pet greater cure potions");
-                }
-                else
-                {
-                    list.Add(1041620 + (int)m_Type);
-                }
-            }
-            else
-            {
-                list.Add("an empty potion keg");
-            }
-        }
-
-        //public override int LabelNumber{ get{ return (m_Held > 0 ? 1041620 + (int)m_Type : 1041641); } }
-       
         public override void GetProperties(ObjectPropertyList list)
         {
             base.GetProperties(list);
@@ -411,19 +370,6 @@ namespace Server.Items
                     return new ConfusionBlastPotion();
                 case PotionEffect.ConfusionBlastGreater:
                     return new GreaterConfusionBlastPotion();
-
-                case PotionEffect.PetResurrect:
-                    return new PetResurrectPotion();
-                case PotionEffect.PetShrink:
-                    return new PetShrinkPotion();
-                case PotionEffect.PetHeal:
-                    return new HealPotionPet();
-                case PotionEffect.PetGreaterHeal:
-                    return new GreaterHealPotionPet();
-                case PotionEffect.PetCure:
-                    return new CurePotionPet();
-                case PotionEffect.PetGreaterCure:
-                    return new GreaterCurePotionPet();
             }
         }
     }

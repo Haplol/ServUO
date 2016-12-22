@@ -1,9 +1,7 @@
 using System;
-using Server.Items;
 
 namespace Server.Items
 {
-	//daat99 OWLTR start - added base log class
 	[FlipableAttribute( 0x1bdd, 0x1be0 )]
 	public class BaseLog : Item, ICommodity, IAxe
 	{
@@ -18,7 +16,6 @@ namespace Server.Items
 
 		int ICommodity.DescriptionNumber { get { return CraftResources.IsStandard( m_Resource ) ? LabelNumber : 1075062 + ( (int)m_Resource - (int)CraftResource.RegularWood ); } }
 		bool ICommodity.IsDeedable { get { return true; } }
-
 		[Constructable]
 		public BaseLog() : this( 1 )
 		{
@@ -74,7 +71,7 @@ namespace Server.Items
 		}
 
 		public static bool UpdatingBaseLogClass;
-		public override void Deserialize( GenericReader reader )
+		public override void Deserialize(GenericReader reader)
 		{
 			base.Deserialize( reader );
 
@@ -82,7 +79,7 @@ namespace Server.Items
 
 			if (version == 1)
 				UpdatingBaseLogClass = true;
-						m_Resource = (CraftResource)reader.ReadInt();
+			m_Resource = (CraftResource)reader.ReadInt();
 
 			if ( version == 0 )
 				m_Resource = CraftResource.RegularWood;
@@ -92,7 +89,7 @@ namespace Server.Items
 		{
 			if ( Deleted || !from.CanSee( this ) ) 
 				return false;
-			else if ( from.Skills.Carpentry.Value < skill &&
+			if ( from.Skills.Carpentry.Value < skill &&
 				from.Skills.Lumberjacking.Value < skill )
 			{
 				item.Delete();
@@ -155,133 +152,6 @@ namespace Server.Items
 			return true;
 		}
 	}
-	//daat99 OWLTR end - adding base log class
-
-	public class OakLog : BaseLog
-	{
-		[Constructable]
-		public OakLog()
-			: this( 1 )
-		{
-		}
-
-		[Constructable]
-		public OakLog( int amount )
-			: base( CraftResource.OakWood, amount )
-		{
-		}
-
-		public OakLog( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-
-		public override bool Axe( Mobile from, BaseAxe axe )
-		{
-			if ( !TryCreateBoards( from , 65, new OakBoard() ) )
-				return false;
-
-			return true;
-		}
-	}
-
-	public class AshLog : BaseLog
-	{
-		[Constructable]
-		public AshLog()
-			: this( 1 )
-		{
-		}
-
-		[Constructable]
-		public AshLog( int amount )
-			: base( CraftResource.AshWood, amount )
-		{
-		}
-
-		public AshLog( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-
-		public override bool Axe( Mobile from, BaseAxe axe )
-		{
-			if ( !TryCreateBoards( from , 70, new AshBoard() ) )
-				return false;
-
-			return true;
-		}
-	}
-
-	public class YewLog : BaseLog
-	{
-		[Constructable]
-		public YewLog()
-			: this( 1 )
-		{
-		}
-
-		[Constructable]
-		public YewLog( int amount )
-			: base( CraftResource.YewWood, amount )
-		{
-		}
-
-		public YewLog( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-
-		public override bool Axe( Mobile from, BaseAxe axe )
-		{
-			if ( !TryCreateBoards( from , 75, new YewBoard() ) )
-				return false;
-
-			return true;
-		}
-	}
 
     public class HeartwoodLog : BaseLog
     {
@@ -290,21 +160,25 @@ namespace Server.Items
             : this(1)
         {
         }
+
         [Constructable]
         public HeartwoodLog(int amount)
             : base(CraftResource.Heartwood, amount)
         {
         }
+
         public HeartwoodLog(Serial serial)
             : base(serial)
         {
         }
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
 
             writer.Write((int)0); // version
         }
+
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
@@ -314,7 +188,7 @@ namespace Server.Items
 
         public override bool Axe(Mobile from, BaseAxe axe)
         {
-            if (!TryCreateBoards(from, 80, new HeartwoodBoard()))
+            if (!this.TryCreateBoards(from, 100, new HeartwoodBoard()))
                 return false;
 
             return true;
@@ -328,21 +202,25 @@ namespace Server.Items
             : this(1)
         {
         }
+
         [Constructable]
         public BloodwoodLog(int amount)
             : base(CraftResource.Bloodwood, amount)
         {
         }
+
         public BloodwoodLog(Serial serial)
             : base(serial)
         {
         }
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
 
             writer.Write((int)0); // version
         }
+
         public override void Deserialize(GenericReader reader)
         {
             base.Deserialize(reader);
@@ -352,7 +230,7 @@ namespace Server.Items
 
         public override bool Axe(Mobile from, BaseAxe axe)
         {
-            if (!TryCreateBoards(from, 85, new BloodwoodBoard()))
+            if (!this.TryCreateBoards(from, 100, new BloodwoodBoard()))
                 return false;
 
             return true;
@@ -394,222 +272,136 @@ namespace Server.Items
 
         public override bool Axe(Mobile from, BaseAxe axe)
         {
-            if (!TryCreateBoards(from, 90, new FrostwoodBoard()))
+            if (!this.TryCreateBoards(from, 100, new FrostwoodBoard()))
                 return false;
 
             return true;
         }
     }
 
-	//daat99 OWLTR start - custom woods
-	public class EbonyLog : BaseLog
-	{
-		[Constructable]
-		public EbonyLog()
-			: this( 1 )
-		{
-		}
+    public class OakLog : BaseLog
+    {
+        [Constructable]
+        public OakLog()
+            : this(1)
+        {
+        }
 
-		[Constructable]
-		public EbonyLog( int amount )
-			: base( CraftResource.Ebony, amount )
-		{
-		}
+        [Constructable]
+        public OakLog(int amount)
+            : base(CraftResource.OakWood, amount)
+        {
+        }
 
-		public EbonyLog( Serial serial )
-			: base( serial )
-		{
-		}
+        public OakLog(Serial serial)
+            : base(serial)
+        {
+        }
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
 
-			writer.Write( (int)0 ); // version
-		}
+            writer.Write((int)0); // version
+        }
 
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
 
-			int version = reader.ReadInt();
-		}
+            int version = reader.ReadInt();
+        }
 
-		public override bool Axe( Mobile from, BaseAxe axe )
-		{
-			if ( !TryCreateBoards( from , 95, new EbonyBoard() ) )
-				return false;
+        public override bool Axe(Mobile from, BaseAxe axe)
+        {
+            if (!this.TryCreateBoards(from, 65, new OakBoard()))
+                return false;
 
-			return true;
-		}
-	}
-	
-	public class BambooLog : BaseLog
-	{
-		[Constructable]
-		public BambooLog()
-			: this( 1 )
-		{
-		}
+            return true;
+        }
+    }
 
-		[Constructable]
-		public BambooLog( int amount )
-			: base( CraftResource.Bamboo, amount )
-		{
-		}
+    public class AshLog : BaseLog
+    {
+        [Constructable]
+        public AshLog()
+            : this(1)
+        {
+        }
 
-		public BambooLog( Serial serial )
-			: base( serial )
-		{
-		}
+        [Constructable]
+        public AshLog(int amount)
+            : base(CraftResource.AshWood, amount)
+        {
+        }
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
+        public AshLog(Serial serial)
+            : base(serial)
+        {
+        }
 
-			writer.Write( (int)0 ); // version
-		}
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
 
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+            writer.Write((int)0); // version
+        }
 
-			int version = reader.ReadInt();
-		}
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
 
-		public override bool Axe( Mobile from, BaseAxe axe )
-		{
-			if ( !TryCreateBoards( from , 95, new BambooBoard() ) )
-				return false;
+            int version = reader.ReadInt();
+        }
 
-			return true;
-		}
-	}
-	
-	public class PurpleHeartLog : BaseLog
-	{
-		[Constructable]
-		public PurpleHeartLog()
-			: this( 1 )
-		{
-		}
+        public override bool Axe(Mobile from, BaseAxe axe)
+        {
+            if (!this.TryCreateBoards(from, 80, new AshBoard()))
+                return false;
 
-		[Constructable]
-		public PurpleHeartLog( int amount )
-			: base( CraftResource.PurpleHeart, amount )
-		{
-		}
+            return true;
+        }
+    }
 
-		public PurpleHeartLog( Serial serial )
-			: base( serial )
-		{
-		}
+    public class YewLog : BaseLog
+    {
+        [Constructable]
+        public YewLog()
+            : this(1)
+        {
+        }
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
+        [Constructable]
+        public YewLog(int amount)
+            : base(CraftResource.YewWood, amount)
+        {
+        }
 
-			writer.Write( (int)0 ); // version
-		}
+        public YewLog(Serial serial)
+            : base(serial)
+        {
+        }
 
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
 
-			int version = reader.ReadInt();
-		}
+            writer.Write((int)0); // version
+        }
 
-		public override bool Axe( Mobile from, BaseAxe axe )
-		{
-			if ( !TryCreateBoards( from , 95, new PurpleHeartBoard() ) )
-				return false;
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
 
-			return true;
-		}
-	}
-	
-	public class RedwoodLog : BaseLog
-	{
-		[Constructable]
-		public RedwoodLog()
-			: this( 1 )
-		{
-		}
+            int version = reader.ReadInt();
+        }
 
-		[Constructable]
-		public RedwoodLog( int amount )
-			: base( CraftResource.Redwood, amount )
-		{
-		}
+        public override bool Axe(Mobile from, BaseAxe axe)
+        {
+            if (!this.TryCreateBoards(from, 95, new YewBoard()))
+                return false;
 
-		public RedwoodLog( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-
-		public override bool Axe( Mobile from, BaseAxe axe )
-		{
-			if ( !TryCreateBoards( from , 95, new RedwoodBoard() ) )
-				return false;
-
-			return true;
-		}
-	}
-	
-	public class PetrifiedLog : BaseLog
-	{
-		[Constructable]
-		public PetrifiedLog()
-			: this( 1 )
-		{
-		}
-
-		[Constructable]
-		public PetrifiedLog( int amount )
-			: base( CraftResource.Petrified, amount )
-		{
-		}
-
-		public PetrifiedLog( Serial serial )
-			: base( serial )
-		{
-		}
-
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
-
-			writer.Write( (int)0 ); // version
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-		}
-
-		public override bool Axe( Mobile from, BaseAxe axe )
-		{
-			if ( !TryCreateBoards( from , 95, new PetrifiedBoard() ) )
-				return false;
-
-			return true;
-		}
-	}
-	//daat99 OWLTR end - custom woods
+            return true;
+        }
+    }
 }

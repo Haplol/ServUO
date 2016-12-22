@@ -19,7 +19,6 @@ using Server.Misc;
 using Server.Mobiles;
 using Server.Network;
 using Server.Regions;
-using daat99;
 #endregion
 
 namespace Server.Mobiles
@@ -56,6 +55,8 @@ namespace Server.Mobiles
 		public override bool BardImmune { get { return true; } }
 
 		public override bool PlayerRangeSensitive { get { return true; } }
+
+        public override bool UseSmartAI { get { return true; } }
 
 		public virtual bool IsActiveVendor { get { return true; } }
 		public virtual bool IsActiveBuyer { get { return IsActiveVendor; } } // response to vendor SELL
@@ -188,7 +189,7 @@ namespace Server.Mobiles
 		}
 
 		public BaseVendor(string title)
-			: base(AIType.AI_Vendor, FightMode.None, 2, 1, 0.5, 5)
+			: base(AIType.AI_Vendor, FightMode.None, 2, 1, 0.5, 2)
 		{
 			AllVendors.Add(this);
 
@@ -236,10 +237,9 @@ namespace Server.Mobiles
 			AllVendors.Remove(this);
 		}
 
-
 		public DateTime LastRestock { get { return m_LastRestock; } set { m_LastRestock = value; } }
 
-		public virtual TimeSpan RestockDelay { get { return TimeSpan.FromMinutes(5); } }
+		public virtual TimeSpan RestockDelay { get { return TimeSpan.FromHours(1); } }
 
 		public Container BuyPack
 		{
@@ -1406,14 +1406,12 @@ namespace Server.Mobiles
 							}
 
 							if (total <= 0)
-
 							{
 								break;
 							}
 						}
 
 						bought = true;
-
 					}
 				}
 			}
@@ -1433,18 +1431,14 @@ namespace Server.Mobiles
 					else if (buyer.Account != null && AccountGold.Enabled)
 					{
 						if (buyer.Account.WithdrawCurrency(totalCost / AccountGold.CurrencyThreshold))
-
-
 						{
 							bought = true;
 							fromBank = true;
 						}
-
 					}
 				}
 
 				if (!bought)
-
 				{
 					cont = buyer.FindBankNoCreate();
 
@@ -1481,7 +1475,6 @@ namespace Server.Mobiles
 									}
 
 									if (total <= 0)
-
 									{
 										break;
 									}
@@ -1489,7 +1482,6 @@ namespace Server.Mobiles
 
 								bought = true;
 								fromBank = true;
-
 							}
 						}
 					}

@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.IO;
-using Server;
 
 namespace Server.Engines.BulkOrders
 {
@@ -187,55 +184,6 @@ namespace Server.Engines.BulkOrders
                 return GetEntries("Tailoring", "wizard");
             }
         }
-        //--<< Custom BODs Edit>>-------------------------------[Start 1 of 1]  
-       
-        public static SmallBulkEntry[] AllBow
-        {
-            get { return GetEntries("Fletcher", "allbows"); }
-        }
-
-        public static SmallBulkEntry[] Bow
-        {
-            get { return GetEntries("Fletcher", "bows"); }
-        }
-
-        public static SmallBulkEntry[] CrossBow
-        {
-            get { return GetEntries("Fletcher", "crossbows"); }
-        }
-
-        public static SmallBulkEntry[] LargeWeapon
-        {
-            get { return GetEntries("Carpenter", "largeweapon"); }
-        }
-
-   //     public static SmallBulkEntry[] Weapon
-   //     {
-   //         get { return GetEntries("Carpenter", "weapon"); }
-   //     }
-
-        public static SmallBulkEntry[] LargeArmor
-        {
-            get { return GetEntries("Carpenter", "largearmor"); }
-        }
-
-   //     public static SmallBulkEntry[] Armor
-   //     {
-   //         get { return GetEntries("Carpenter", "armor"); }
-   //     }
-
-  //     public static SmallBulkEntry[] Instrument
-  //     {
-  //         get { return GetEntries("Carpenter", "instrument"); }
-  //     } 
-
-        public static SmallBulkEntry[] LargeInstrument
-        {
-            get { return GetEntries("Carpenter", "largeinstrument"); }
-        }
-
-
-        //--<< Custom BODs Edit>>-------------------------------[End 1 of 1] 
         public LargeBOD Owner
         {
             get

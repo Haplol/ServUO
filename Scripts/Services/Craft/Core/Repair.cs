@@ -1,9 +1,7 @@
 using System;
-using Server;
+using Server.Items;
 using Server.Mobiles;
 using Server.Targeting;
-using Server.Items;
-using daat99;
 
 namespace Server.Engines.Craft
 {
@@ -350,7 +348,7 @@ namespace Server.Engines.Craft
                     {
                         number = 1044278; // That item has been repaired many times, and will break if repairs are attempted again.
                     }
-                    else if (weapon.BlockRepair)
+                    else if (weapon.BlockRepair || weapon.NegativeAttributes.NoRepair > 0)
                     {
                         number = 1044277; // That item cannot be repaired.
                     }
@@ -367,11 +365,7 @@ namespace Server.Engines.Craft
                             number = 1044279; // You repair the item.
                             this.m_CraftSystem.PlayCraftEffect(from);
                             weapon.HitPoints = weapon.MaxHitPoints;
-                        //daat99 OWLTR start - tokens on repairs
-							if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.CRAFT_GIVE_TOKENS))
-								TokenSystem.GiveTokensToPlayer(from as PlayerMobile, Utility.Random(5));
-							//daat99 OWLTR end - tokens on repairs
-						}
+                        }
                         else
                         {
                             number = (usingDeed) ? 1061137 : 1044280; // You fail to repair the item. [And the contract is destroyed]
@@ -419,7 +413,7 @@ namespace Server.Engines.Craft
                     {
                         number = 1044278; // That item has been repaired many times, and will break if repairs are attempted again.
                     }
-                    else if (armor.BlockRepair)
+                    else if (armor.BlockRepair || armor.NegativeAttributes.NoRepair > 0)
                     {
                         number = 1044277; // That item cannot be repaired.
                     }
@@ -446,7 +440,7 @@ namespace Server.Engines.Craft
                         toDelete = true;
                     }
                 }
-                else if (targeted is BaseJewel && ((BaseJewel)targeted).TimesImbued > 0)
+                else if (targeted is BaseJewel)
                 {
                     BaseJewel jewel = (BaseJewel)targeted;
                     SkillName skill = m_CraftSystem.MainSkill;
@@ -484,7 +478,7 @@ namespace Server.Engines.Craft
                     {
                         number = 1044278; // That item has been repaired many times, and will break if repairs are attempted again.
                     }
-                    else if (jewel.BlockRepair)
+                    else if (jewel.BlockRepair || jewel.NegativeAttributes.NoRepair > 0)
                     {
                         number = 1044277; // That item cannot be repaired.
                     }
@@ -549,7 +543,7 @@ namespace Server.Engines.Craft
                     {
                         number = 1044278; // That item has been repaired many times, and will break if repairs are attempted again.
                     }
-                    else if (clothing.BlockRepair)// quick fix
+                    else if (clothing.BlockRepair || clothing.NegativeAttributes.NoRepair > 0)// quick fix
                     {
                         number = 1044277; // That item cannot be repaired.
                     }

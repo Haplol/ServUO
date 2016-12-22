@@ -3,14 +3,22 @@ using Server.Items;
 
 namespace Server.Engines.Quests
 { 
-    public class LethalBowQuest : BaseQuest
+    public class LethalDartsQuest : BaseQuest
     { 
-        public LethalBowQuest()
+        public LethalDartsQuest()
             : base()
         { 
-            this.AddObjective(new ObtainObjective(typeof(CompositeBow), "Composite Bow", 8, 0x26C2));
+            this.AddObjective(new ObtainObjective(typeof(Bolt), "crossbow bolts", 10, 0x1BFB));
 			
             this.AddReward(new BaseReward(typeof(FletcherCraftsmanSatchel), 1074282));
+        }
+
+        public override TimeSpan RestartDelay
+        {
+            get
+            {
+                return TimeSpan.FromMinutes(2);
+            }
         }
 
         /* Lethal Darts */
@@ -23,7 +31,7 @@ namespace Server.Engines.Quests
         }
         /* We elves are no strangers to archery but I would be interested in learning whether there 
         is anything to learn from the human approach. I would gladly trade you something I have if 
-        you could teach me of the deadly Composite Bow. */
+        you could teach me of the deadly crossbow bolt. */
         public override object Description
         {
             get
@@ -39,7 +47,7 @@ namespace Server.Engines.Quests
                 return 1073921;
             }
         }
-        /* I will be in your debt if you bring me Composite Bows. */
+        /* I will be in your debt if you bring me crossbow bolts. */
         public override object Uncomplete
         {
             get
@@ -357,7 +365,7 @@ namespace Server.Engines.Quests
             {
                 return new Type[] 
                 {
-                    typeof(LethalBowQuest),
+                    typeof(LethalDartsQuest),
                     typeof(SimpleBowQuest),
                     typeof(IngeniousArcheryPartOneQuest),
                     typeof(IngeniousArcheryPartTwoQuest),

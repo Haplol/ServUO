@@ -488,7 +488,6 @@ namespace Server.Engines.XmlSpawner2
                 this[AosWeaponAttribute.HitLightning] = value;
             }
         }
-		 
         [CommandProperty(AccessLevel.GameMaster)]
         public int HitDispel
         {
@@ -1069,7 +1068,7 @@ namespace Server.Engines.XmlSpawner2
                 if ((ourNames & currentBit) != 0)
                     ++index;
 
-                if (currentBit == 0x100000000)
+                if (currentBit == 0x80000000)
                     return -1;
 
                 currentBit <<= 1;

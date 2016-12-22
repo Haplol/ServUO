@@ -21,23 +21,19 @@ namespace Server.Items
             typeof(PolarBearMask), typeof(VioletCourage), typeof(HeartOfTheLion),
             typeof(ColdBlood), typeof(AlchemistsBauble), typeof(CaptainQuacklebushsCutlass),
 			typeof(ForgedPardon), typeof(ShieldOfInvulnerability), typeof(AncientShipModelOfTheHMSCape),
-			typeof(AdmiralHeartyRum), typeof(GauntletsOfAngerplus), typeof(HeartOfTheLionplus),
-			typeof(GauntletsOfNobilityplus)
-			
+			typeof(AdmiralHeartyRum)
         };
 
         public static Type[] ArtifactsLevelFiveToSeven { get { return m_LevelFiveToSeven; } }
         private static Type[] m_LevelFiveToSeven = new Type[]
         {
-            typeof(ForgedPardon), typeof(ManaPhasingOrb), typeof(RunedSashOfWarding), typeof(SurgeShield), 
-			typeof(GauntletsOfAngerplus), typeof(GauntletsOfNobilityplus), typeof(HeartOfTheLionplus),
-			typeof(PadsOfTheCuSidheplus)
-		};
+            typeof(ForgedPardon), typeof(ManaPhasingOrb), typeof(RunedSashOfWarding), typeof(SurgeShield)
+        };
+
         public static Type[] ArtifactsLevelSeven { get { return m_LevelSevenOnly; } }
         private static Type[] m_LevelSevenOnly = new Type[]
         {
-            typeof(CoffinPiece), typeof(MasterSkeletonKey), typeof(GauntletsOfAngerplus), typeof(GauntletsOfNobilityplus), typeof(HeartOfTheLionplus),
-			typeof(PadsOfTheCuSidheplus), typeof(DreadPirateHatplus)
+            typeof(CoffinPiece), typeof(MasterSkeletonKey)
         };
 
         public static Type[] SOSArtifacts { get { return m_SOSArtifacts; } }
@@ -91,7 +87,16 @@ namespace Server.Items
             this.m_Timer = new DeleteTimer(this, this.m_DeleteTime);
             this.m_Timer.Start();
 
-            Fill(this, owner.Luck, level, false);
+            int luck = 0;
+            Map map = Map.Trammel;
+
+            if (owner != null)
+            {
+                luck = owner.Luck;
+                map = owner.Map;
+            }
+
+            Fill(this, luck, level, false, map);
         }
 
         public TreasureMapChest(Serial serial)
@@ -165,12 +170,8 @@ namespace Server.Items
             }
         }
 
-        public static void Fill(LockableContainer cont, int luck, int level, bool isSos)
+        public static void Fill(LockableContainer cont, int luck, int level, bool isSos, Map map)
         {
-			// Apply Felucca luck bonus
-			if (cont.Map == Map.Felucca)
-				luck += Mobiles.RandomItemGenerator.FeluccaLuckBonus;
-
             cont.Movable = false;
             cont.Locked = true;
             int numberItems;
@@ -274,7 +275,7 @@ namespace Server.Items
                         int min, max;
                         GetRandomItemStat(out min, out max, propsScale);
 
-                        RunicReforging.GenerateRandomItem(item, LootPack.GetLuckChance(luck), min, max);
+                        RunicReforging.GenerateRandomItem(item, luck, min, max, map);
 
                         cont.DropItem(item);
                     }
@@ -443,6 +444,16 @@ namespace Server.Items
 
             if (special != null)
                 cont.DropItem(special);
+
+            if (Core.SA)
+            {
+                int rolls = 2;
+
+                if (level >= 5)
+                    rolls += level - 2;
+
+                RefinementComponent.Roll(cont, rolls, 0.10);
+            }
         }
 
         private static Item GetRandomSpecial(int level, Map map)

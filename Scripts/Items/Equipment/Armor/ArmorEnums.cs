@@ -49,15 +49,6 @@ namespace Server.Items
         Spined,
         Horned,
         Barbed,
-//daat99 OWLTR start
-		Polar, 
-		Synthetic,
-		BlazeL,
-		Daemonic, 
-		Shadow, 
-		Frost, 
-		Ethereal,
-//daat99 OWLTR end
         Ringmail,
         Chainmail,
         Plate,

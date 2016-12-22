@@ -180,268 +180,6 @@ namespace Server.Engines.Quests
         }
     }
 
-public class InciteObjective : BaseObjective
-    {
-        private List<Type> m_Creature1;
-        private List<Type> m_Creature2;
-        private string m_Name;
-
-        public InciteObjective(List<Type> creature1, List<Type> creature2, int amount, string name)
-            : base(amount, 0)
-        {
-            this.m_Creature1 = creature1;
-            this.m_Creature2 = creature2;
-            this.m_Name = name;
-        }
-
-        public List<Type> Creature1
-        {
-            get { return this.m_Creature1; }
-            set { this.m_Creature1 = value; }
-        }
-
-        public List<Type> Creature2
-        {
-            get { return this.m_Creature2; }
-            set { this.m_Creature2 = value; }
-        }
-
-        public virtual void OnIncite()
-        {
-            if (this.Completed)
-                this.Quest.Owner.SendLocalizedMessage(501827); // You have completed your quest!  Return to the person that gave you this task.
-            else
-                this.Quest.Owner.SendLocalizedMessage(1115748, true, (this.MaxProgress - this.CurProgress).ToString()); // Conflicts remaining to be incited:  ~1_val~.
-        }
-        public virtual bool IsObjective(Mobile mob1, Mobile mob2)
-        {
-            if (this.m_Creature1 == null || this.m_Creature2 == null)
-                return false;
-
-            if ( (this.m_Creature1.Contains(mob1.GetType()) && this.m_Creature2.Contains(mob2.GetType())) || (this.m_Creature1.Contains(mob2.GetType()) && this.m_Creature2.Contains(mob1.GetType())) ) {
-                return true;
-            }
-
-            return false;
-        }
-        public override bool Update(object obj)
-        {
-            if (obj is Mobile[])
-            {
-                Mobile mob1 = (obj as Mobile[])[0];
-                Mobile mob2 = (obj as Mobile[])[1];
-
-                if (this.IsObjective(mob1, mob2))
-                {
-                    if (!this.Completed)
-                        this.CurProgress += 1;
-
-                    this.OnIncite();
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public string Name
-        {
-            get
-            {
-                return this.m_Name;
-            }
-            set
-            {
-                this.m_Name = value;
-            }
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.WriteEncodedInt((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadEncodedInt();
-        }
-            
-    }
-
-    public class CalmObjective : BaseObjective
-    {
-        private List<Type> m_Creature;
-        private string m_Name;
-
-        public CalmObjective(List<Type> creature, int amount, string name)
-            : base(amount, 0)
-        {
-            this.m_Creature = creature;
-            this.m_Name = name;
-        }
-
-        public List<Type> Creature
-        {
-            get { return this.m_Creature; }
-            set { this.m_Creature = value; }
-        }
-
-        public virtual void OnCalm()
-        {
-            if (this.Completed)
-                this.Quest.Owner.SendLocalizedMessage(501827); // You have completed your quest!  Return to the person that gave you this task.
-            else
-                this.Quest.Owner.SendLocalizedMessage(1115747, true, (this.MaxProgress - this.CurProgress).ToString()); // Creatures remaining to be calmed:   ~1_val~.
-        }
-
-        public virtual bool IsObjective(Mobile mob)
-        {
-            if (this.m_Creature == null)
-                return false;
-
-            if (this.m_Creature.Contains(mob.GetType()))
-            {
-                return true;
-            }
-
-            return false;
-        }
-        public override bool Update(object obj)
-        {
-            if (obj is Mobile)
-            {
-
-                Mobile mob = obj as Mobile;
-
-                if (this.IsObjective(mob))
-                {
-                    if (!this.Completed)
-                        this.CurProgress += 1;
-
-                    this.OnCalm();
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public string Name
-        {
-            get
-            {
-                return this.m_Name;
-            }
-            set
-            {
-                this.m_Name = value;
-            }
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.WriteEncodedInt((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadEncodedInt();
-        }
-
-    }
-
-    public class DiscordObjective : BaseObjective
-    {
-        private List<Type> m_Creature;
-        private string m_Name;
-
-        public DiscordObjective(List<Type> creature, int amount, string name)
-            : base(amount, 0)
-        {
-            this.m_Creature = creature;
-            this.m_Name = name;
-        }
-
-        public List<Type> Creature
-        {
-            get { return this.m_Creature; }
-            set { this.m_Creature = value; }
-        }
-
-        public virtual void OnDiscord()
-        {
-            if (this.Completed)
-                this.Quest.Owner.SendLocalizedMessage(501827); // You have completed your quest!  Return to the person that gave you this task.
-            else
-                this.Quest.Owner.SendLocalizedMessage(1115749, true, (this.MaxProgress - this.CurProgress).ToString()); // Creatures remaining to be discorded: ~1_val~.
-        }
-
-        public virtual bool IsObjective(Mobile mob)
-        {
-            if (this.m_Creature == null)
-                return false;
-
-            if (this.m_Creature.Contains(mob.GetType()))
-            {
-                return true;
-            }
-
-            return false;
-        }
-        public override bool Update(object obj)
-        {
-            if (obj is Mobile)
-            {
-                Mobile mob = obj as Mobile;
-
-                if (this.IsObjective(mob))
-                {
-                    if (!this.Completed)
-                        this.CurProgress += 1;
-
-                    this.OnDiscord();
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public string Name
-        {
-            get
-            {
-                return this.m_Name;
-            }
-            set
-            {
-                this.m_Name = value;
-            }
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.WriteEncodedInt((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadEncodedInt();
-        }
-
-    }
     public class SlayObjective : BaseObjective
     {
         private Type m_Creature;
@@ -1061,6 +799,66 @@ public class InciteObjective : BaseObjective
             base.Deserialize(reader);
 			
             int version = reader.ReadEncodedInt();
+        }
+    }
+
+    public class QuestionAndAnswerObjective : BaseObjective
+    {
+        private List<int> m_Done = new List<int>();
+        private QuestionAndAnswerEntry[] m_EntryTable;
+
+        public virtual QuestionAndAnswerEntry[] EntryTable { get { return m_EntryTable; } }
+
+        public QuestionAndAnswerObjective(int count, QuestionAndAnswerEntry[] table)
+            : base(count)
+        {
+            m_EntryTable = table;
+        }
+
+        public QuestionAndAnswerEntry GetRandomQandA()
+        {
+            if (m_EntryTable == null || m_EntryTable.Length == 0 || m_EntryTable.Length - m_Done.Count <= 0)
+                return null;
+
+            int ran;
+
+            do
+            {
+                ran = Utility.Random(m_EntryTable.Length);
+            }
+            while (m_Done.Contains(ran));
+
+            m_Done.Add(ran);
+            return m_EntryTable[ran];
+        }
+
+        public override bool Update(object obj)
+        {
+            if (!Completed)
+                CurProgress++;
+
+            return true;
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+
+            writer.Write(m_Done.Count);
+            for (int i = 0; i < m_Done.Count; i++)
+                writer.Write(m_Done[i]);
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+            int c = reader.ReadInt();
+            for (int i = 0; i < c; i++)
+                m_Done.Add(reader.ReadInt());
         }
     }
 }

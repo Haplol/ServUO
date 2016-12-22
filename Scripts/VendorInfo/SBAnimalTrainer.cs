@@ -46,7 +46,6 @@ namespace Server.Mobiles
                     this.Add(new AnimalBuyInfo(1, typeof(TimberWolf), 768, 10, 225, 0));
                     this.Add(new AnimalBuyInfo(1, typeof(Rat), 107, 10, 238, 0));
                 }
-               
             }
         }
 

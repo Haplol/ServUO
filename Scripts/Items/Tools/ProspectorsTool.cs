@@ -1,20 +1,18 @@
 using System;
-using Server;
-using Server.Targeting;
 using Server.Engines.Harvest;
-using daat99;
+using Server.Targeting;
 
 namespace Server.Items
 {
-    public class ProspectorsTool : BaseBashing
+    public class ProspectorsTool : BaseBashing, IUsesRemaining
     {
-      // private int m_UsesRemaining;
+        private int m_UsesRemaining;
         [Constructable]
         public ProspectorsTool()
             : base(0xFB4)
         {
             this.Weight = 9.0;
-           // this.UsesRemaining = 50;
+            this.UsesRemaining = 50;
         }
 
         public ProspectorsTool(Serial serial)
@@ -22,7 +20,7 @@ namespace Server.Items
         {
         }
 
-       /* [CommandProperty(AccessLevel.GameMaster)]
+        [CommandProperty(AccessLevel.GameMaster)]
         public int UsesRemaining
         {
             get
@@ -44,7 +42,7 @@ namespace Server.Items
             set
             {
             }
-        }*/
+        }
         public override int LabelNumber
         {
             get
@@ -173,9 +171,7 @@ namespace Server.Items
                 from.SendLocalizedMessage(1049048); // You cannot use your prospector tool on that.
                 return;
             }
-            //daat99 OWLTR start - prospected sticks
-            else if (vein != defaultVein || (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.DAAT99_MINING) && (bank.Vein).IsProspected))
-            //daat99 OWLTR end - prospected sticks
+            else if (vein != defaultVein)
             {
                 from.SendLocalizedMessage(1049049); // That ore looks to be prospected already.
                 return;
@@ -187,56 +183,22 @@ namespace Server.Items
             {
                 from.SendLocalizedMessage(1049048); // You cannot use your prospector tool on that.
             }
-            //daat99 OWLTR start - prospecting
-            else if (!OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.DAAT99_MINING))
+            else if (veinIndex >= (def.Veins.Length - 1))
             {
-                if (veinIndex >= (def.Veins.Length - 1))
-                {
-                    from.SendMessage("You cannot improve Platinum ore through prospecting."); // You cannot improve valorite ore through prospecting.
-                }
-                else
-                {
-                    bank.Vein = def.Veins[veinIndex + 1];
-                    //from.SendLocalizedMessage( 1049050 + veinIndex );
-                    switch (veinIndex)
-                    {
-                        case 0: from.SendLocalizedMessage(1049050); break;//Dull Copper
-                        case 1: from.SendLocalizedMessage(1049051); break;//Shadow Iron
-                        case 2: from.SendLocalizedMessage(1049052); break;//Copper
-                        case 3: from.SendLocalizedMessage(1049053); break;//Bronze
-                        case 4: from.SendLocalizedMessage(1049054); break;//Gold
-                        case 5: from.SendLocalizedMessage(1049055); break;//Agapite
-                        case 6: from.SendLocalizedMessage(1049056); break;//Verite
-                        case 7: from.SendLocalizedMessage(1049057); break;//Valorite
-                        case 8: from.SendMessage("You sift through the ore and find blaze ore can be mined there"); break;
-                        case 9: from.SendMessage("You sift through the ore and find ice ore can be mined there"); break;
-                        case 10: from.SendMessage("You sift through the ore and find toxic ore can be mined there"); break;
-                        case 11: from.SendMessage("You sift through the ore and find electrum ore can be mined there"); break;
-                        case 12: from.SendMessage("You sift through the ore and find platinum ore can be mined there"); break;
-                    }
-
-              //      --UsesRemaining;
-
-                   // if (UsesRemaining <= 0)
-                   // {
-                   //     from.SendLocalizedMessage(1049062); // You have used up your prospector's tool.
-                   //     Delete();
-                  //  }
-                }
+                from.SendLocalizedMessage(1049061); // You cannot improve valorite ore through prospecting.
             }
             else
             {
-                (bank.Vein).IsProspected = true;
-                from.SendMessage("You sift through the ore increasing your chances to find better ores");
-                //daat99 OWLTR end - prospecting
+                bank.Vein = def.Veins[veinIndex + 1];
+                from.SendLocalizedMessage(1049050 + veinIndex);
 
-              /*  --this.UsesRemaining;
+                --this.UsesRemaining;
 
                 if (this.UsesRemaining <= 0)
                 {
                     from.SendLocalizedMessage(1049062); // You have used up your prospector's tool.
                     this.Delete();
-                }*/
+                }
             }
         }
 
@@ -245,7 +207,7 @@ namespace Server.Items
             base.Serialize(writer);
 
             writer.Write((int)1); // version
-         //   writer.Write((int)this.m_UsesRemaining);
+            writer.Write((int)this.m_UsesRemaining);
         }
 
         public override void Deserialize(GenericReader reader)
@@ -254,11 +216,11 @@ namespace Server.Items
 
             int version = reader.ReadInt();
 
-           /* switch ( version )
+            switch ( version )
             {
-               case 1:
-                   {
-                       this.m_UsesRemaining = reader.ReadInt();
+                case 1:
+                    {
+                        this.m_UsesRemaining = reader.ReadInt();
                         break;
                     }
                 case 0:
@@ -266,7 +228,7 @@ namespace Server.Items
                         this.m_UsesRemaining = 50;
                         break;
                     }
-            }*/
+            }
         }
 
         private class InternalTarget : Target

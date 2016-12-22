@@ -19,7 +19,6 @@ using Server.Spells.Ninjitsu;
 using Server.Spells.Second;
 using Server.Spells.Spellweaving;
 using Server.Targeting;
-using daat99;
 #endregion
 
 namespace Server.Spells
@@ -64,27 +63,28 @@ namespace Server.Spells
 
 		private class DelayedDamageContextWrapper
 		{
-			private readonly Dictionary<Mobile, Timer> m_Contexts = new Dictionary<Mobile, Timer>();
+            private readonly Dictionary<IDamageable, Timer> m_Contexts = new Dictionary<IDamageable, Timer>();
 
-			public void Add(Mobile m, Timer t)
+			public void Add(IDamageable d, Timer t)
 			{
 				Timer oldTimer;
-				if (m_Contexts.TryGetValue(m, out oldTimer))
+
+				if (m_Contexts.TryGetValue(d, out oldTimer))
 				{
 					oldTimer.Stop();
-					m_Contexts.Remove(m);
+					m_Contexts.Remove(d);
 				}
 
-				m_Contexts.Add(m, t);
+				m_Contexts.Add(d, t);
 			}
 
-			public void Remove(Mobile m)
+			public void Remove(IDamageable d)
 			{
-				m_Contexts.Remove(m);
+				m_Contexts.Remove(d);
 			}
 		}
 
-		public void StartDelayedDamageContext(Mobile m, Timer t)
+        public void StartDelayedDamageContext(IDamageable d, Timer t)
 		{
 			if (DelayedDamageStacking)
 			{
@@ -99,10 +99,10 @@ namespace Server.Spells
 				m_ContextTable.Add(GetType(), contexts);
 			}
 
-			contexts.Add(m, t);
+			contexts.Add(d, t);
 		}
 
-		public void RemoveDelayedDamageContext(Mobile m)
+		public void RemoveDelayedDamageContext(IDamageable d)
 		{
 			DelayedDamageContextWrapper contexts;
 
@@ -111,15 +111,19 @@ namespace Server.Spells
 				return;
 			}
 
-			contexts.Remove(m);
+			contexts.Remove(d);
 		}
 
-		public void HarmfulSpell(Mobile m)
+        public void HarmfulSpell(IDamageable d)
 		{
-			if (m is BaseCreature)
+			if (d is BaseCreature)
 			{
-				((BaseCreature)m).OnHarmfulSpell(m_Caster);
+				((BaseCreature)d).OnHarmfulSpell(m_Caster);
 			}
+            else if (d is IDamageableItem)
+            {
+                ((IDamageableItem)d).OnHarmfulSpell(m_Caster);
+            }
 		}
 
 		public Spell(Mobile caster, Item scroll, SpellInfo info)
@@ -129,11 +133,11 @@ namespace Server.Spells
 			m_Info = info;
 		}
 
-		public virtual int GetNewAosDamage(int bonus, int dice, int sides, Mobile singleTarget)
+		public virtual int GetNewAosDamage(int bonus, int dice, int sides, IDamageable singleTarget)
 		{
 			if (singleTarget != null)
 			{
-				return GetNewAosDamage(bonus, dice, sides, (Caster.Player && singleTarget.Player), GetDamageScalar(singleTarget), singleTarget);
+				return GetNewAosDamage(bonus, dice, sides, (Caster.Player && singleTarget is PlayerMobile), GetDamageScalar(singleTarget as Mobile), singleTarget);
 			}
 			else
 			{
@@ -141,13 +145,15 @@ namespace Server.Spells
 			}
 		}
 
-		public virtual int GetNewAosDamage(int bonus, int dice, int sides, bool playerVsPlayer, Mobile target)
+        public virtual int GetNewAosDamage(int bonus, int dice, int sides, bool playerVsPlayer, IDamageable damageable)
 		{
-			return GetNewAosDamage(bonus, dice, sides, playerVsPlayer, 1.0, target);
+			return GetNewAosDamage(bonus, dice, sides, playerVsPlayer, 1.0, damageable);
 		}
 
-		public virtual int GetNewAosDamage(int bonus, int dice, int sides, bool playerVsPlayer, double scalar, Mobile target)
+		public virtual int GetNewAosDamage(int bonus, int dice, int sides, bool playerVsPlayer, double scalar, IDamageable damageable)
 		{
+            Mobile target = damageable as Mobile;
+
 			int damage = Utility.Dice(dice, sides, bonus) * 100;
 			int damageBonus = 0;
 
@@ -167,23 +173,6 @@ namespace Server.Spells
             if (target != null && RunedSashOfWarding.IsUnderEffects(target, WardingEffect.SpellDamage))
                 sdiBonus -= 10;
 
-			if (m_Caster is PlayerMobile && m_Caster.Race == Race.Gargoyle)
-			{
-				double perc = ((double)m_Caster.Hits / (double)m_Caster.HitsMax) * 100;
-
-				perc = 100 - perc;
-				perc /= 20;
-
-				if (perc > 4)
-					sdiBonus += 12;
-				else if (perc >= 3)
-					sdiBonus += 9;
-				else if (perc >= 2)
-					sdiBonus += 6;
-				else if (perc >= 1)
-					sdiBonus += 3;
-			}
-
 			// PvP spell damage increase cap of 15% from an item’s magic property, 30% if spell school focused.
 			if (playerVsPlayer)
 			{
@@ -200,14 +189,10 @@ namespace Server.Spells
 
 			damageBonus += sdiBonus;
 
-			TransformContext context = TransformationSpellHelper.GetContext(Caster);
-
-			if (context != null && context.Spell is ReaperFormSpell)
-			{
-				damageBonus += ((ReaperFormSpell)context.Spell).SpellDamageBonus;
-			}
-
 			damage = AOS.Scale(damage, 100 + damageBonus);
+
+            if (target != null && Feint.Registry.ContainsKey(target) && Feint.Registry[target].Enemy == Caster)
+                damage -= (int)((double)damage * ((double)Feint.Registry[target].DamageReduction / 100));
 
 			int evalSkill = GetDamageFixed(m_Caster);
 			int evalScale = 30 + ((9 * evalSkill) / 100);
@@ -248,7 +233,13 @@ namespace Server.Spells
 
                 #region Stygian Abyss
                 int focus = SAAbsorptionAttributes.GetValue(Caster, SAAbsorptionAttribute.CastingFocus);
-                if (focus > 12) focus = 12;
+
+                if (BaseFishPie.IsUnderEffects(m_Caster, FishPieEffect.CastFocus))
+                    focus += 2;
+
+                if (focus > 12) 
+                    focus = 12;
+
                 focus += m_Caster.Skills[SkillName.Inscribe].Value >= 50 ? GetInscribeFixed(m_Caster) / 200 : 0;
 
                 if (focus > 0 && focus > Utility.Random(100))
@@ -297,8 +288,11 @@ namespace Server.Spells
 
 		public virtual bool OnCasterMoving(Direction d)
 		{
-			if (IsCasting && BlocksMovement)
+            if (IsCasting && BlocksMovement && (!(m_Caster is BaseCreature) || ((BaseCreature)m_Caster).FreezeOnCast))
 			{
+                if (m_Caster is BaseCreature)
+                    m_Caster.Say("Trying to move...");
+
 				m_Caster.SendLocalizedMessage(500111); // You are frozen and can not move.
 				return false;
 			}
@@ -359,10 +353,7 @@ namespace Server.Spells
 			{
 				return true;
 			}
-            //daat99 OWLTR start - use SpellCastersKey
-            if (OWLTROptionsManager.IsEnabled(OWLTROptionsManager.OPTIONS_ENUM.USE_STORAGE_RESOURCES) && MasterStorageUtils.ConsumePlayersStorageItems(m_Caster as PlayerMobile, m_Info.Reagents, m_Info.Amounts))
-                return true;
-            //daat99 OWLTR end - use SpellCastersKey
+
 			return false;
 		}
 
@@ -400,6 +391,9 @@ namespace Server.Spells
 		public virtual double GetDamageScalar(Mobile target)
 		{
 			double scalar = 1.0;
+
+            if (target == null)
+                return scalar;
 
 			if (!Core.AOS) //EvalInt stuff for AoS is handled elsewhere
 			{
@@ -618,6 +612,14 @@ namespace Server.Spells
 
 		public virtual bool CheckCast()
 		{
+            #region High Seas
+            if (Server.Multis.BaseBoat.IsDriving(m_Caster) && m_Caster.AccessLevel == AccessLevel.Player)
+            {
+                m_Caster.SendLocalizedMessage(1049616); // You are too busy to do that at the moment.
+                return false;
+            }
+            #endregion
+
 			return true;
 		}
 
@@ -628,7 +630,7 @@ namespace Server.Spells
 				return;
 			}
 
-			if (m_Info.Mantra != null && m_Info.Mantra.Length > 0 && m_Caster.Player)
+			if (m_Info.Mantra != null && m_Info.Mantra.Length > 0 && (m_Caster.Player || (m_Caster is BaseCreature && ((BaseCreature)m_Caster).ShowSpellMantra)))
 			{
 				m_Caster.PublicOverheadMessage(MessageType.Spell, m_Caster.SpeechHue, true, m_Info.Mantra, false);
 			}
@@ -841,10 +843,13 @@ namespace Server.Spells
 
 			// Lower Mana Cost = 40%
 			int lmc = AosAttributes.GetValue(m_Caster, AosAttribute.LowerManaCost);
-			if (lmc > 80)
+
+			if (lmc > 40)
 			{
-				lmc = 80;
+				lmc = 40;
 			}
+
+            lmc += BaseArmor.GetInherentLowerManaCost(m_Caster);
 
 			scalar -= (double)lmc / 100;
 
@@ -882,8 +887,6 @@ namespace Server.Spells
 
 			int fcr = AosAttributes.GetValue(m_Caster, AosAttribute.CastRecovery);
 
-			fcr -= ThunderstormSpell.GetCastRecoveryMalus(m_Caster);
-
 			int fcrDelay = -(CastRecoveryFastScalar * fcr);
 
 			int delay = CastRecoveryBase + fcrDelay;
@@ -918,12 +921,12 @@ namespace Server.Spells
 			// Faster casting cap of 0 (if using the protection spell) 
 			// Paladin spells are subject to a faster casting cap of 4 
 			// Paladins with magery of 70.0 or above are subject to a faster casting cap of 2 
-			int fcMax = 8;
+			int fcMax = 4;
 
 			if (CastSkill == SkillName.Magery || CastSkill == SkillName.Necromancy ||
-				(CastSkill == SkillName.Chivalry && m_Caster.Skills[SkillName.Magery].Value >= 70.0))
+                (CastSkill == SkillName.Chivalry && (m_Caster.Skills[SkillName.Magery].Value >= 70.0 || m_Caster.Skills[SkillName.Mysticism].Value >= 70.0)))
 			{
-				fcMax = 6;
+				fcMax = 2;
 			}
 
 			int fc = AosAttributes.GetValue(m_Caster, AosAttribute.CastSpeed);
@@ -933,15 +936,10 @@ namespace Server.Spells
 				fc = fcMax;
 			}
 
-			if (ProtectionSpell.Registry.Contains(m_Caster))
-			{
-				fc -= 2;
-			}
-
-			if (EssenceOfWindSpell.IsDebuffed(m_Caster))
-			{
-				fc -= EssenceOfWindSpell.GetFCMalus(m_Caster);
-			}
+            if (ProtectionSpell.Registry.ContainsKey(m_Caster) /*|| EodonianPotion.IsUnderEffects(m, PotionEffect.Urali)*/)
+            {
+                fc = Math.Min(fcMax - 2, fc - 2);
+            }
 
 			TimeSpan baseDelay = CastDelayBase;
 
@@ -1112,9 +1110,9 @@ namespace Server.Spells
 			}
 		}
 
-		public bool CheckHSequence(Mobile target)
+		public bool CheckHSequence(IDamageable target)
 		{
-			if (!target.Alive)
+			if (!target.Alive || (target is IDamageableItem && !((IDamageableItem)target).CanDamage))
 			{
 				m_Caster.SendLocalizedMessage(501857); // This spell won't work on that!
 				return false;

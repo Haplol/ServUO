@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Server;
 
 namespace Server.Engines.BulkOrders
 {
@@ -47,28 +46,6 @@ namespace Server.Engines.BulkOrders
                 return GetEntries("Tailoring", "leather");
             }
         }
-        //--<< Custom BODs Edit>>-------------------------------[Start 1 of 1]  
-        public static SmallBulkEntry[] CarpenterAllCarp
-        {
-            get { return GetEntries("Carpenter", "allcarp"); }
-        }
-
-   /*     public static SmallBulkEntry[] CarpenterArmory
-        {
-            get { return GetEntries("Carpenter", "armory"); }
-        }
-
-        public static SmallBulkEntry[] CarpenterInstrument
-        {
-            get { return GetEntries("Carpenter", "instrument"); }
-        } */
-
-        public static SmallBulkEntry[] FletcherAllBow
-        {
-            get { return GetEntries("Fletcher", "allbows"); }
-        }
-
-        //--<< Custom BODs Edit>>-------------------------------[End 1 of 1] 
         public Type Type
         {
             get

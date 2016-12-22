@@ -77,9 +77,9 @@ namespace Server.Items
         {
             BaseWeapon weapon = from.Weapon as BaseWeapon;
 
-            if (weapon != null && weapon.PrimaryAbility == this || weapon.PrimaryAbility == Bladeweave)
+            if (weapon != null && weapon.PrimaryAbility == this)
                 return 70.0;
-            else if (weapon != null && weapon.SecondaryAbility == this || weapon.SecondaryAbility == Bladeweave)
+            else if (weapon != null && weapon.SecondaryAbility == this)
                 return 90.0;
 
             return 200.0;
@@ -105,6 +105,8 @@ namespace Server.Items
 
             // Lower Mana Cost = 40%
             int lmc = Math.Min(AosAttributes.GetValue(from, AosAttribute.LowerManaCost), 40);
+
+            lmc += BaseArmor.GetInherentLowerManaCost(from);
 
             scalar -= (double)lmc / 100;
             mana = (int)(mana * scalar);
