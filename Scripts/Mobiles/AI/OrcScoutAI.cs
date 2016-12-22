@@ -55,7 +55,7 @@ namespace Server.Mobiles
 
 		public override bool DoActionCombat()
 		{
-			Mobile combatant = m_Mobile.Combatant as Mobile;
+			Mobile combatant = m_Mobile.Combatant;
 
 			if (combatant == null || combatant.Deleted || combatant.Map != m_Mobile.Map || !combatant.Alive ||
 				combatant.IsDeadBondedPet)
@@ -85,7 +85,7 @@ namespace Server.Mobiles
 					m_Mobile.Combatant = null;
 				}
 
-				combatant = m_Mobile.Combatant as Mobile;
+				combatant = m_Mobile.Combatant;
 
 				if (combatant == null)
 				{
@@ -208,7 +208,7 @@ namespace Server.Mobiles
 			}
 			else
 			{
-				m_Mobile.FocusMob = m_Mobile.Combatant as Mobile;
+				m_Mobile.FocusMob = m_Mobile.Combatant;
 
 				PerformHide();
 

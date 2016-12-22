@@ -48,7 +48,7 @@ namespace Server.Mobiles
 
         public override bool DoActionInteract()
         {
-            Mobile customer = this.m_Mobile.FocusMob as Mobile;
+            Mobile customer = this.m_Mobile.FocusMob;
 
             if (this.m_Mobile.Combatant != null)
             {
@@ -94,7 +94,7 @@ namespace Server.Mobiles
 
         public override bool DoActionGuard()
         {
-            this.m_Mobile.FocusMob = this.m_Mobile.Combatant as Mobile;
+            this.m_Mobile.FocusMob = this.m_Mobile.Combatant;
             return base.DoActionGuard();
         }
 

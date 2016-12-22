@@ -90,13 +90,6 @@ namespace Server.Items
                 return 255;
             }
         }
-        public override Race RequiredRace
-        {
-            get
-            {
-                return Race.Elf;
-            }
-        }
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);

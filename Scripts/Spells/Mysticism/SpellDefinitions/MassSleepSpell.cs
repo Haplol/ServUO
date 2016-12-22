@@ -17,9 +17,10 @@ namespace Server.Spells.Mystic
 				"Mass Sleep", "Vas Zu",
 				230,
 				9022,
-				Reagent.Ginseng,
+				Reagent.MandrakeRoot,
 				Reagent.Nightshade,
-				Reagent.SpidersSilk
+				Reagent.SulfurousAsh,
+				Reagent.Bloodmoss
 			);
 
 		public MassSleepSpell( Mobile caster, Item scroll ) : base( caster, scroll, m_Info )

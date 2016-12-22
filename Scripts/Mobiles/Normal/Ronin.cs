@@ -106,7 +106,7 @@ namespace Server.Mobiles
         {
             get
             {
-                if(Combatant is Mobile && ((Mobile)Combatant).Mounted)
+                if(Combatant != null && Combatant.Mounted)
                     return 0.8;
 
                 return base.WeaponAbilityChance;

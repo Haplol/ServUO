@@ -8,7 +8,7 @@ namespace Server.Mobiles
     {
         [Constructable]
         public AncientLichRenowned()
-            : base(AIType.AI_NecroMage)
+            : base(AIType.AI_Mage)
         {
             this.Name = "Ancient Lich";
             this.Title = "[Renowned]";
@@ -44,7 +44,6 @@ namespace Server.Mobiles
             this.Karma = -23000;
 
             this.VirtualArmor = 60;
-            this.QLPoints = 50;
 
             this.PackItem(new EssenceDirection());
 

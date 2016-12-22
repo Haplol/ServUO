@@ -304,7 +304,7 @@ namespace Server.Mobiles
                     PlayerMobile pm = m as PlayerMobile;
                     if (pm != null && pm.Mounted)
                     {
-                        pm.SetMountBlock(BlockMountType.DismountRecovery, TimeSpan.FromSeconds(10), true);
+                        pm.Mount.Rider = null;
                     }
                 }
                 double damage = m.Hits * 0.6;//was .6

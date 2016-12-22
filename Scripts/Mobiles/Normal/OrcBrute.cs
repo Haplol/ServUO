@@ -51,8 +51,6 @@ namespace Server.Mobiles
 
             if (0.2 > Utility.RandomDouble())
                 this.PackItem(new BolaBall());
-
-            PackItem(new Yeast());
         }
 
         public OrcBrute(Serial serial)

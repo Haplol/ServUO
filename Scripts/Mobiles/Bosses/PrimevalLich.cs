@@ -11,7 +11,7 @@ namespace Server.Mobiles
         private DateTime m_NextDiscordTime;
         [Constructable]
         public PrimevalLich()
-            : base(AIType.AI_NecroMage)
+            : base(AIType.AI_Mage)
         {
             this.Name = "The Primeval Lich";
             this.Body = 830;
@@ -20,7 +20,7 @@ namespace Server.Mobiles
             this.SetDex(130, 140);
             this.SetInt(1000, 1200);
 
-            this.SetHits(20000);
+            this.SetHits(120000);
             this.SetStam(130, 140);
             this.SetMana(4500, 5500);
 
@@ -51,7 +51,6 @@ namespace Server.Mobiles
             this.Karma = -22500;
 
             this.VirtualArmor = 80;
-            this.QLPoints = 150;
         }
 
         public PrimevalLich(Serial serial)
@@ -105,21 +104,21 @@ namespace Server.Mobiles
         {
             get
             {
-                return new Type[] { typeof(LightsRampart) };
+                return new Type[] { typeof(BansheesCall), typeof(CastOffZombieSkin), typeof(ProtectoroftheBattleMage), typeof(ChannelersDefender) };
             }
         }
         public override Type[] SharedList
         {
             get
             {
-                return new Type[] { typeof(TheMostKnowledgePerson), typeof(ChannelersDefender), typeof(LieutenantOfTheBritannianRoyalGuard) };
+                return new Type[] { typeof(TokenOfHolyFavor) };
             }
         }
         public override Type[] DecorativeList
         {
             get
             {
-                return new Type[] { typeof(MummifiedCorpse) };
+                return new Type[] { };
             }
         }
         public override MonsterStatuetteType[] StatueTypes
@@ -222,7 +221,7 @@ namespace Server.Mobiles
         {
             if (this.m_NextDiscordTime <= DateTime.UtcNow)
             {
-                Mobile target = this.Combatant as Mobile;
+                Mobile target = this.Combatant;
 
                 if (target != null && target.InRange(this, this.PerceptionRange) && this.CanBeHarmful(target))
                     this.Discord(target);
@@ -233,15 +232,15 @@ namespace Server.Mobiles
         {
             if (Utility.RandomDouble() < 0.9)
             {
-                target.AddSkillMod(new TimedSkillMod(SkillName.Magery, true, target.Skills.Magery.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
-                target.AddSkillMod(new TimedSkillMod(SkillName.Necromancy, true, target.Skills.Necromancy.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
-                target.AddSkillMod(new TimedSkillMod(SkillName.Tactics, true, target.Skills.Tactics.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
-                target.AddSkillMod(new TimedSkillMod(SkillName.Swords, true, target.Skills.Swords.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
-                target.AddSkillMod(new TimedSkillMod(SkillName.Meditation, true, target.Skills.Meditation.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
-                target.AddSkillMod(new TimedSkillMod(SkillName.Focus, true, target.Skills.Focus.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
-                target.AddSkillMod(new TimedSkillMod(SkillName.Chivalry, true, target.Skills.Chivalry.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
-                target.AddSkillMod(new TimedSkillMod(SkillName.Wrestling, true, target.Skills.Wrestling.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
-                target.AddSkillMod(new TimedSkillMod(SkillName.Spellweaving, true, target.Skills.Spellweaving.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
+                target.AddSkillMod(new TimedSkillMod(SkillName.Magery, true, this.Combatant.Skills.Magery.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
+                target.AddSkillMod(new TimedSkillMod(SkillName.Necromancy, true, this.Combatant.Skills.Necromancy.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
+                target.AddSkillMod(new TimedSkillMod(SkillName.Tactics, true, this.Combatant.Skills.Tactics.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
+                target.AddSkillMod(new TimedSkillMod(SkillName.Swords, true, this.Combatant.Skills.Swords.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
+                target.AddSkillMod(new TimedSkillMod(SkillName.Meditation, true, this.Combatant.Skills.Meditation.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
+                target.AddSkillMod(new TimedSkillMod(SkillName.Focus, true, this.Combatant.Skills.Focus.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
+                target.AddSkillMod(new TimedSkillMod(SkillName.Chivalry, true, this.Combatant.Skills.Chivalry.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
+                target.AddSkillMod(new TimedSkillMod(SkillName.Wrestling, true, this.Combatant.Skills.Wrestling.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
+                target.AddSkillMod(new TimedSkillMod(SkillName.Spellweaving, true, this.Combatant.Skills.Spellweaving.Base * this.DiscordModifier * -1, TimeSpan.FromSeconds(this.DiscordDuration)));
 
                 Timer.DelayCall(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1), (int)this.DiscordDuration, new TimerStateCallback(Animate), target);
 

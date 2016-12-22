@@ -27,9 +27,6 @@ namespace Server.Items
 
 			if( key != null )
 				key.Delete();
-
-            if(Core.SA)
-                RefinementComponent.Roll(this, 1, 0.08);
 		}
 
 		public BaseTreasureChestMod( Serial serial ) : base( serial )

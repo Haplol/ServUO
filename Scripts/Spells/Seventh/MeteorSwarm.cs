@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Server.Targeting;
-using Server.Mobiles;
 
 namespace Server.Spells.Seventh
 {
@@ -53,27 +52,22 @@ namespace Server.Spells.Seventh
                 if (p is Item)
                     p = ((Item)p).GetWorldLocation();
 
-                List<IDamageable> targets = new List<IDamageable>();
+                List<Mobile> targets = new List<Mobile>();
 
                 Map map = this.Caster.Map;
 
                 if (map != null)
                 {
-                    IPooledEnumerable eable = map.GetObjectsInRange(new Point3D(p), 2);
+                    IPooledEnumerable eable = map.GetMobilesInRange(new Point3D(p), 2);
 
-                    foreach (object o in eable)
+                    foreach (Mobile m in eable)
                     {
-                        IDamageable id = o as IDamageable;
-
-                        if (id == null || (Core.AOS && id is Mobile && (Mobile)id == this.Caster))
-                            continue;
-
-                        if ((!(id is Mobile) || SpellHelper.ValidIndirectTarget(this.Caster, id as Mobile)) && this.Caster.CanBeHarmful(id, false))
+                        if (this.Caster != m && SpellHelper.ValidIndirectTarget(this.Caster, m) && this.Caster.CanBeHarmful(m, false))
                         {
-                            if (Core.AOS && !this.Caster.InLOS(id))
+                            if (Core.AOS && !this.Caster.InLOS(m))
                                 continue;
 
-                            targets.Add(id);
+                            targets.Add(m);
                         }
                     }
 
@@ -88,38 +82,29 @@ namespace Server.Spells.Seventh
 
                     for (int i = 0; i < targets.Count; ++i)
                     {
-                        IDamageable id = targets[i];
-                        Mobile m = id as Mobile;
+                        Mobile m = targets[i];
 
                         if (Core.AOS)
-                            damage = this.GetNewAosDamage(51, 1, 5, id is PlayerMobile, id);
+                            damage = this.GetNewAosDamage(51, 1, 5, m.Player, m);
                         else
                             damage = Utility.Random(27, 22);
 
-                        if (Core.AOS && targets.Count > 2)
-                            damage = (damage * 2) / targets.Count;
-                        else if (!Core.AOS)
-                            damage /= targets.Count;
+                      
 
-                        if (!Core.AOS && m != null && this.CheckResisted(m))
+                        if (!Core.AOS && this.CheckResisted(m))
                         {
                             damage *= 0.5;
 
                             m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
                         }
 
-                        if(m != null)
-                            damage *= this.GetDamageScalar(m);
+                        damage *= this.GetDamageScalar(m);
+                        this.Caster.DoHarmful(m);
+                        SpellHelper.Damage(this, m, damage, 0, 100, 0, 0, 0);
 
-                        this.Caster.DoHarmful(id);
-                        SpellHelper.Damage(this, id, damage, 0, 100, 0, 0, 0);
-
-                        this.Caster.MovingParticles(id, 0x36D4, 7, 0, false, true, 9501, 1, 0, 0x100);
+                        this.Caster.MovingParticles(m, 0x36D4, 7, 0, false, true, 9501, 1, 0, 0x100);
                     }
                 }
-
-                targets.Clear();
-                targets.TrimExcess();
             }
 
             this.FinishSequence();

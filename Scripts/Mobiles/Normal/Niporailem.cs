@@ -209,7 +209,7 @@ namespace Server.Mobiles
 
 		public override void OnActionCombat()
 		{
-			Mobile combatant = Combatant as Mobile;
+			Mobile combatant = Combatant;
 
 			if ( combatant == null || combatant.Deleted || combatant.Map != Map || !InRange( combatant, 20 ) || !CanBeHarmful( combatant ) || !InLOS( combatant ) )
 				return;

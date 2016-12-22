@@ -87,9 +87,6 @@ namespace Server.Mobiles
                 return 0;
             }
         }
-
-        public override bool UseSmartAI { get { return true; } }
-
         public override bool ShowFameTitle
         {
             get
@@ -175,8 +172,8 @@ namespace Server.Mobiles
                     this.m_NextFireRing = DateTime.UtcNow + TimeSpan.FromMinutes(2);
                 }
 
-                if (this.Combatant is PlayerMobile && this.m_MorphedInto != this.Combatant && Utility.RandomDouble() < 0.05)
-                    this.MorphedInto = this.Combatant as Mobile;
+                if (this.Combatant.Player && this.m_MorphedInto != this.Combatant && Utility.RandomDouble() < 0.05)
+                    this.MorphedInto = this.Combatant;
             }
         }
 

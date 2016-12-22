@@ -299,12 +299,12 @@ namespace Server.Mobiles
                 ooze.MoveToWorld(p, this.Map);
             }
 			
-            if (this.Combatant is PlayerMobile)
+            if (this.Combatant != null)
             {
                 if (corrosive)
-                    ((PlayerMobile)Combatant).SendLocalizedMessage(1072071); // A corrosive gas seeps out of your enemy's skin!
+                    this.Combatant.SendLocalizedMessage(1072071); // A corrosive gas seeps out of your enemy's skin!
                 else
-                    ((PlayerMobile)Combatant).SendLocalizedMessage(1072072); // A poisonous gas seeps out of your enemy's skin!
+                    this.Combatant.SendLocalizedMessage(1072072); // A poisonous gas seeps out of your enemy's skin!
             }
         }
 

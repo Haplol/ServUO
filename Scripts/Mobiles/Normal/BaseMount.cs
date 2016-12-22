@@ -181,8 +181,6 @@ namespace Server.Mobiles
 
                 if (message)
                     dismounted.SendLocalizedMessage(1040023); // You have been knocked off of your mount!
-                    
-                BuffInfo.AddBuff(dismounted, new BuffInfo(BuffIcon.DismountPrevention, 1075635, 1075636, delay, dismounted));
             }
             else if (dismounted.Flying)
             {
@@ -256,7 +254,6 @@ namespace Server.Mobiles
             if (entry.IsExpired)
             {
                 m_Table.Remove(mob);
-                BuffInfo.RemoveBuff(mob, BuffIcon.DismountPrevention);
                 return BlockMountType.None;
             }
 

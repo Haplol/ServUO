@@ -46,7 +46,7 @@ namespace Server.Mobiles
 
 		public override bool DoActionCombat()
 		{
-			Mobile combatant = m_Mobile.Combatant as Mobile;
+			Mobile combatant = m_Mobile.Combatant;
 
 			if (combatant == null || combatant.Deleted || combatant.Map != m_Mobile.Map)
 			{
@@ -209,7 +209,7 @@ namespace Server.Mobiles
 			}
 			else
 			{
-				m_Mobile.FocusMob = m_Mobile.Combatant as Mobile;
+				m_Mobile.FocusMob = m_Mobile.Combatant;
 				base.DoActionFlee();
 			}
 

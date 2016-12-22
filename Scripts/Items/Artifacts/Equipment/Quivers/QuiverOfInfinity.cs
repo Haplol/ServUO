@@ -23,14 +23,6 @@ namespace Server.Items
         {
         }
 
-		public override bool CanAlter
-		{
-			get
-			{
-				return false;
-			}
-		}
-
         public override int LabelNumber
         {
             get

@@ -56,12 +56,7 @@ namespace Server.Factions
                 case 2:
                 case 1:
                     {
-                        Election ele = new Election(reader);
-
-                        if (Settings.Enabled)
-                            this.m_Election = ele;
-                        else
-                            this.m_Election = new Election(m_Faction);
+                        this.m_Election = new Election(reader);
 
                         goto case 0;
                     }
@@ -93,7 +88,7 @@ namespace Server.Factions
                         {
                             PlayerState pl = new PlayerState(reader, this.m_Faction, this.m_Members);
 
-                            if (Settings.Enabled && pl.Mobile != null)
+                            if (pl.Mobile != null)
                                 this.m_Members.Add(pl);
                         }
 
@@ -122,8 +117,7 @@ namespace Server.Factions
                             {
                                 FactionItem factionItem = new FactionItem(reader, this.m_Faction);
 
-                                if(Settings.Enabled)
-                                    Timer.DelayCall(TimeSpan.Zero, new TimerCallback(factionItem.CheckAttach)); // sandbox attachment
+                                Timer.DelayCall(TimeSpan.Zero, new TimerCallback(factionItem.CheckAttach)); // sandbox attachment
                             }
                         }
 
@@ -138,12 +132,7 @@ namespace Server.Factions
                                 BaseFactionTrap trap = reader.ReadItem() as BaseFactionTrap;
 
                                 if (trap != null && !trap.CheckDecay())
-                                {
-                                    if (Settings.Enabled)
-                                        this.m_FactionTraps.Add(trap);
-                                    else
-                                        trap.Delete();
-                                }
+                                    this.m_FactionTraps.Add(trap);
                             }
                         }
 

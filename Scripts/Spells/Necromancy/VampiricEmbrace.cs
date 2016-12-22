@@ -42,10 +42,7 @@ namespace Server.Spells.Necromancy
         {
             get
             {
-                if (Caster.Race == Race.Gargoyle)
-                    return Caster.Female ? 667 : 666;
-                else
-                    return Caster.Female ? 745 : 744;
+                return this.Caster.Body;//Only way I found to combat the body change glitch for gargoyles.  May lead to polymorph issues with custom items, may need to add checks on said items if so.  Otherwise Gargoyles change to a humanoid bodyvalue on casting and when dieing glicth out and crash.
             }
         }
         public override int Hue

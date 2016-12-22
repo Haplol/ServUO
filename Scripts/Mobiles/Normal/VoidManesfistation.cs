@@ -104,7 +104,7 @@ namespace Server.Mobiles
 				m_NextSummon = DateTime.UtcNow + TimeSpan.FromSeconds(30);
 			}
 
-            IDamageable combatant = Combatant;
+            Mobile combatant = Combatant;
 
 			if(m_NextAIChange < DateTime.UtcNow)
 			{

@@ -10,6 +10,7 @@ namespace Server.Mobiles
 	public class MysticAI : MageAI
 	{
 		public virtual bool UseMagery { get { return m_Mobile.Skills[SkillName.Magery].Value >= 20; } }
+		public override bool IsNecromancer { get { return false; } }
 		
 		public MysticAI(BaseCreature m) : base(m)
 		{
@@ -17,12 +18,12 @@ namespace Server.Mobiles
 		
 		public override Spell GetRandomDamageSpell()
         {
-            return UseMagery && 0.50 > Utility.RandomDouble() ? base.GetRandomDamageSpell() : GetRandomDamageSpellMystic();
+            return UseMagery && 0.50 > Utility.RandomDouble() ? GetRandomDamageSpellMage() : GetRandomDamageSpellMystic();
         }
 		
 		public override Spell GetRandomCurseSpell()
 		{
-			return UseMagery && 0.50 > Utility.RandomDouble() ? base.GetRandomCurseSpell() : GetRandomCurseSpellMystic();
+			return UseMagery && 0.50 > Utility.RandomDouble() ? GetRandomCurseSpellMage() : GetRandomCurseSpellMystic();
 		}
 		
 		public virtual Spell GetRandomDamageSpellMystic()

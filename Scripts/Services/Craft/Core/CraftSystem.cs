@@ -252,18 +252,6 @@ namespace Server.Engines.Craft
 
         public virtual bool ConsumeOnFailure(Mobile from, Type resourceType, CraftItem craftItem)
         {
-		Item item = from.FindItemOnLayer(Layer.Talisman);
-
-			if (item is MasterCraftsmanTalisman)
-			{
-				MasterCraftsmanTalisman mct = (MasterCraftsmanTalisman)item;
-				
-				if( mct.Charges > 0 )
-				{
-					mct.Charges--;
-					return false;
-				}
-			}
             return true;
         }
 
@@ -351,11 +339,11 @@ namespace Server.Engines.Craft
             craftItem.UseAllRes = useAll;
         }
 
-		public void SetForceTypeRes(int index, bool value)
-		{
-			CraftItem craftItem = this.m_CraftItems.GetAt(index);
-			craftItem.ForceTypeRes = value;
-		}
+	//	public void SetForceTypeRes(int index, bool value)
+	//	{
+	//		CraftItem craftItem = this.m_CraftItems.GetAt(index);
+	//		craftItem.ForceTypeRes = value;
+	//	}
 
 
 		public void SetNeedHeat(int index, bool needHeat)
@@ -387,26 +375,6 @@ namespace Server.Engines.Craft
             CraftItem craftItem = this.m_CraftItems.GetAt(index);
             craftItem.RequiredExpansion = expansion;
         }
-
-        #region SA
-        public void SetRequiresBasketWeaving(int index)
-        {
-            CraftItem craftItem = m_CraftItems.GetAt(index);
-            craftItem.RequiresBasketWeaving = true;
-        }
-
-        public void SetRequireResTarget(int index)
-        {
-            CraftItem craftItem = m_CraftItems.GetAt(index);
-            craftItem.RequiresResTarget = true;
-        }
-
-        public void SetRequiresMechanicalLife(int index)
-        {
-            CraftItem craftItem = m_CraftItems.GetAt(index);
-            craftItem.RequiresMechanicalLife = true;
-        }
-        #endregion
 
         public void AddRes(int index, Type type, TextDefinition name, int amount)
         {

@@ -36,8 +36,6 @@ namespace Server
             pm.HonorActive = true;
             pm.SendLocalizedMessage(1063235); // You embrace your honor
 
-            BuffInfo.AddBuff(pm, new BuffInfo(BuffIcon.Honored, 1075649, BuffInfo.Blank, TimeSpan.FromSeconds(duration), pm, "You have embraced your honor"));
-
             Timer.DelayCall(TimeSpan.FromSeconds(duration),
                 delegate()
                 {
@@ -159,8 +157,6 @@ namespace Server
 
             if (!source.Mounted)
                 source.Animate(32, 5, 1, true, true, 0);
-
-            BuffInfo.AddBuff(source, new BuffInfo(BuffIcon.Honored, 1075649, BuffInfo.Blank, String.Format("You are honoring {0}", target.Name)));
         }
 
         private class InternalTarget : Target
@@ -328,8 +324,6 @@ namespace Server
             {
                 this.m_Perfection = 100;
                 this.m_Source.SendLocalizedMessage(1063254); // You have Achieved Perfection in inflicting damage to this opponent!
-
-                BuffInfo.AddBuff(from, new BuffInfo(BuffIcon.Perfection, 1075651, BuffInfo.Blank, String.Format("+100% Damage to {0}", m_Target.Name)));
             }
             else
             {
@@ -339,8 +333,6 @@ namespace Server
 
         public void OnTargetMissed(Mobile from)
         {
-            BuffInfo.RemoveBuff(from, BuffIcon.Perfection);
-
             if (from != this.m_Source || this.m_Perfection == 0)
                 return;
 
@@ -361,8 +353,6 @@ namespace Server
         {
             if (to != this.m_Target)
                 return;
-
-            BuffInfo.RemoveBuff(m_Source, BuffIcon.Perfection);
 
             if (this.m_Perfection >= 0)
             {
@@ -433,9 +423,6 @@ namespace Server
             ((IHonorTarget)this.m_Target).ReceivedHonorContext = null;
 
             this.m_Timer.Stop();
-
-            BuffInfo.RemoveBuff(m_Source, BuffIcon.Perfection);
-            BuffInfo.RemoveBuff(m_Source, BuffIcon.Honored);
         }
 
         private class InternalTimer : Timer

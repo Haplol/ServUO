@@ -80,8 +80,6 @@ namespace Server.Items
                 defender.FixedParticles(0x37BE, 232, 25, 9948, EffectLayer.LeftHand);
 
                 pack.DropItem(toDisarm);
-                
-                BuffInfo.AddBuff(defender, new BuffInfo( BuffIcon.NoRearm, 1075637, BlockEquipDuration, defender));
 
                 BaseWeapon.BlockEquip(defender, BlockEquipDuration);
             }

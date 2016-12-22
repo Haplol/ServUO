@@ -175,10 +175,7 @@ namespace Server.Spells.Bushido
             if (t != null)
                 t.Stop();
 
-            TimeSpan duration = GetEvadeDuration(m);
-            t = new InternalTimer(m, duration);
-
-            BuffInfo.AddBuff(m, new BuffInfo(BuffIcon.Evasion, 1060597, 1153810, duration, m));
+            t = new InternalTimer(m, GetEvadeDuration(m));
 
             m_Table[m] = t;
 
@@ -193,8 +190,6 @@ namespace Server.Spells.Bushido
                 t.Stop();
 
             m_Table.Remove(m);
-
-            BuffInfo.RemoveBuff(m, BuffIcon.Evasion);
 
             OnEffectEnd(m, typeof(Evasion));
         }

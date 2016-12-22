@@ -618,7 +618,7 @@ namespace Server.Items
 					m_Aggressors.Add(master);
 				}
 
-				var rights = bc.GetLootingRights();
+				var rights = BaseCreature.GetLootingRights(bc.DamageEntries, bc.HitsMax);
 				for (int i = 0; i < rights.Count; ++i)
 				{
 					DamageStore ds = rights[i];

@@ -1,9 +1,7 @@
 using System;
-using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefBlacksmithy), typeof(SmallPlateShield))]
     public class Buckler : BaseShield
     {
         [Constructable]

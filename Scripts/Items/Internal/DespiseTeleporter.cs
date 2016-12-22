@@ -2,7 +2,6 @@ using Server;
 using System;
 using Server.Mobiles;
 using Server.Engines.Despise;
-using System.Collections.Generic;
 
 namespace Server.Items
 {
@@ -33,7 +32,7 @@ namespace Server.Items
             if (p == Point3D.Zero)
                 p = m.Location;
 
-            TeleportPets(m, p, map);
+            //Server.Mobiles.BaseCreature.TeleportPets(m, p, map);
 
             bool sendEffect = (!m.Hidden || m.AccessLevel == AccessLevel.Player);
 
@@ -47,36 +46,6 @@ namespace Server.Items
 
             if (SoundID > 0 && sendEffect)
                 Effects.PlaySound(m.Location, m.Map, SoundID);
-        }
-
-        public static void TeleportPets(Mobile master, Point3D loc, Map map)
-        {
-            var move = new List<Mobile>();
-
-            foreach (Mobile m in master.GetMobilesInRange(3))
-            {
-                if (m is BaseCreature && !(m is DespiseCreature))
-                {
-                    BaseCreature pet = (BaseCreature)m;
-
-                    if (pet.Controlled && pet.ControlMaster == master)
-                    {
-                        if (pet.ControlOrder == OrderType.Guard || pet.ControlOrder == OrderType.Follow ||
-                            pet.ControlOrder == OrderType.Come)
-                        {
-                            move.Add(pet);
-                        }
-                    }
-                }
-            }
-
-            foreach (Mobile m in move)
-            {
-                m.MoveToWorld(loc, map);
-            }
-
-            move.Clear();
-            move.TrimExcess();
         }
 
         public DespiseTeleporter(Serial serial)

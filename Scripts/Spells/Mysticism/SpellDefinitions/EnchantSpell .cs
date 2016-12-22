@@ -77,7 +77,7 @@ namespace Server.Spells.Mystic
                 int sec = (int)Caster.Skills[DamageSkill].Value;
 
                 int value = (50 * (prim + sec)) / 240;
-                double duration = ((double)(prim + sec) / 2.0) + 30.0;
+                double duration = Math.Max(30, (double)(prim + sec) / 2.0);
 
                 if (Table == null)
                     Table = new Dictionary<Mobile, EnchantmentTimer>();
@@ -87,11 +87,8 @@ namespace Server.Spells.Mystic
 
                 Enhancement.SetValue(Caster, this.Attribute, value, ModName);
 
-                if (prim >= 80 && sec >= 80)
-                {
-                    Enhancement.SetValue(Caster, AosAttribute.SpellChanneling, 1, ModName);
-                    Enhancement.SetValue(Caster, AosAttribute.CastSpeed, -1, ModName);
-                }
+                if ((Weapon.ArtifactRarity > 0 || Weapon.Name != null) && Weapon.Attributes.CastSpeed >= 0)
+                    Enhancement.SetValue(Caster, AosAttribute.CastSpeed, -1, ModName + "CastSpeed");
 
                 Table[Caster] = new EnchantmentTimer(Caster, Weapon, this.Attribute, value, duration);
 
@@ -133,23 +130,22 @@ namespace Server.Spells.Mystic
         {
             if (Table.ContainsKey(from))
             {
-                SkillName damageSkill = from.Skills[SkillName.Imbuing].Value > from.Skills[SkillName.Focus].Value ? SkillName.Imbuing : SkillName.Focus;
-
-                return from.Skills[SkillName.Mysticism].Value >= 80 && from.Skills[damageSkill].Value >= 80;
+                BaseWeapon wep = Table[from].Weapon;
+                return weapon != null && (weapon.ArtifactRarity > 0 || weapon.Name != null) && weapon.Attributes.CastSpeed >= 0;
             }
 
             return false;
         }
 
-        public static void RemoveEnchantment(Mobile caster)
+        public static void RemoveEnchantment(Mobile Caster)
         {
-            if(Table != null && Table.ContainsKey(caster))
+            if(Table != null && Table.ContainsKey(Caster))
             {
-                Table[caster].Stop();
-                Table[caster] = null;
-                Table.Remove(caster);
+                Table[Caster].Stop();
+                Table[Caster] = null;
+                Table.Remove(Caster);
 
-                Enhancement.RemoveMobile(caster);
+                Enhancement.RemoveMobile(Caster);
             }
         }
 
@@ -207,9 +203,6 @@ namespace Server.Spells.Mystic
 
         protected override void OnTick()
         {
-            if(Weapon != null)
-                Weapon.EnchantedWeilder = null;
-
             EnchantSpell.RemoveEnchantment(Owner);
         }
     }

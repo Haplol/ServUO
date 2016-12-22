@@ -101,13 +101,6 @@ namespace Server.Items
                 return ArmorMeditationAllowance.All;
             }
         }
-        public override Race RequiredRace
-        {
-            get
-            {
-                return Race.Elf;
-            }
-        }
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);

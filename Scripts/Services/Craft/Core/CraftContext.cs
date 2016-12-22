@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using Server.Engines.Plants;
 
 namespace Server.Engines.Craft
 {
@@ -33,7 +32,6 @@ namespace Server.Engines.Craft
         private CraftMarkOption m_MarkOption;
         private CraftQuestOption m_QuestOption;
         private int m_MakeTotal;
-        private PlantHue m_RequiredPlantHue;
 
         #region Hue State Vars
         private bool m_CheckedHues;
@@ -162,13 +160,6 @@ namespace Server.Engines.Craft
             } 
         }
 
-        public PlantHue RequiredPlantHue
-        { 
-            get { return m_RequiredPlantHue; } 
-            set { m_RequiredPlantHue = value; } 
-        }
-
-        public PlantPigmentHue RequiredPigmentHue { get; set; }
         #endregion
 
         public CraftContext(Mobile owner, CraftSystem system)
@@ -185,8 +176,6 @@ namespace Server.Engines.Craft
             this.m_Hues = new List<int>();
             this.m_CompareHueTo = null;
             this.m_QuestOption = CraftQuestOption.NonQuestItem;
-            m_RequiredPlantHue = PlantHue.None;
-            RequiredPigmentHue = PlantPigmentHue.None;
 
             Contexts.Add(this);
         }

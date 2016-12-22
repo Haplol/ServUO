@@ -1,5 +1,6 @@
 using System;
 using Server.Targeting;
+using Server.Items;
 
 namespace Server.Spells.Seventh
 {
@@ -34,11 +35,9 @@ namespace Server.Spells.Seventh
         {
             this.Caster.Target = new InternalTarget(this);
         }
-
-        public void Target(IDamageable m)
+        public void Target(Mobile m)
         {
-            Mobile mob = m as Mobile;
-
+	
             if (!this.Caster.CanSee(m))
             {
                 this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
@@ -47,44 +46,37 @@ namespace Server.Spells.Seventh
             {
                 SpellHelper.Turn(this.Caster, m);
 
-                if(mob != null)
-                    SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref mob);
+                SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
 
-                double damage = 0;
+                double damage;
 
                 if (Core.AOS)
                 {
                     damage = this.GetNewAosDamage(48, 1, 5, m);
                 }
-                else if (mob != null)
+                else
                 {
                     damage = Utility.Random(27, 22);
 
-                    if (this.CheckResisted(mob))
+                    if (this.CheckResisted(m))
                     {
                         damage *= 0.6;
 
-                        mob.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
+                        m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
                     }
 
-                    damage *= this.GetDamageScalar(mob);
+                    damage *= this.GetDamageScalar(m);
                 }
 
-                if (mob != null)
-                {
-                    mob.FixedParticles(0x3709, 10, 30, 5052, EffectLayer.LeftFoot);
-                    mob.PlaySound(0x208);
-                }
-                else
-                {
-                    Effects.SendLocationParticles(m, 0x3709, 10, 30, 5052);
-                    Effects.PlaySound(m.Location, m.Map, 0x208);
-                }
+                m.FixedParticles(0x3709, 10, 30, 5052, EffectLayer.LeftFoot);
+                m.PlaySound(0x208);
 
-                if (damage > 0)
-                {
-                    SpellHelper.Damage(this, m, damage, 0, 100, 0, 0, 0);
-                }
+				if(ItemExtensions.HasEquipped(this.Caster, typeof(StaffOfTheMagiplus))){
+				SpellHelper.Damage(this, m, damage, 0, 0, 0, 0, 0, 0, 100);
+				}
+				else{
+                SpellHelper.Damage(this, m, damage, 0, 100, 0, 0, 0);
+				}
             }
 
             this.FinishSequence();
@@ -101,9 +93,9 @@ namespace Server.Spells.Seventh
 
             protected override void OnTarget(Mobile from, object o)
             {
-                if (o is IDamageable)
+                if (o is Mobile)
                 {
-                    this.m_Owner.Target((IDamageable)o);
+                    this.m_Owner.Target((Mobile)o);
                 }
             }
 

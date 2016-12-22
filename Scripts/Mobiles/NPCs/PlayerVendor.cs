@@ -360,11 +360,6 @@ namespace Server.Mobiles
             this.m_PayTimer.Start();
 
             this.m_NextPayTime = DateTime.UtcNow + delay;
-
-            if (PlayerVendors == null)
-                PlayerVendors = new List<PlayerVendor>();
-
-            PlayerVendors.Add(this);
         }
 
         public PlayerVendor(Serial serial)
@@ -648,11 +643,6 @@ namespace Server.Mobiles
 
             if (Core.AOS && this.NameHue == 0x35)
                 this.NameHue = -1;
-
-            if (PlayerVendors == null)
-                PlayerVendors = new List<PlayerVendor>();
-
-            PlayerVendors.Add(this);
         }
 
         public void InitBody()
@@ -1715,8 +1705,6 @@ namespace Server.Mobiles
                 from.SendGump(new NewPlayerVendorOwnerGump(this.m_Vendor));
             }
         }
-
-        public static List<PlayerVendor> PlayerVendors { get; set; }
     }
 
     public class PlayerVendorPlaceholder : Item

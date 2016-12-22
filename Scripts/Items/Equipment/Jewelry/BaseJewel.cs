@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Server.ContextMenus;
 using Server.Engines.Craft;
 using Server.Mobiles;
-
+using daat99;
 namespace Server.Items
 {
     public enum GemType
@@ -20,7 +20,7 @@ namespace Server.Items
         Diamond
     }
 
-    public abstract class BaseJewel : Item, ICraftable, ISetItem, IWearableDurability, IVvVItem, IOwnerRestricted
+    public abstract class BaseJewel : Item, ICraftable, ISetItem, IWearableDurability
     {
         private int m_MaxHitPoints;
         private int m_HitPoints;
@@ -46,30 +46,6 @@ namespace Server.Items
         private ReforgedPrefix m_ReforgedPrefix;
         private ReforgedSuffix m_ReforgedSuffix;
         #endregion
-
-        private bool _VvVItem;
-        private Mobile _Owner;
-        private string _OwnerName;
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public bool IsVvVItem
-        {
-            get { return _VvVItem; }
-            set { _VvVItem = value; InvalidateProperties(); }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile Owner
-        {
-            get { return _Owner; }
-            set { _Owner = value; if (_Owner != null) _OwnerName = _Owner.Name; InvalidateProperties(); }
-        }
-
-        public virtual string OwnerName
-        {
-            get { return _OwnerName; }
-            set { _OwnerName = value; InvalidateProperties(); }
-        }
 
         private Mobile m_BlessedBy;
 
@@ -444,17 +420,6 @@ namespace Server.Items
             }
         }
 
-        public override bool DisplayWeight
-        {
-            get
-            {
-                if (IsVvVItem)
-                    return true;
-
-                return base.DisplayWeight;
-            }
-        }
-
         private Mobile m_Crafter;
         private ArmorQuality m_Quality;
 
@@ -504,7 +469,6 @@ namespace Server.Items
             this.m_SAAbsorptionAttributes = new SAAbsorptionAttributes(this);
             m_NegativeAttributes = new NegativeAttributes(this);
         }
-
         #region Stygian Abyss
         public override bool CanEquip(Mobile from)
         {
@@ -512,32 +476,6 @@ namespace Server.Items
             {
                 from.SendLocalizedMessage(1075277); // That item is blessed by another player.
                 return false;
-            }
-
-            if (from.IsPlayer())
-            {
-                if (_Owner != null && _Owner != from)
-                {
-                    from.SendLocalizedMessage(501023); // You must be the owner to use this item.
-                    return false;
-                }
-
-                if (this is IAccountRestricted && ((IAccountRestricted)this).Account != null)
-                {
-                    Accounting.Account acct = from.Account as Accounting.Account;
-
-                    if (acct == null || acct.Username != ((IAccountRestricted)this).Account)
-                    {
-                        from.SendLocalizedMessage(1071296); // This item is Account Bound and your character is not bound to it. You cannot use this item.
-                        return false;
-                    }
-                }
-
-                if (IsVvVItem && !Engines.VvV.ViceVsVirtueSystem.IsVvV(from))
-                {
-                    from.SendLocalizedMessage(1155496); // This item can only be used by VvV participants!
-                    return false;
-                }
             }
 
             if (from.AccessLevel < AccessLevel.GameMaster)
@@ -562,7 +500,6 @@ namespace Server.Items
 		
             return base.CanEquip(from);
         }
-
         public virtual int OnHit(BaseWeapon weap , int damageTaken)
         {
             if (m_TimesImbued == 0 && m_MaxHitPoints == 0)
@@ -719,12 +656,7 @@ namespace Server.Items
                         list.Add(1151756, String.Format("#{0}\t{1}\t#{2}", prefix, GetNameString(), RunicReforging.GetSuffixName(m_ReforgedSuffix))); // ~1_PREFIX~ ~2_ITEM~ of ~3_SUFFIX~
                 }
                 else if (m_ReforgedSuffix != ReforgedSuffix.None)
-                {
-                    if (m_ReforgedSuffix == ReforgedSuffix.Minax)
-                        list.Add(1154507, String.Format("{0}", GetNameString())); // ~1_ITEM~ bearing the crest of Minax
-                    else
-                        list.Add(1151758, String.Format("{0}\t#{1}", GetNameString(), RunicReforging.GetSuffixName(m_ReforgedSuffix))); // ~1_ITEM~ of ~2_SUFFIX~
-                }
+                    list.Add(1151758, String.Format("{0}\t#{1}", GetNameString(), RunicReforging.GetSuffixName(m_ReforgedSuffix))); // ~1_ITEM~ of ~2_SUFFIX~
             }
             else
             {
@@ -742,22 +674,9 @@ namespace Server.Items
             return name;
         }
 
-        public override void AddWeightProperty(ObjectPropertyList list)
-        {
-            base.AddWeightProperty(list);
-
-            if (IsVvVItem)
-                list.Add(1154937); // VvV Item
-        }
-
         public override void GetProperties(ObjectPropertyList list)
         {
             base.GetProperties(list);
-
-            if (OwnerName != null)
-            {
-                list.Add(1153213, OwnerName);
-            }
 
             #region Stygian Abyss
             if (IsImbued)
@@ -779,12 +698,6 @@ namespace Server.Items
             if (this.IsSetItem)
             {
                 list.Add(1080240, this.Pieces.ToString()); // Part of a Jewelry Set (~1_val~ pieces)
-
-                if (SetID == SetItem.Bestial)
-                    list.Add(1151541, BestialSetHelper.GetTotalBerserk(this).ToString()); // Berserk ~1_VAL~
-
-                if (this.BardMasteryBonus)
-                    list.Add(1151553); // Activate: Bard Mastery Bonus x2<br>(Effect: 1 min. Cooldown: 30 min.)
 
                 if (this.m_SetEquipped)
                 {
@@ -926,12 +839,6 @@ namespace Server.Items
             if (this.m_HitPoints >= 0 && this.m_MaxHitPoints > 0)
                 list.Add(1060639, "{0}\t{1}", this.m_HitPoints, this.m_MaxHitPoints); // durability ~1_val~ / ~2_val~
 
-            if (this.IsSetItem && !this.m_SetEquipped)
-            {
-                list.Add(1072378); // <br>Only when full set is present:				
-                SetHelper.GetSetProperties(list, this);
-            }
-
             if (m_ItemPower != ItemPower.None)
             {
                 if (m_ItemPower <= ItemPower.LegendaryArtifact)
@@ -955,11 +862,7 @@ namespace Server.Items
         {
             base.Serialize(writer);
 
-            writer.Write(8); // version
-
-            writer.Write(_VvVItem);
-            writer.Write(_Owner);
-            writer.Write(_OwnerName);
+            writer.Write(7); // version
 
             //Version 7
             writer.Write((bool)this.m_IsImbued);
@@ -1016,13 +919,6 @@ namespace Server.Items
 
             switch (version)
             {
-                case 8:
-                    {
-                        _VvVItem = reader.ReadBool();
-                        _Owner = reader.ReadMobile();
-                        _OwnerName = reader.ReadString();
-                        goto case 7;
-                    }
                 case 7:
                     {
                         this.m_IsImbued = reader.ReadBool();
@@ -1159,6 +1055,10 @@ namespace Server.Items
             if (context != null && context.DoNotColor)
                 this.Hue = 0;
 
+//daat99 OWLTR start - runic jewels
+            if (tool is BaseRunicTool)
+                ((BaseRunicTool)tool).ApplyAttributesTo(this);
+            //daat99 OWLTR end - reunic jewels
             if (1 < craftItem.Resources.Count)
             {
                 resourceType = craftItem.Resources.GetAt(1).ItemType;
@@ -1221,15 +1121,6 @@ namespace Server.Items
                 return 0;
             }
         }
-
-        public virtual bool BardMasteryBonus
-        {
-            get
-            {
-                return (this.SetID == SetItem.Virtuoso);
-            }
-        }
-
         public virtual bool MixedSet
         {
             get
@@ -1313,20 +1204,6 @@ namespace Server.Items
             set
             {
             }
-        }
-
-        public int SetResistBonus(ResistanceType resist)
-        {
-            switch (resist)
-            {
-                case ResistanceType.Physical: return PhysicalResistance;
-                case ResistanceType.Fire: return FireResistance;
-                case ResistanceType.Cold: return ColdResistance;
-                case ResistanceType.Poison: return PoisonResistance;
-                case ResistanceType.Energy: return EnergyResistance;
-            }
-
-            return 0;
         }
         #endregion
     }

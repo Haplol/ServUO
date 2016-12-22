@@ -4,7 +4,7 @@ using Server.Targeting;
 
 namespace Server.Items
 {
-    public class PlantPigment : Item, IPigmentHue
+    public class PlantPigment : Item
     {
         private PlantPigmentHue m_Hue;
         [Constructable]
@@ -67,19 +67,12 @@ namespace Server.Items
         }// plant pigment
         public override void AddNameProperty(ObjectPropertyList list)
         {
-            PlantPigmentHueInfo info = PlantPigmentHueInfo.GetInfo(this.m_Hue);
-            int cliloc;
+            PlantPigmentHueInfo hueInfo = PlantPigmentHueInfo.GetInfo(this.m_Hue);
 
-            if (Amount > 1)
-            {
-                cliloc = info.IsBright() ? 1113271 : 1113270;
-                list.Add(cliloc, String.Format("{0}\t#{1}", Amount.ToString(), info.Name));
-            }
-            else
-            {
-                cliloc = info.IsBright() ? 1112134 : 1112133;
-                list.Add(cliloc, String.Format("#{0}", info.Name));
-            }
+            if (this.Amount > 1)
+                list.Add(1113273, "{0}\t{1}", this.Amount, "#" + hueInfo.Name);  // ~1_COLOR~ dry reeds
+            else 
+                list.Add(1112133, "#" + hueInfo.Name);  // ~1_COLOR~ plant pigment
         }
 
         public override void Serialize(GenericWriter writer)

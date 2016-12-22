@@ -67,9 +67,6 @@ namespace Server.Mobiles
 			{
 				AddItem(new Bow());
 			}
-
-            if (0.5 > Utility.RandomDouble())
-                PackItem(new Yeast());
 		}
 
 		public OrcScout(Serial serial)

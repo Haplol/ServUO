@@ -22,8 +22,20 @@ namespace Server.Items
         private SlayerName m_Slayer, m_Slayer2;
         private InstrumentQuality m_Quality;
         private Mobile m_Crafter;
+        private CraftResource m_Resource;
         private int m_UsesRemaining;
+        private string m_EngravedText;
 
+        [CommandProperty(AccessLevel.GameMaster)]
+        public string EngravedText
+        {
+            get { return m_EngravedText; }
+            set
+            {
+                m_EngravedText = value;
+                InvalidateProperties();
+            }
+        }
         [CommandProperty(AccessLevel.GameMaster)]
         public int SuccessSound
         {
@@ -107,7 +119,36 @@ namespace Server.Items
                 this.InvalidateProperties();
             }
         }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public CraftResource Resource
+        {
+            get
+            {
+                return this.m_Resource;
+            }
+            set
+            {
+                if (this.m_Resource != value)
+                {
+                //    this.UnscaleDurability();
 
+                    this.m_Resource = value;
+
+                    if (CraftItem.RetainsColor(this.GetType()))
+                    {
+                        this.Hue = CraftResources.GetHue(this.m_Resource);
+                    }
+
+             //       this.Invalidate();
+             //       this.InvalidateProperties();
+
+                    if (this.Parent is Mobile)
+                        ((Mobile)this.Parent).UpdateResistances();
+
+             //      this.ScaleDurability();
+                }
+            }
+        }
         public virtual int InitMinUses
         {
             get
@@ -176,34 +217,6 @@ namespace Server.Items
                     this.m_LastReplenished = DateTime.UtcNow;
 
                 this.m_ReplenishesCharges = value; 
-            }
-        }
-
-        public void RandomInstrument()
-        {
-            switch (Utility.Random(3))
-            {
-                case 0:
-                    {
-                        this.ItemID = 0xEB2;
-                        this.SuccessSound = 0x45;
-                        this.FailureSound = 0x46;
-                        break;
-                    }
-                case 1:
-                    {
-                        this.ItemID = 0xEB3;
-                        this.SuccessSound = 0x4C;
-                        this.FailureSound = 0x4D;
-                        break;
-                    }
-                default:
-                    {
-                        this.ItemID = 0xE9C;
-                        this.SuccessSound = 0x38;
-                        this.FailureSound = 0x39;
-                        break;
-                    }
             }
         }
 
@@ -439,8 +452,7 @@ namespace Server.Items
         {
             this.m_WellSound = wellSound;
             this.m_BadlySound = badlySound;
-
-            UsesRemaining = Utility.RandomMinMax(this.InitMinUses, this.InitMaxUses);
+            this.UsesRemaining = Utility.RandomMinMax(this.InitMinUses, this.InitMaxUses);
         }
 
         public override void GetProperties(ObjectPropertyList list)
@@ -478,7 +490,61 @@ namespace Server.Items
             if (this.m_UsesRemaining != oldUses)
                 Timer.DelayCall(TimeSpan.Zero, new TimerCallback(InvalidateProperties));
         }
+        public override void AddNameProperty(ObjectPropertyList list)
+        {
+            //daat99 OWLTR start - custom resources
+            string oreType = CraftResources.GetName(m_Resource);
+            int level = CraftResources.GetIndex(m_Resource) + 1;
 
+            if (m_Quality == InstrumentQuality.Exceptional)
+            {
+                if (level > 1 && !string.IsNullOrEmpty(oreType))
+                    list.Add(1053100, "{0}\t{1}", oreType, GetNameString()); // exceptional ~1_oretype~ ~2_armortype~
+                else
+                    list.Add(1050040, GetNameString()); // exceptional ~1_ITEMNAME~
+            }
+            else
+            {
+                if (level > 1 && !string.IsNullOrEmpty(oreType))
+                    list.Add(1053099, "{0}\t{1}", oreType, GetNameString()); // ~1_oretype~ ~2_armortype~
+                else
+                    list.Add(GetNameString());
+
+            }
+            //daat99 OWLTR end - custom resources
+       /*     if (m_ReforgedPrefix != ReforgedPrefix.None || m_ReforgedSuffix != ReforgedSuffix.None)
+            {
+                if (m_ReforgedPrefix != ReforgedPrefix.None)
+                {
+                    int prefix = RunicReforging.GetPrefixName(m_ReforgedPrefix);
+
+                    if (m_ReforgedSuffix == ReforgedSuffix.None)
+                        list.Add(1151757, String.Format("#{0}\t{1}", prefix, GetNameString())); // ~1_PREFIX~ ~2_ITEM~
+                    else
+                        list.Add(1151756, String.Format("#{0}\t{1}\t#{2}", prefix, GetNameString(), RunicReforging.GetSuffixName(m_ReforgedSuffix))); // ~1_PREFIX~ ~2_ITEM~ of ~3_SUFFIX~
+                }
+                else if (m_ReforgedSuffix != ReforgedSuffix.None)
+                    list.Add(1151758, String.Format("{0}\t#{1}", GetNameString(), RunicReforging.GetSuffixName(m_ReforgedSuffix))); // ~1_ITEM~ of ~2_SUFFIX~
+            } */
+
+            /*
+            * Want to move this to the engraving tool, let the non-harmful 
+            * formatting show, and remove CLILOCs embedded: more like OSI
+            * did with the books that had markup, etc.
+            * 
+            * This will have a negative effect on a few event things imgame 
+            * as is.
+            * 
+            * If we cant find a more OSI-ish way to clean it up, we can 
+            * easily put this back, and use it in the deserialize
+            * method and engraving tool, to make it perm cleaned up.
+            */
+
+            if (!String.IsNullOrEmpty(m_EngravedText))
+            {
+                list.Add(1062613, m_EngravedText);
+            }
+        }
         public override void OnSingleClick(Mobile from)
         {
             ArrayList attrs = new ArrayList();
@@ -536,13 +602,24 @@ namespace Server.Items
             : base(serial)
         {
         }
+        private string GetNameString()
+        {
+            string name = Name;
 
+            if (name == null)
+            {
+                name = String.Format("#{0}", LabelNumber);
+            }
+
+            return name;
+        }
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
 
-            writer.Write((int)3); // version
+            writer.Write((int)4); // version
 
+            writer.WriteEncodedInt((int)this.m_Resource); // != this.DefaultResource);
             writer.Write(this.m_ReplenishesCharges);
             if (this.m_ReplenishesCharges)
                 writer.Write(this.m_LastReplenished);
@@ -567,8 +644,14 @@ namespace Server.Items
 
             switch ( version )
             {
+                case 4:
+                    {
+                        this.m_Resource = (CraftResource)reader.ReadEncodedInt();
+                        goto case 3;
+                    }
                 case 3:
                     {
+                        
                         this.m_ReplenishesCharges = reader.ReadBool();
 
                         if (this.m_ReplenishesCharges)
@@ -684,6 +767,36 @@ namespace Server.Items
             if (makersMark)
                 this.Crafter = from;
 
+            #region Mondain's Legacy
+            if (!craftItem.ForceNonExceptional)
+            {
+                Type type = typeRes;
+
+                if (type == null)
+                    type = craftItem.Resources.GetAt(0).ItemType;
+
+                this.Resource = CraftResources.GetFromType(type);
+            }
+            #endregion
+
+        //    Type resourceType = typeRes;
+
+        //    if (resourceType == null)
+        //        resourceType = craftItem.Resources.GetAt(0).ItemType;
+
+        //    this.Resource = CraftResources.GetFromType(resourceType);
+         //   PlayerConstructed = true;
+
+            CraftContext context = craftSystem.GetContext(from);
+
+            if (context != null && !context.DoNotColor)
+            {
+                Type resourceType = typeRes ?? craftItem.Resources.GetAt(0).ItemType;
+
+                CraftResource res = CraftResources.GetFromType(resourceType);
+
+                Hue = CraftResources.GetHue(res);
+            }
             return quality;
         }
         #endregion

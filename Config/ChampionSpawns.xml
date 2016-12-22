@@ -51,7 +51,7 @@
     <spawn name="Oasis" group="FelT2A" spawnMod="0.75">
         <location x="5549" y="2640" z="15" map="Felucca" radius="25"/>
     </spawn>
-    <spawn name="Terra" group="FelT2A">
+    <spawn name="Terra" group="FelT2A" type= "Crafter">
         <location x="6035" y="2944" z="52" map="Felucca" radius="35"/>
     </spawn>
     <spawn name="Lord Oaks" group="FelT2A" type="ForestLord" spawnMod="0.5">
@@ -75,7 +75,7 @@
     <spawn name="City of Death" group="FelT2A">
         <location x="5207" y="3637" z="20" map="Felucca" radius="50"/>
     </spawn>
-    <spawn name="Valor">
+    <spawn name="Valor"> 
         <location x="382" y="328" z="-30" map="Ilshenar" radius="100"/>
     </spawn>
     <spawn name="Humility">

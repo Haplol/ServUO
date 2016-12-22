@@ -35,9 +35,9 @@ namespace Server.Mobiles
 
         public override bool DoActionCombat()
         {
-            IDamageable combatant = this.m_Mobile.Combatant;
+            Mobile combatant = this.m_Mobile.Combatant;
 
-            if (combatant == null || combatant.Deleted || combatant.Map != this.m_Mobile.Map || !combatant.Alive || (combatant is Mobile && ((Mobile)combatant).IsDeadBondedPet))
+            if (combatant == null || combatant.Deleted || combatant.Map != this.m_Mobile.Map || !combatant.Alive || combatant.IsDeadBondedPet)
             {
                 this.m_Mobile.DebugSay("My combatant is gone, so my guard is up");
 
@@ -69,6 +69,15 @@ namespace Server.Mobiles
                     return true;
                 }
             }
+
+            /*if ( !m_Mobile.InLOS( combatant ) )
+            {
+            if ( AcquireFocusMob( m_Mobile.RangePerception, m_Mobile.FightMode, false, false, true ) )
+            {
+            m_Mobile.Combatant = combatant = m_Mobile.FocusMob;
+            m_Mobile.FocusMob = null;
+            }
+            }*/
 
             if (this.MoveTo(combatant, true, this.m_Mobile.RangeFight))
             {
@@ -158,7 +167,7 @@ namespace Server.Mobiles
             }
             else
             {
-                this.m_Mobile.FocusMob = this.m_Mobile.Combatant as Mobile;
+                this.m_Mobile.FocusMob = this.m_Mobile.Combatant;
                 base.DoActionFlee();
             }
 

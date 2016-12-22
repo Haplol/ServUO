@@ -22,7 +22,11 @@ namespace Server
 				return 0;
 			}
 
-			int luck = killer is PlayerMobile ? ((PlayerMobile)killer).RealLuck : killer.Luck;
+			int luck = killer.Luck;
+
+            luck += FountainOfFortune.GetLuckBonus(killer);
+
+            luck += TenthAnniversarySculpture.GetLuckBonus(killer);
 
             PlayerMobile pmKiller = killer as PlayerMobile;
 			if (pmKiller != null && pmKiller.SentHonorContext != null && pmKiller.SentHonorContext.Target == victim)
@@ -48,14 +52,12 @@ namespace Server
             return (int)(Math.Pow(luck, 1 / 1.8) * 100);
         }
 
-		public static int GetLuckChanceForKiller(Mobile m)
+		public static int GetLuckChanceForKiller(Mobile dead)
 		{
-            BaseCreature dead = m as BaseCreature;
-
             if (dead == null)
                 return 240;
 
-			var list = dead.GetLootingRights();
+			var list = BaseCreature.GetLootingRights(dead.DamageEntries, dead.HitsMax);
 
 			DamageStore highest = null;
 
@@ -586,7 +588,7 @@ namespace Server
             if (e == null)
                 return false;
 
-            return e.Map == Map.TerMur || (!IsInTokuno(e) && !IsMondain(e) && Utility.RandomBool());
+            return e.Map == Map.TerMur;
 		}
 		#endregion
 
@@ -676,7 +678,7 @@ namespace Server
 					if (Core.AOS)
 					{
                         // Try to generate a new random item based on the creature killed
-                        if (Core.HS && RandomItemGenerator.Enabled && from is BaseCreature)
+                        if (from is BaseCreature)
                         {
                             if (RandomItemGenerator.GenerateRandomItem(item, ((BaseCreature)from).LastKiller, (BaseCreature)from))
                                 return item;

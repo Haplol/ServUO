@@ -1083,8 +1083,7 @@ namespace Server
 			{
 				return;
 			}
-            //EventSink.InvokeBeforeWorldSave(new BeforeWorldSaveEventArgs());
-
+            EventSink.InvokeBeforeWorldSave(new BeforeWorldSaveEventArgs());
             ++m_Saves;
 
 			NetState.FlushAll();

@@ -116,19 +116,14 @@ namespace Server.Mobiles
         {
             base.OnThink();
 
-            Mobile combatant = Combatant as Mobile;
+            if (this.CanTakeLife(this.Combatant))
+                this.TakeLife(this.Combatant);
 
-            if (combatant != null)
-            {
-                if (this.CanTakeLife(combatant))
-                    this.TakeLife(combatant);
+            if (this.CanSmackTalk())
+                this.SmackTalk();
 
-                if (this.CanSmackTalk())
-                    this.SmackTalk();
-
-                if (this.CanPutridNausea())
-                    this.PutridNausea();
-            }
+            if (this.CanPutridNausea())
+                this.PutridNausea();
         }
 
         public override void SetLocation(Point3D newLocation, bool isTeleport)

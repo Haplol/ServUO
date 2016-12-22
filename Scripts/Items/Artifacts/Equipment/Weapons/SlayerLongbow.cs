@@ -8,7 +8,7 @@ namespace Server.Items
         [Constructable]
         public SlayerLongbow()
         {
-            this.Slayer2 = BaseRunicTool.GetRandomSlayer();
+            this.Slayer2 = (SlayerName)Utility.RandomMinMax(1, 27);
         }
 
         public SlayerLongbow(Serial serial)

@@ -40,10 +40,8 @@ namespace Server.Spells.Second
             return 1.0; //This spell isn't affected by slayer spellbooks
         }
 
-        public void Target(IDamageable m)
+        public void Target(Mobile m)
         {
-            Mobile mob = m as Mobile;
-
             if (!this.Caster.CanSee(m))
             {
                 this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
@@ -52,57 +50,45 @@ namespace Server.Spells.Second
             {
                 SpellHelper.Turn(this.Caster, m);
 
-                if(mob != null)
-                    SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref mob);
+                SpellHelper.CheckReflect((int)this.Circle, this.Caster, ref m);
 
-                double damage = 0;
+                double damage;
 				
                 if (Core.AOS)
                 {
                     damage = this.GetNewAosDamage(17, 1, 5, m);
                 }
-                else if (mob != null)
+                else
                 {
                     damage = Utility.Random(1, 15);
 
-                    if (this.CheckResisted(mob))
+                    if (this.CheckResisted(m))
                     {
                         damage *= 0.75;
 
-                        mob.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
+                        m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
                     }
 
-                    damage *= this.GetDamageScalar(mob);
+                    damage *= this.GetDamageScalar(m);
                 }
 
-                if (!this.Caster.InRange(m, 2))
+                if (!m.InRange(this.Caster, 2))
                     damage *= 0.25; // 1/4 damage at > 2 tile range
-                else if (!this.Caster.InRange(m, 1))
+                else if (!m.InRange(this.Caster, 1))
                     damage *= 0.50; // 1/2 damage at 2 tile range
 
                 if (Core.AOS)
                 {
-                    if (mob != null)
-                    {
-                        mob.FixedParticles(0x374A, 10, 30, 5013, 1153, 2, EffectLayer.Waist);
-                        mob.PlaySound(0x0FC);
-                    }
-                    else
-                    {
-                        Effects.SendLocationParticles(m, 0x374A, 10, 30, 1153, 2, 5013, 0);
-                        Effects.PlaySound(m.Location, m.Map, 0x0FC);
-                    }
+                    m.FixedParticles(0x374A, 10, 30, 5013, 1153, 2, EffectLayer.Waist);
+                    m.PlaySound(0x0FC);
                 }
-                else if (mob != null)
+                else
                 {
-                    mob.FixedParticles(0x374A, 10, 15, 5013, EffectLayer.Waist);
-                    mob.PlaySound(0x1F1);
+                    m.FixedParticles(0x374A, 10, 15, 5013, EffectLayer.Waist);
+                    m.PlaySound(0x1F1);
                 }
 
-                if (damage > 0)
-                {
-                    SpellHelper.Damage(this, m, damage, 0, 0, 100, 0, 0);
-                }
+                SpellHelper.Damage(this, m, damage, 0, 0, 100, 0, 0);
             }
 
             this.FinishSequence();
@@ -119,9 +105,9 @@ namespace Server.Spells.Second
 
             protected override void OnTarget(Mobile from, object o)
             {
-                if (o is IDamageable)
+                if (o is Mobile)
                 {
-                    this.m_Owner.Target((IDamageable)o);
+                    this.m_Owner.Target((Mobile)o);
                 }
             }
 

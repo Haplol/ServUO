@@ -238,8 +238,6 @@ namespace Server.Items
 
 				DisguiseTimers.CreateTimer(m_From, TimeSpan.FromHours(2.0));
 				DisguiseTimers.StartTimer(m_From);
-				
-				BuffInfo.AddBuff(m_From, new BuffInfo(BuffIcon.Disguised, 1075821, 1075820, TimeSpan.FromHours(2.0), m_From));
 			}
 		}
 
@@ -357,7 +355,7 @@ namespace Server.Items
 		{
 			var t = (Timer)m_Timers[m];
 
-			if (t != null && t.Next > DateTime.UtcNow)
+			if (t != null)
 			{
 				return t.Next - DateTime.UtcNow;
 			}

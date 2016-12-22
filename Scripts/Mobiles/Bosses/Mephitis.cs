@@ -59,14 +59,14 @@ namespace Server.Mobiles
         {
             get
             {
-                return new Type[] { typeof(Calm) };
+				return new Type[] { typeof(RingOfTheVileplus), typeof(Calm) };
             }
         }
         public override Type[] SharedList
         {
             get
             {
-                return new Type[] { typeof(OblivionsNeedle), typeof(ANecromancerShroud) };
+                return new Type[] { typeof(OblivionsNeedle), typeof(ANecromancerShroud), typeof(EmbroideredOakLeafCloak), typeof(TheMostKnowledgePerson) };
             }
         }
         public override Type[] DecorativeList

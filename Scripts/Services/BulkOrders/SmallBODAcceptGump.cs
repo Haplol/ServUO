@@ -1,4 +1,5 @@
 using System;
+using Server;
 using Server.Gumps;
 using Server.Network;
 
@@ -47,7 +48,9 @@ namespace Server.Engines.BulkOrders
                     this.AddHtmlLocalized(40, 168, 350, 20, 1045141, 0x7FFF, false, false); // All items must be exceptional.
 
                 if (deed.Material != BulkMaterialType.None)
-                    this.AddHtmlLocalized(40, deed.RequireExceptional ? 192 : 168, 350, 20, GetMaterialNumberFor(deed.Material), 0x7FFF, false, false); // All items must be made with x material.
+                    //daat99 OWLTR start - custom resources
+                    AddHtml(40, deed.RequireExceptional ? 192 : 168, 350, 25, "<basefont color=#FF0000>All items must be crafted with " + LargeBODGump.GetMaterialStringFor(deed.Material), false, false);
+                //daat99 OWLTR end - cusotom resources
             }
 
             this.AddHtmlLocalized(40, 216, 350, 20, 1045139, 0x7FFF, false, false); // Do you want to accept this order?
@@ -88,5 +91,17 @@ namespace Server.Engines.BulkOrders
                 this.m_Deed.Delete();
             }
         }
+        //daat99 OWLTR start - REMOVED - make sure nobody calls this!
+        /*
+        public static int GetMaterialNumberFor( BulkMaterialType material )
+        {
+            if ( material >= BulkMaterialType.DullCopper && material <= BulkMaterialType.Valorite )
+                return 1045142 + (int)(material - BulkMaterialType.DullCopper);
+            else if ( material >= BulkMaterialType.Spined && material <= BulkMaterialType.Barbed )
+                return 1049348 + (int)(material - BulkMaterialType.Spined);
+
+            return 0;
+        }*/
+        //daat99 OWLTR end - REMOVED - make sure nobody calls this!
     }
 }

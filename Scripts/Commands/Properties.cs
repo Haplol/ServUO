@@ -445,9 +445,8 @@ namespace Server.Commands
 				
 				return "Property has been set.";
 			}
-			catch(Exception e)
+			catch
 			{
-                Console.WriteLine(e.ToString());
 				return "An exception was caught, the property may not be set.";
 			}
 		}
@@ -468,9 +467,8 @@ namespace Server.Commands
 
 				return "Property has been set.";
 			}
-            catch (Exception e)
+			catch
 			{
-                Console.WriteLine(e.ToString());
 				return "An exception was caught, the property may not be set.";
 			}
 		}

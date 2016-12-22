@@ -35,10 +35,8 @@ namespace Server.Spells.Sixth
             this.Caster.Target = new InternalTarget(this);
         }
 
-        public void Target(IDamageable m)
+        public void Target(Mobile m)
         {
-            Mobile mob = m as Mobile;
-
             if (!this.Caster.CanSee(m))
             {
                 this.Caster.SendLocalizedMessage(500237); // Target can not be seen.
@@ -49,39 +47,35 @@ namespace Server.Spells.Sixth
 
                 SpellHelper.Turn(this.Caster, m);
 
-                if(mob != null)
-                    SpellHelper.CheckReflect((int)this.Circle, ref source, ref mob);
+                SpellHelper.CheckReflect((int)this.Circle, ref source, ref m);
 
-                double damage = 0;
+                double damage;
 
                 if (Core.AOS)
                 {
                     damage = this.GetNewAosDamage(40, 1, 5, m);
                 }
-                else if (mob != null)
+                else
                 {
                     damage = Utility.Random(24, 18);
 
-                    if (this.CheckResisted(mob))
+                    if (this.CheckResisted(m))
                     {
                         damage *= 0.75;
 
-                        mob.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
+                        m.SendLocalizedMessage(501783); // You feel yourself resisting magical energy.
                     }
 
                     // Scale damage based on evalint and resist
-                    damage *= this.GetDamageScalar(mob);
+                    damage *= this.GetDamageScalar(m);
                 }
 
                 // Do the effects
                 source.MovingParticles(m, 0x379F, 7, 0, false, true, 3043, 4043, 0x211);
                 source.PlaySound(0x20A);
 
-                if (damage > 0)
-                {
-                    // Deal the damage
-                    SpellHelper.Damage(this, m, damage, 0, 0, 0, 0, 100);
-                }
+                // Deal the damage
+                SpellHelper.Damage(this, m, damage, 0, 0, 0, 0, 100);
             }
 
             this.FinishSequence();
@@ -98,8 +92,8 @@ namespace Server.Spells.Sixth
 
             protected override void OnTarget(Mobile from, object o)
             {
-                if (o is IDamageable)
-                    this.m_Owner.Target((IDamageable)o);
+                if (o is Mobile)
+                    this.m_Owner.Target((Mobile)o);
             }
 
             protected override void OnTargetFinish(Mobile from)

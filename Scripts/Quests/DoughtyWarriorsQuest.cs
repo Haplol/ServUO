@@ -59,7 +59,6 @@ namespace Server.Engines.Quests
     {
         public override QuestChain ChainID { get { return QuestChain.DoughtyWarriors; } }
         public override Type NextQuest { get { return typeof(DoughtyWarriors3Quest); } }
-        public override bool DoneOnce { get { return true; } }
 
         /* Doughty Warriors */
         public override object Title { get { return 1075404; } }
@@ -106,7 +105,6 @@ namespace Server.Engines.Quests
     public class DoughtyWarriors3Quest : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.DoughtyWarriors; } }
-        public override bool DoneOnce { get { return true; } }
 
         /* Doughty Warriors */
         public override object Title { get { return 1075410; } }

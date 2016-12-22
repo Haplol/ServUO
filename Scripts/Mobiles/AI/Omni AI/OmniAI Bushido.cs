@@ -46,7 +46,7 @@ namespace Server.Mobiles
             if (this.m_Mobile.Debug)
                 this.m_Mobile.Say(2117, "Using a samurai or special move strike");
 
-            Mobile comb = this.m_Mobile.Combatant as Mobile;
+            Mobile comb = this.m_Mobile.Combatant;
 
             if (comb == null)
                 return;

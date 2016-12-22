@@ -6,7 +6,7 @@ namespace Server.Engines.Quests
 {
     public abstract class MondainQuester : BaseVendor
     {
-        protected readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
+        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
         private DateTime m_Spoken;
         public MondainQuester()
             : base(null)

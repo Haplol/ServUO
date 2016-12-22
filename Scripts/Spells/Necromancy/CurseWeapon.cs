@@ -74,8 +74,6 @@ namespace Server.Spells.Necromancy
                 m_Table[weapon] = t = new ExpireTimer(weapon, duration);
 
                 t.Start();
-
-                BuffInfo.AddBuff(Caster, new BuffInfo(BuffIcon.CurseWeapon, 1060512, 1153780, duration, Caster));
             }
 
             this.FinishSequence();

@@ -48,9 +48,6 @@ namespace Server.Mobiles
                 return m_EscortTable;
             }
         }
-
-        public override bool UseSmartAI { get { return true; } }
-
         public override bool Commandable
         {
             get

@@ -1,9 +1,7 @@
 using System;
-using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefTailoring), typeof(GargishLeatherArms))]
     public class LeatherHiroSode : BaseArmor
     {
         [Constructable]

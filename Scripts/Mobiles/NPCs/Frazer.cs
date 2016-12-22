@@ -75,6 +75,7 @@ namespace Server.Engines.Quests
 
     public class Frazer : MondainQuester
     { 
+        private readonly List<SBInfo> m_SBInfos = new List<SBInfo>();
         [Constructable]
         public Frazer()
             : base("Frazer", "the vagabond")

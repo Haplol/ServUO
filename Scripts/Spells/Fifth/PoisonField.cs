@@ -93,9 +93,6 @@ namespace Server.Spells.Fifth
             private Timer m_Timer;
             private DateTime m_End;
             private Mobile m_Caster;
-
-            public Mobile Caster { get { return m_Caster; } }
-
             public InternalItem(int itemID, Point3D loc, Mobile caster, Map map, TimeSpan duration, int val)
                 : base(itemID)
             {
@@ -289,7 +286,7 @@ namespace Server.Spells.Fifth
             }
         }
 
-        public class InternalTarget : Target
+        private class InternalTarget : Target
         {
             private readonly PoisonFieldSpell m_Owner;
             public InternalTarget(PoisonFieldSpell owner)

@@ -51,11 +51,10 @@ namespace Server.Spells.Necromancy
             this.Caster.Target = new InternalTarget(this);
         }
 
-        public void Target(IDamageable m)
+        public void Target(Mobile m)
         {
             if (this.CheckHSequence(m))
             {
-                Mobile mob = m as Mobile;
                 SpellHelper.Turn(this.Caster, m);
 
                 /* Creates a blast of poisonous energy centered on the target.
@@ -63,13 +62,30 @@ namespace Server.Spells.Necromancy
                 * One tile from main target receives 50% damage, two tiles from target receives 33% damage.
                 */
 
+                //CheckResisted( m ); // Check magic resist for skill, but do not use return value	//reports from OSI:  Necro spells don't give Resist gain
+
                 Effects.SendLocationParticles(EffectItem.Create(m.Location, m.Map, EffectItem.DefaultDuration), 0x36B0, 1, 14, 63, 7, 9915, 0);
                 Effects.PlaySound(m.Location, m.Map, 0x229);
 
                 double damage = Utility.RandomMinMax((Core.ML ? 32 : 36), 40) * ((300 + (this.GetDamageSkill(this.Caster) * 9)) / 1000);
 				
                 double sdiBonus = (double)AosAttributes.GetValue(this.Caster, AosAttribute.SpellDamage) / 100;
-				
+				if (Caster is PlayerMobile && Caster.Race == Race.Gargoyle)
+				{
+					double perc = ((double)Caster.Hits / (double)Caster.HitsMax) * 100;
+
+					perc = 100 - perc;
+					perc /= 20;
+
+					if (perc > 4)
+						sdiBonus += 12;
+					else if (perc >= 3)
+						sdiBonus += 9;
+					else if (perc >= 2)
+						sdiBonus += 6;
+					else if (perc >= 1)
+						sdiBonus += 3;
+				}
                 double pvmDamage = damage * (1 + sdiBonus);
 				
                 if (Core.ML && sdiBonus > 0.15)
@@ -80,48 +96,31 @@ namespace Server.Spells.Necromancy
 
                 if (map != null)
                 {
-                    List<IDamageable> targets = new List<IDamageable>();
+                    List<Mobile> targets = new List<Mobile>();
 			
                     if (this.Caster.CanBeHarmful(m, false))
                         targets.Add(m);
 
-                    IPooledEnumerable eable = m.Map.GetObjectsInRange(m.Location, 2);
-
-                    foreach (object o in eable)
-                    {
-                        IDamageable id = o as IDamageable;
-
-                        if (!(this.Caster is BaseCreature && id is BaseCreature))
-                        {
-                            if ((id is Mobile && (Mobile)id == Caster) || id == m)
-                                continue;
-
-                            if ((!(id is Mobile) || SpellHelper.ValidIndirectTarget(this.Caster, (Mobile)id)) && this.Caster.CanBeHarmful(id, false))
-                                targets.Add(id);
-                        }
-                    }
-
-                    eable.Free();
+                    foreach (Mobile targ in m.GetMobilesInRange(2))
+                        if (!(this.Caster is BaseCreature && targ is BaseCreature))
+                            if ((targ != this.Caster && m != targ) && (SpellHelper.ValidIndirectTarget(this.Caster, targ) && this.Caster.CanBeHarmful(targ, false)))
+                                targets.Add(targ);
 
                     for (int i = 0; i < targets.Count; ++i)
                     {
-                        IDamageable id = targets[i];
-
+                        Mobile targ = targets[i];
                         int num;
 
-                        if (Utility.InRange(id.Location, m.Location, 0))
+                        if (targ.InRange(m.Location, 0))
                             num = 1;
-                        else if (Utility.InRange(id.Location, m.Location, 1))
+                        else if (targ.InRange(m.Location, 1))
                             num = 2;
                         else
                             num = 3;
 
-                        this.Caster.DoHarmful(id);
-                        SpellHelper.Damage(this, id, ((id is PlayerMobile && this.Caster.Player) ? pvpDamage : pvmDamage) / num, 0, 0, 0, 100, 0);
+                        this.Caster.DoHarmful(targ);
+                        SpellHelper.Damage(this, targ, ((m.Player && this.Caster.Player) ? pvpDamage : pvmDamage) / num, 0, 0, 0, 100, 0);
                     }
-
-                    targets.Clear();
-                    targets.TrimExcess();
                 }
             }
 
@@ -139,8 +138,8 @@ namespace Server.Spells.Necromancy
 
             protected override void OnTarget(Mobile from, object o)
             {
-                if (o is IDamageable)
-                    this.m_Owner.Target((IDamageable)o);
+                if (o is Mobile)
+                    this.m_Owner.Target((Mobile)o);
             }
 
             protected override void OnTargetFinish(Mobile from)

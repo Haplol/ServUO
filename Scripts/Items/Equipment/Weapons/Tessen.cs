@@ -1,9 +1,7 @@
 using System;
-using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefBlacksmithy), typeof(GargishTessen))]
     [FlipableAttribute(0x27A3, 0x27EE)]
     public class Tessen : BaseBashing
     {

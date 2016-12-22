@@ -148,7 +148,7 @@ namespace Server.Engines.Quests.Doom
 
                 if (this.m_Daemon != null)
                 {
-                    List<DamageStore> lootingRights = this.m_Daemon.GetLootingRights();
+                    List<DamageStore> lootingRights = BaseCreature.GetLootingRights(this.m_Daemon.DamageEntries, this.m_Daemon.HitsMax);
 
                     for (int i = 0; i < lootingRights.Count; ++i)
                     {

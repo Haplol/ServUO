@@ -277,10 +277,7 @@ namespace Server.Items
 				
                 player.AddCollectionPoints(this.CollectionID, (int)reward.Points * -1);
                 player.SendLocalizedMessage(1073621); // Your reward has been placed in your backpack.
-                player.PlaySound(0x5A7);
-
-                if (reward.QuestItem)
-                    CollectionsObtainObjective.CheckReward(player, item);
+                player.PlaySound(0x5A7);	
             }
             else if (item != null)
             {

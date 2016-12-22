@@ -1159,8 +1159,6 @@ namespace Server.Network
 
 		private bool m_Disposing;
 
-		public bool IsDisposing { get { return m_Disposing; } }
-
 		public void Dispose()
 		{
 			Dispose(true);

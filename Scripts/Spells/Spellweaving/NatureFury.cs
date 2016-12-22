@@ -86,7 +86,7 @@ namespace Server.Spells.Spellweaving
             this.FinishSequence();
         }
 
-        public class InternalTarget : Target
+        private class InternalTarget : Target
         {
             private readonly NatureFurySpell m_Owner;
             public InternalTarget(NatureFurySpell owner)

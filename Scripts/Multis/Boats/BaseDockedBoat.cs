@@ -1,276 +1,220 @@
 using System;
-using Server;
+using Server.Engines.CannedEvil;
 using Server.Regions;
 using Server.Targeting;
-using Server.Engines.CannedEvil;
-using Server.Gumps;
-using Server.Items;
-using Server.Mobiles;
 
 namespace Server.Multis
 {
-	public abstract class BaseDockedBoat : Item
-	{
-		private int m_MultiID;
-		private Point3D m_Offset;
-		private string m_ShipName;
-        private Direction m_Direction;
-        private BaseBoat m_BoatItem;
-        #region High Seas
-        private SecurityEntry m_SecurityEntry;
-        private PilotEntry m_PilotEntry;
-        private Mobile m_Owner;
-        private int m_BaseHue;
-        #endregion
+    public abstract class BaseDockedBoat : Item
+    {
+        private int m_MultiID;
+        private Point3D m_Offset;
+        private string m_ShipName;
+        public BaseDockedBoat(int id, Point3D offset, BaseBoat boat)
+            : base(0x14F4)
+        {
+            this.Weight = 1.0;
+            this.LootType = LootType.Blessed;
 
-        [CommandProperty( AccessLevel.GameMaster )]
-		public int MultiID{ get{ return m_MultiID; } set{ m_MultiID = value; } }
+            this.m_MultiID = id;
+            this.m_Offset = offset;
 
-		[CommandProperty( AccessLevel.GameMaster )]
-		public Point3D Offset{ get{ return m_Offset; } set{ m_Offset = value; } }
+            this.m_ShipName = boat.ShipName;
+        }
 
-		[CommandProperty( AccessLevel.GameMaster )]
-		public string ShipName
+        public BaseDockedBoat(Serial serial)
+            : base(serial)
+        {
+        }
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int MultiID
         {
             get
             {
-                if (m_BoatItem == null || m_BoatItem.ShipName == null || m_BoatItem.ShipName.Trim().Length == 0)
-                    return "Unnamed Ship";
-
-                return m_BoatItem.ShipName;
-            } 
+                return this.m_MultiID;
+            }
+            set
+            {
+                this.m_MultiID = value;
+            }
         }
-
         [CommandProperty(AccessLevel.GameMaster)]
-        public Direction BoatDirection { get { return m_Direction; } set { m_Direction = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public BaseBoat BoatItem { get { return m_BoatItem; } set { m_BoatItem = value; } }
-
-        public BaseDockedBoat( int id, Point3D offset, BaseBoat boat ) : base( 0x14F4 )
-		{
-			Weight = 1.0;
-			LootType = LootType.Blessed;
-
-			m_MultiID = id;
-			m_Offset = offset;
-
-            m_Direction = Direction.North;
-            m_BoatItem = boat;
-		}
-
-        public override void OnAfterDelete()
+        public Point3D Offset
         {
-            base.OnAfterDelete();
+            get
+            {
+                return this.m_Offset;
+            }
+            set
+            {
+                this.m_Offset = value;
+            }
+        }
+        [CommandProperty(AccessLevel.GameMaster)]
+        public string ShipName
+        {
+            get
+            {
+                return this.m_ShipName;
+            }
+            set
+            {
+                this.m_ShipName = value;
+                this.InvalidateProperties();
+            }
+        }
+        public abstract BaseBoat Boat { get; }
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
 
-            if (m_BoatItem != null && !m_BoatItem.Deleted)
-                m_BoatItem.Delete();
+            writer.Write((int)1); // version
+
+            writer.Write(this.m_MultiID);
+            writer.Write(this.m_Offset);
+            writer.Write(this.m_ShipName);
         }
 
-		public BaseDockedBoat( Serial serial ) : base( serial )
-		{
-		}
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
 
-		public override void Serialize( GenericWriter writer )
-		{
-			base.Serialize( writer );
+            int version = reader.ReadInt();
 
-			writer.Write( (int) 5 ); // version
-
-			writer.Write( m_MultiID );
-			writer.Write( m_Offset );
-			writer.Write( m_ShipName );
-            writer.Write( m_BoatItem );
-		}
-
-		public override void Deserialize( GenericReader reader )
-		{
-			base.Deserialize( reader );
-
-			int version = reader.ReadInt();
-
-			switch ( version )
-			{
-                case 5:
+            switch ( version )
+            {
+                case 1:
+                case 0:
                     {
-                        m_MultiID = reader.ReadInt();
-                        m_Offset = reader.ReadPoint3D();
-                        m_ShipName = reader.ReadString();
-                        m_BoatItem = reader.ReadItem() as BaseBoat;
+                        this.m_MultiID = reader.ReadInt();
+                        this.m_Offset = reader.ReadPoint3D();
+                        this.m_ShipName = reader.ReadString();
+
+                        if (version == 0)
+                            reader.ReadUInt();
+
                         break;
                     }
-                case 4:
-                    {
-                        switch (reader.ReadInt())
-                        {
-                            default:
-                            case 0: break;
-                            case 1: m_PilotEntry = new PilotEntry(reader);
-                                break;
-                        }
-                        goto case 3;
-                    }
-                case 3:
-                    {
-                        m_BaseHue = reader.ReadInt();
-
-                        if(version < 5)
-                        reader.ReadItem();
-                        reader.ReadItem();
-                        m_Owner = reader.ReadMobile();
-                        goto case 2;
-                    }
-                case 2:
-                    {
-                        switch (reader.ReadInt())
-                        {
-                            default:
-                            case 0: break;
-                            case 1: m_SecurityEntry = new SecurityEntry(null, reader);
-                                break;
-                        }
-                        goto case 1;
-                    }
-				case 1:
-				case 0:
-				{
-					m_MultiID = reader.ReadInt();
-					m_Offset = reader.ReadPoint3D();
-					m_ShipName = reader.ReadString();
-
-					if ( version == 0 )
-						reader.ReadUInt();
-
-					break;
-				}
-			}
-
-			if ( LootType == LootType.Newbied )
-				LootType = LootType.Blessed;
-
-			if ( Weight == 0.0 )
-				Weight = 1.0;
-		}
-
-		public override void OnDoubleClick( Mobile from )
-		{
-			if ( !IsChildOf( from.Backpack ) )
-			{
-				from.SendLocalizedMessage( 1042001 ); // That must be in your pack for you to use it.
-			}
-            else if (IsGalleon() && BaseGalleon.HasGalleon(from) && from.AccessLevel == AccessLevel.Player)
-            {
-                from.SendLocalizedMessage(1116758); //You already have a ship deployed!
             }
-            else if (!from.HasGump(typeof(BoatPlacementGump)))
-			{
-				from.SendLocalizedMessage( 502482 ); // Where do you wish to place the ship?
-                from.SendGump(new BoatPlacementGump(this, from));
-			}
-		}
 
-        public bool IsGalleon()
-        {
-            return this is DockedBritannianShip || this is DockedGargishGalleon || this is DockedTokunoGalleon || this is DockedOrcishGalleon;
+            if (this.LootType == LootType.Newbied)
+                this.LootType = LootType.Blessed;
+
+            if (this.Weight == 0.0)
+                this.Weight = 1.0;
         }
 
-		public abstract BaseBoat Boat{ get; }
+        public override void OnDoubleClick(Mobile from)
+        {
+            if (!this.IsChildOf(from.Backpack))
+            {
+                from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+            }
+            else
+            {
+                from.SendLocalizedMessage(502482); // Where do you wish to place the ship?
+
+                from.Target = new InternalTarget(this);
+            }
+        }
 
         public override void AddNameProperty(ObjectPropertyList list)
         {
-            //string name = m_ShipName;
-            //if (name == null || name.Length < 1)
-            //    name = "Unnamed Ship";
-
-            list.Add(1041644, ShipName); //The ~1_VAL~ (Dry Docked)
+            if (this.m_ShipName != null)
+                list.Add(this.m_ShipName);
+            else
+                base.AddNameProperty(list);
         }
 
-        public override void GetProperties(ObjectPropertyList list)
+        public override void OnSingleClick(Mobile from)
         {
-            base.GetProperties(list);
-            list.Add(LabelNumber);
+            if (this.m_ShipName != null)
+                this.LabelTo(from, this.m_ShipName);
+            else
+                base.OnSingleClick(from);
         }
 
-		public override void OnSingleClick( Mobile from )
-		{
-			if ( ShipName != null )
-				LabelTo( from, ShipName );
-			else
-				base.OnSingleClick( from );
-		}
+        public void OnPlacement(Mobile from, Point3D p)
+        {
+            if (this.Deleted)
+            {
+                return;
+            }
+            else if (!this.IsChildOf(from.Backpack))
+            {
+                from.SendLocalizedMessage(1042001); // That must be in your pack for you to use it.
+            }
+            else
+            {
+                Map map = from.Map;
 
-        public void OnPlacement(Mobile from, Point3D p, int itemID, Direction d)
-		{
-			if ( Deleted )
-			{
-				return;
-			}
-			else if ( !IsChildOf( from.Backpack ) )
-			{
-				from.SendLocalizedMessage( 1042001 ); // That must be in your pack for you to use it.
-			}
-			else
-			{
-				Map map = from.Map;
+                if (map == null)
+                    return;
 
-				if ( map == null )
-					return;
+                BaseBoat boat = this.Boat;
 
-                m_Direction = d;
-                BaseBoat boat = m_BoatItem;
+                if (boat == null)
+                    return;
 
-                if (boat == null || boat.Deleted)
-                    boat = Boat;
+                p = new Point3D(p.X - this.m_Offset.X, p.Y - this.m_Offset.Y, p.Z - this.m_Offset.Z);
 
-				if ( boat == null )
-					return;
+                if (BaseBoat.IsValidLocation(p, map) && boat.CanFit(p, map, boat.ItemID) && map != Map.Ilshenar && map != Map.Malas)
+                {
+                    this.Delete();
 
-                Mobile oldOwner = boat.Owner;
+                    boat.Owner = from;
+                    boat.Anchored = true;
+                    boat.ShipName = this.m_ShipName;
 
-                boat.BoatItem = this;
-                boat.Owner = from;
+                    uint keyValue = boat.CreateKeys(from);
 
-                if(oldOwner != from && boat is BaseGalleon)
-                    ((BaseGalleon)boat).SecurityEntry = new SecurityEntry((BaseGalleon)boat);
+                    if (boat.PPlank != null)
+                        boat.PPlank.KeyValue = keyValue;
 
-				p = new Point3D( p.X - m_Offset.X, p.Y - m_Offset.Y, p.Z - m_Offset.Z );
+                    if (boat.SPlank != null)
+                        boat.SPlank.KeyValue = keyValue;
 
-				if ( BaseBoat.IsValidLocation( p, map ) && boat.CanFit( p, map, itemID ) && map != Map.Ilshenar && map != Map.Malas )
-				{
-                    boat.SetFacing(d);
-					boat.MoveToWorld( p, map );
-                    boat.OnPlacement(from);
-                    boat.Refresh();
+                    boat.MoveToWorld(p, map);
+                }
+                else
+                {
+                    boat.Delete();
+                    from.SendLocalizedMessage(1043284); // A ship can not be created here.
+                }
+            }
+        }
 
-                    var addon = LighthouseAddon.GetLighthouse(from);
+        private class InternalTarget : MultiTarget
+        {
+            private readonly BaseDockedBoat m_Model;
+            public InternalTarget(BaseDockedBoat model)
+                : base(model.MultiID, model.Offset)
+            {
+                this.m_Model = model;
+            }
 
-                    if (addon != null)
-                    {
-                        if (boat.CanLinkToLighthouse)
-                            from.SendLocalizedMessage(1154592); // You have linked your boat lighthouse.
-                        else
-                            from.SendLocalizedMessage(1154597); // Failed to link to lighthouse.
-                    }
+            protected override void OnTarget(Mobile from, object o)
+            {
+                IPoint3D ip = o as IPoint3D;
 
-                    if (boat.IsClassicBoat)
-                    {
-                        uint keyValue = boat.CreateKeys(from);
+                if (ip != null)
+                {
+                    if (ip is Item)
+                        ip = ((Item)ip).GetWorldTop();
 
-                        if (boat.PPlank != null)
-                            boat.PPlank.KeyValue = keyValue;
+                    Point3D p = new Point3D(ip);
 
-                        if (boat.SPlank != null)
-                            boat.SPlank.KeyValue = keyValue;
-                    }
+                    Region region = Region.Find(p, from.Map);
 
-                    this.Internalize();
-				}
-				else
-				{
-					//boat.Delete();
-					from.SendLocalizedMessage( 1043284 ); // A ship can not be created here.
-				}
-			}
-		}
-	}
+                    if (region.IsPartOf(typeof(DungeonRegion)))
+                        from.SendLocalizedMessage(502488); // You can not place a ship inside a dungeon.
+                    else if (region.IsPartOf(typeof(HouseRegion)) || region.IsPartOf(typeof(ChampionSpawnRegion)))
+                        from.SendLocalizedMessage(1042549); // A boat may not be placed in this area.
+                    else
+                        this.m_Model.OnPlacement(from, p);
+                }
+            }
+        }
+    }
 }

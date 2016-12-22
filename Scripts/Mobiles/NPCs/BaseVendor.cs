@@ -8,8 +8,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-
 using Server.Accounting;
 using Server.ContextMenus;
 using Server.Engines.BulkOrders;
@@ -19,6 +17,7 @@ using Server.Misc;
 using Server.Mobiles;
 using Server.Network;
 using Server.Regions;
+using daat99;
 #endregion
 
 namespace Server.Mobiles
@@ -34,13 +33,6 @@ namespace Server.Mobiles
 
 	public abstract class BaseVendor : BaseCreature, IVendor
 	{
-		public static List<BaseVendor> AllVendors { get; private set; }
-
-		static BaseVendor()
-		{
-			AllVendors = new List<BaseVendor>(0x4000);
-		}
-
 		private const int MaxSell = 500;
 
 		protected abstract List<SBInfo> SBInfos { get; }
@@ -55,8 +47,6 @@ namespace Server.Mobiles
 		public override bool BardImmune { get { return true; } }
 
 		public override bool PlayerRangeSensitive { get { return true; } }
-
-        public override bool UseSmartAI { get { return true; } }
 
 		public virtual bool IsActiveVendor { get { return true; } }
 		public virtual bool IsActiveBuyer { get { return IsActiveVendor; } } // response to vendor SELL
@@ -129,7 +119,7 @@ namespace Server.Mobiles
 			private readonly BaseVendor m_Vendor;
 
 			public BulkOrderInfoEntry(Mobile from, BaseVendor vendor)
-				: base(6152, 3)
+				: base(6152)
 			{
 				m_From = from;
 				m_Vendor = vendor;
@@ -137,9 +127,6 @@ namespace Server.Mobiles
 
 			public override void OnClick()
 			{
-                if (!m_From.InRange(m_Vendor.Location, 3))
-                    return;
-
 				EventSink.InvokeBODOffered(new BODOfferEventArgs(m_From, m_Vendor));
 				if (m_Vendor.SupportsBulkOrders(m_From))
 				{
@@ -191,8 +178,6 @@ namespace Server.Mobiles
 		public BaseVendor(string title)
 			: base(AIType.AI_Vendor, FightMode.None, 2, 1, 0.5, 2)
 		{
-			AllVendors.Add(this);
-
 			LoadSBInfo();
 
 			Title = title;
@@ -219,27 +204,11 @@ namespace Server.Mobiles
 
 		public BaseVendor(Serial serial)
 			: base(serial)
-		{
-			AllVendors.Add(this);
-		}
-
-		public override void OnDelete()
-		{
-			base.OnDelete();
-
-			AllVendors.Remove(this);
-		}
-
-		public override void OnAfterDelete()
-		{
-			base.OnAfterDelete();
-			
-			AllVendors.Remove(this);
-		}
+		{ }
 
 		public DateTime LastRestock { get { return m_LastRestock; } set { m_LastRestock = value; } }
 
-		public virtual TimeSpan RestockDelay { get { return TimeSpan.FromHours(1); } }
+		public virtual TimeSpan RestockDelay { get { return TimeSpan.FromMinutes(5); } }
 
 		public Container BuyPack
 		{
@@ -1089,7 +1058,6 @@ namespace Server.Mobiles
 				Titles.AwardFame(from, fame, true);
 
 				OnSuccessfulBulkOrderReceive(from);
-                Server.Engines.CityLoyalty.CityLoyaltySystem.OnBODTurnIn(from, gold);
 
 				if (Core.ML && pm != null)
 				{
@@ -1126,7 +1094,7 @@ namespace Server.Mobiles
 			List<BuyItemResponse> validBuy,
 			ref int controlSlots,
 			ref bool fullPurchase,
-			ref double totalCost)
+			ref int totalCost)
 		{
 			int amount = buy.Amount;
 
@@ -1152,7 +1120,7 @@ namespace Server.Mobiles
 				return;
 			}
 
-			totalCost += (double)bii.Price * amount;
+			totalCost += bii.Price * amount;
 			validBuy.Add(buy);
 		}
 
@@ -1261,9 +1229,9 @@ namespace Server.Mobiles
 
 			UpdateBuyInfo();
 
-			//var buyInfo = GetBuyInfo();
+			var buyInfo = GetBuyInfo();
 			var info = GetSellInfo();
-			var totalCost = 0.0;
+			int totalCost = 0;
 			var validBuy = new List<BuyItemResponse>(list.Count);
 			Container cont;
 			bool bought = false;
@@ -1309,7 +1277,7 @@ namespace Server.Mobiles
 							{
 								if (ssi.IsResellable(item))
 								{
-									totalCost += (double)ssi.GetBuyPriceFor(item) * amount;
+									totalCost += ssi.GetBuyPriceFor(item) * amount;
 									validBuy.Add(buy);
 									break;
 								}
@@ -1350,7 +1318,7 @@ namespace Server.Mobiles
 			}
 
 			bought = buyer.AccessLevel >= AccessLevel.GameMaster;
-			var discount = 0.0;
+			int discount = 0;
 			cont = buyer.Backpack;
 
 			if (Core.SA && HasHonestyDiscount)
@@ -1370,123 +1338,51 @@ namespace Server.Mobiles
 						discountPc = 0;
 						break;
 				}
-				discount = totalCost - (totalCost * (1.0 - discountPc));
+				discount = totalCost - (int)(totalCost * (1 - discountPc));
 				totalCost -= discount;
 			}
 
 			if (!bought && cont != null)
 			{
-				if (totalCost <= Int32.MaxValue)
+				if (cont.ConsumeTotal(typeof(Gold), totalCost))
 				{
-					if (cont.ConsumeTotal(typeof(Gold), (int)totalCost))
+					bought = true;
+
+					if (discount > 0)
 					{
-						bought = true;
-					}
-				}
-				else
-				{
-					var items = cont.FindItemsByType<Gold>();
-					var total = items.Aggregate(0.0, (c, o) => c + o.Amount);
-
-					if (total >= totalCost)
-					{
-						total = totalCost;
-
-						foreach (var o in items)
-						{
-							if (o.Amount >= total)
-							{
-								o.Consume((int)total);
-								total = 0;
-							}
-							else
-							{
-								total -= o.Amount;
-								o.Delete();
-							}
-
-							if (total <= 0)
-							{
-								break;
-							}
-						}
-
-						bought = true;
+						SayTo(buyer, 1151517, discount.ToString());
 					}
 				}
 			}
 
-			//if (totalCost >= 2000)
-			//{
-				if (!bought)
+			if (!bought &&(totalCost >= 2000 ||AccountGold.Enabled))
+			{
+				if (Banker.Withdraw(buyer, totalCost))
 				{
-					if (totalCost <= Int32.MaxValue)
+					bought = true;
+					fromBank = true;
+
+					if (discount > 0)
 					{
-						if (Banker.Withdraw(buyer, (int)totalCost))
-						{
-							bought = true;
-							fromBank = true;
-						}
-					}
-					else if (buyer.Account != null && AccountGold.Enabled)
-					{
-						if (buyer.Account.WithdrawCurrency(totalCost / AccountGold.CurrencyThreshold))
-						{
-							bought = true;
-							fromBank = true;
-						}
+						SayTo(buyer, 1151517, discount.ToString());
 					}
 				}
-
-				if (!bought)
+				else
 				{
 					cont = buyer.FindBankNoCreate();
 
-					if (cont != null)
+					if (cont != null && cont.ConsumeTotal(typeof(Gold), totalCost))
 					{
-						if (totalCost <= Int32.MaxValue)
+						bought = true;
+						fromBank = true;
+
+						if (discount > 0)
 						{
-							if (cont.ConsumeTotal(typeof(Gold), (int)totalCost))
-							{
-								bought = true;
-								fromBank = true;
-							}
-						}
-						else
-						{
-							var items = cont.FindItemsByType<Gold>();
-							var total = items.Aggregate(0.0, (c, o) => c + o.Amount);
-
-							if (total >= totalCost)
-							{
-								total = totalCost;
-
-								foreach (var o in items)
-								{
-									if (o.Amount >= total)
-									{
-										o.Consume((int)total);
-										total = 0;
-									}
-									else
-									{
-										total -= o.Amount;
-										o.Delete();
-									}
-
-									if (total <= 0)
-									{
-										break;
-									}
-								}
-
-								bought = true;
-								fromBank = true;
-							}
+							SayTo(buyer, 1151517, discount.ToString());
 						}
 					}
 				}
-			//}
+			}
 
 			if (!bought)
 			{
@@ -1495,11 +1391,6 @@ namespace Server.Mobiles
 				SayTo(buyer, totalCost >= 2000 ? 500191 : 500192);
 
 				return false;
-			}
-
-			if (discount > 0)
-			{
-				SayTo(buyer, 1151517, discount.ToString());
 			}
 
 			buyer.PlaySound(0x32);
@@ -1588,11 +1479,6 @@ namespace Server.Mobiles
 					}
 				}
 			} //foreach
-
-			if (discount > 0)
-			{
-				SayTo(buyer, 1151517, discount.ToString());
-			}
 
 			if (fullPurchase)
 			{

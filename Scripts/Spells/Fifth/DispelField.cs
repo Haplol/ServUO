@@ -61,7 +61,7 @@ namespace Server.Spells.Fifth
             this.FinishSequence();
         }
 
-        public class InternalTarget : Target
+        private class InternalTarget : Target
         {
             private readonly DispelFieldSpell m_Owner;
             public InternalTarget(DispelFieldSpell owner)

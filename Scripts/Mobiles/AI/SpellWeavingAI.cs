@@ -11,6 +11,7 @@ namespace Server.Mobiles
 	public class SpellweavingAI : MageAI
 	{
 		public virtual bool UseMagery { get { return m_Mobile.Skills[SkillName.Magery].Value >= 20; } }
+		public override bool IsNecromancer { get { return false; } }
 		
 		public SpellweavingAI(BaseCreature m) : base(m)
 		{
@@ -18,7 +19,7 @@ namespace Server.Mobiles
 		
 		public override Spell GetRandomDamageSpell()
         {
-            return UseMagery && 0.50 > Utility.RandomDouble() ? base.GetRandomDamageSpell() : GetRandomDamageSpellSpellweaving();
+            return UseMagery && 0.50 > Utility.RandomDouble() ? GetRandomDamageSpellMage() : GetRandomDamageSpellSpellweaving();
         }
 		
 		public override Spell GetRandomBuffSpell()

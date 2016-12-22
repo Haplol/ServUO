@@ -544,6 +544,119 @@ namespace Server.Engines.Quests
             }
         }
 
+public static bool CheckIncite(Mobile from, BaseCreature creature1, BaseCreature creature2, bool progress = true)
+        {
+			if (!(from is PlayerMobile))
+			{
+				return false;
+			}
+			
+			PlayerMobile player = (PlayerMobile)from;
+			
+            for (int i = player.Quests.Count - 1; i >= 0; i--)
+            {
+                BaseQuest quest = player.Quests[i];
+
+                if (quest.Completed)
+                {
+                    return false;
+                }
+
+                for (int j = quest.Objectives.Count - 1; j >= 0; j--)
+                {
+                    if (quest.Objectives[j] is InciteObjective)
+                    {
+                        InciteObjective incite = (InciteObjective)quest.Objectives[j];
+
+                        if (!progress)
+                            return true;
+
+                        if (incite.Update(new Mobile[2] { creature1, creature2 })) {
+                            if (quest.Completed)
+                                quest.OnCompleted();
+                            else if (incite.Completed)
+                                player.PlaySound(quest.UpdateSound);
+
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool CheckCalm(PlayerMobile player, BaseCreature creature, bool progress = true)
+        {
+            for (int i = player.Quests.Count - 1; i >= 0; i--)
+            {
+                BaseQuest quest = player.Quests[i];
+
+                if (quest.Completed)
+                {
+                    return false;
+                }
+
+                for (int j = quest.Objectives.Count - 1; j >= 0; j--)
+                {
+                    if (quest.Objectives[j] is CalmObjective)
+                    {
+                        CalmObjective calm = (CalmObjective)quest.Objectives[j];
+
+                        if (!progress)
+                            return true;
+
+                        if (calm.Update(creature))
+                        {
+                            if (quest.Completed)
+                                quest.OnCompleted();
+                            else if (calm.Completed)
+                                player.PlaySound(quest.UpdateSound);
+
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool CheckDiscord(PlayerMobile player, BaseCreature creature, bool progress = true)
+        {
+            for (int i = player.Quests.Count - 1; i >= 0; i--)
+            {
+                BaseQuest quest = player.Quests[i];
+
+                if (quest.Completed)
+                {
+                    return false;
+                }
+
+                for (int j = quest.Objectives.Count - 1; j >= 0; j--)
+                {
+                    if (quest.Objectives[j] is DiscordObjective)
+                    {
+                        DiscordObjective discord = (DiscordObjective)quest.Objectives[j];
+
+                        if (!progress)
+                            return true;
+
+                        if (discord.Update(creature))
+                        {
+                            if (quest.Completed)
+                                quest.OnCompleted();
+                            else if (discord.Completed)
+                                player.PlaySound(quest.UpdateSound);
+
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
         public static bool CheckCreature(PlayerMobile player, BaseCreature creature)
         {
             for (int i = player.Quests.Count - 1; i >= 0; i --)

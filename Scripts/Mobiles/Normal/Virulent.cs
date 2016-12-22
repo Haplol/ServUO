@@ -3,14 +3,14 @@ using Server.Items;
 
 namespace Server.Mobiles
 {
-    [CorpseName("a Virulent corpse")]
+    [CorpseName("a dread spider corpse")]
     public class Virulent : BaseCreature
     {
         [Constructable]
         public Virulent()
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
-            this.Name = "Virulent";
+            this.Name = "a Virulent";
             this.Body = 11;
             this.Hue = 0x8FF;
             this.BaseSoundID = 1170;

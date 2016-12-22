@@ -61,12 +61,6 @@ namespace Server.Items
 
             this.ClearVotes();
         }
-        [CommandProperty(AccessLevel.GameMaster)]
-        public Mobile Owner
-        {
-            get;
-            set;
-        }
 
         public void AddLineToTopic(string line)
         {
@@ -91,9 +85,6 @@ namespace Server.Items
         public bool IsOwner(Mobile from)
         {
             if (from.AccessLevel >= AccessLevel.GameMaster)
-                return true;
-
-            if (Owner != null && from == Owner)
                 return true;
 
             BaseHouse house = BaseHouse.FindHouseAt(this);
@@ -124,19 +115,11 @@ namespace Server.Items
             }
         }
 
-        public void SendGumpTo(Mobile m)
-        {
-            if (IsOwner(m))
-                m.SendGump(new InternalGump(this, true));
-        }
-
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
 
-            writer.WriteEncodedInt(1); // version
-
-            writer.Write(Owner);
+            writer.WriteEncodedInt(0); // version
 
             writer.WriteEncodedInt(this.m_Topic.Length);
 
@@ -153,21 +136,13 @@ namespace Server.Items
 
             int version = reader.ReadEncodedInt();
 
-            switch (version)
-            {
-                case 1:
-                    Owner = reader.ReadMobile();
-                    goto case 0;
-                case 0:
-                    this.m_Topic = new string[reader.ReadEncodedInt()];
+            this.m_Topic = new string[reader.ReadEncodedInt()];
 
-                    for (int i = 0; i < this.m_Topic.Length; i++)
-                        this.m_Topic[i] = reader.ReadString();
+            for (int i = 0; i < this.m_Topic.Length; i++)
+                this.m_Topic[i] = reader.ReadString();
 
-                    this.m_Yes = reader.ReadStrongMobileList();
-                    this.m_No = reader.ReadStrongMobileList();
-                    break;
-            }
+            this.m_Yes = reader.ReadStrongMobileList();
+            this.m_No = reader.ReadStrongMobileList();
         }
 
         private class InternalGump : Gump

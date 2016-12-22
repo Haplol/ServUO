@@ -36,6 +36,14 @@ namespace Server.Items
         Parasitic,
         Darkglow,
 		ExplodingTarPotion,
+#region FS:ATS Edits
+        PetResurrect,
+        PetShrink,
+        PetHeal,
+        PetGreaterHeal,
+        PetCure,
+        PetGreaterCure,
+        #endregion
     }
 
     public abstract class BasePotion : Item, ICraftable, ICommodity
@@ -122,14 +130,6 @@ namespace Server.Items
         {
             if (!this.Movable)
                 return;
-
-            if (!from.BeginAction(this.GetType()))
-            {
-                from.SendLocalizedMessage(500119); // You must wait to perform another action.
-                return;
-            }
-
-            Timer.DelayCall(TimeSpan.FromMilliseconds(500), () => from.EndAction(this.GetType()));
 
             if (from.InRange(this.GetWorldLocation(), 1))
             {
@@ -220,9 +220,6 @@ namespace Server.Items
         {
             int EP = AosAttributes.GetValue(m, AosAttribute.EnhancePotions);
             int skillBonus = m.Skills.Alchemy.Fixed / 330 * 10;
-
-            if (Core.ML && EP > 50 && m.IsPlayer())
-                EP = 50;
 
             return (EP + skillBonus);
         }

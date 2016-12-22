@@ -128,16 +128,9 @@ namespace Server.Engines.Quests
             }
         }
 		
-		public override bool IsActiveVendor
-        {
-            get
-            {
-                return true;
-            }
-        }
         public override void InitSBInfo()
-        {
-            m_SBInfos.Add(new SBKeeperOfNinjitsu());
+        { 
+            // TODO m_SBInfos.Add( new SBNinja() );
         }
 		
         [Constructable]

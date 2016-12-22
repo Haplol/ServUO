@@ -81,7 +81,7 @@ namespace Server.Mobiles
         {
             get
             {
-                return new Type[] { typeof(ShroudOfDeceit) };
+				return new Type[] { typeof(NoxRangersHeavyCrossbowplus), typeof(ShroudOfDeceit) };
             }
         }
         public override Type[] SharedList
@@ -91,8 +91,7 @@ namespace Server.Mobiles
                 return new Type[]
                 {
                     typeof(ANecromancerShroud),
-                    typeof(CaptainJohnsHat),
-                    typeof(DetectiveBoots)
+                    typeof(CaptainJohnsHat)
                 };
             }
         }

@@ -647,7 +647,7 @@ namespace Server
 			}
 		}
 
-		public virtual void OnDidHarmful(Mobile harmer, IDamageable harmed)
+		public virtual void OnDidHarmful(Mobile harmer, Mobile harmed)
 		{
 			if (m_Parent != null)
 			{
@@ -655,7 +655,7 @@ namespace Server
 			}
 		}
 
-		public virtual void OnGotHarmful(Mobile harmer, IDamageable harmed)
+		public virtual void OnGotHarmful(Mobile harmer, Mobile harmed)
 		{
 			if (m_Parent != null)
 			{
@@ -681,7 +681,7 @@ namespace Server
 			return true;
 		}
 
-        public virtual bool OnCombatantChange(Mobile m, IDamageable Old, IDamageable New)
+		public virtual bool OnCombatantChange(Mobile m, Mobile Old, Mobile New)
 		{
 			if (m_Parent != null)
 			{
@@ -731,7 +731,7 @@ namespace Server
 			return true;
 		}
 
-		public virtual bool AllowHarmful(Mobile from, IDamageable target)
+		public virtual bool AllowHarmful(Mobile from, Mobile target)
 		{
 			if (m_Parent != null)
 			{
@@ -987,8 +987,9 @@ namespace Server
 				if (newRChild >= oldRChild)
 				{
 					newR.OnEnter(m);
-					EventSink.InvokeOnEnterRegion(new OnEnterRegionEventArgs(m, newR));
 					newR = newR.Parent;
+
+					EventSink.InvokeOnEnterRegion(new OnEnterRegionEventArgs(m, newR));
 				}
 			}
 		}
@@ -1048,13 +1049,6 @@ namespace Server
 		{
 			foreach (XmlElement xmlReg in xml.SelectNodes("region"))
 			{
-				var expansion = Expansion.None;
-
-				if (ReadEnum(xmlReg, "expansion", ref expansion, false) && expansion > Core.Expansion)
-				{
-					continue;
-				}
-
 				Type type = DefaultRegionType;
 
 				ReadType(xmlReg, "type", ref type, false);
@@ -1120,13 +1114,6 @@ namespace Server
 			var area = new List<Rectangle3D>();
 			foreach (XmlElement xmlRect in xml.SelectNodes("rect"))
 			{
-				var expansion = Expansion.None;
-
-				if (ReadEnum(xmlRect, "expansion", ref expansion, false) && expansion > Core.Expansion)
-				{
-					continue;
-				}
-
 				Rectangle3D rect = new Rectangle3D();
 				if (ReadRectangle3D(xmlRect, minZ, maxZ, ref rect))
 				{

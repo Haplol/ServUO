@@ -46,7 +46,7 @@ namespace Server.Misc
             rating += GetArmorMeditationValue(from.LegsArmor as BaseArmor);
             rating += GetArmorMeditationValue(from.ChestArmor as BaseArmor);
 
-            return rating / 4;
+            return rating;
         }
 
         private static void CheckBonusSkill(Mobile m, int cur, int max, SkillName skill)
@@ -90,7 +90,7 @@ namespace Server.Misc
                 points = 0;
 
             if (Core.ML && from is PlayerMobile)	//does racial bonus go before/after?
-                points = Math.Min(points, 18);
+                points = Math.Min(points, 40);
 
             if (CheckTransform(from, typeof(HorrificBeastSpell)))
                 points += 20;
@@ -128,7 +128,7 @@ namespace Server.Misc
 
             CheckBonusSkill(from, from.Stam, from.StamMax, SkillName.Focus);
 
-            int points = (int)(from.Skills[SkillName.Focus].Value * 0.1);
+            double points = (int)(from.Skills[SkillName.Focus].Value * 0.1);
 
             if ((from is BaseCreature && ((BaseCreature)from).IsParagon) || from is Leviathan)
                 points += 40;
@@ -142,9 +142,15 @@ namespace Server.Misc
                 cappedPoints += 20;
 
             if (Core.ML && from is PlayerMobile)
-                cappedPoints = Math.Min(cappedPoints, 24);
+                cappedPoints = Math.Min(cappedPoints, 60);
 
             points += cappedPoints;
+			
+			double StamarmorPenalty = (1.5 * GetArmorOffset(from));
+			
+			if (StamarmorPenalty > 0)
+				points *= ((100 - StamarmorPenalty)/100);
+				
 
             if (points < -1)
                 points = -1;
@@ -165,10 +171,10 @@ namespace Server.Misc
                 CheckBonusSkill(from, from.Mana, from.ManaMax, SkillName.Meditation);
 
             double rate;
-            double armorPenalty = GetArmorOffset(from);
+            double armorPenalty = (1.5 * GetArmorOffset(from));
 
-            if (Core.AOS)
-            {
+        //    if (Core.AOS)
+         //   {
                 double medPoints = from.Int + (from.Skills[SkillName.Meditation].Value * 3);
 
                 medPoints *= (from.Skills[SkillName.Meditation].Value < 100.0) ? 0.025 : 0.0275;
@@ -177,9 +183,7 @@ namespace Server.Misc
 
                 double focusPoints = (from.Skills[SkillName.Focus].Value * 0.05);
 
-                if (armorPenalty > 0)
-                    medPoints = 0; // In AOS, wearing any meditation-blocking armor completely removes meditation bonus
-
+              
                 double totalPoints = focusPoints + medPoints + (from.Meditating ? (medPoints > 13.0 ? 13.0 : medPoints) : 0.0);
 
                 if ((from is BaseCreature && ((BaseCreature)from).IsParagon) || from is Leviathan)
@@ -193,13 +197,16 @@ namespace Server.Misc
                     cappedPoints += 13;
 
                 if (Core.ML && from is PlayerMobile)
-                    cappedPoints = Math.Min(cappedPoints, 18);
+                    cappedPoints = Math.Min(cappedPoints, 80);
 
                 totalPoints += cappedPoints;
 
 				if (from is PlayerMobile && ((PlayerMobile)from).Race == Race.Gargoyle)
 					totalPoints += 2;
 
+				if (armorPenalty > 0)
+					totalPoints *= ((100 - armorPenalty)/100);
+				
                 if (totalPoints < -1)
                     totalPoints = -1;
 
@@ -208,9 +215,10 @@ namespace Server.Misc
 
                 foreach (RegenBonusHandler handler in ManaBonusHandlers)
                     totalPoints += handler(from);
+				
 
                 rate = 1.0 / (0.1 * (2 + totalPoints));
-            }
+          /*  }
             else
             {
                 double medPoints = (from.Int + from.Skills[SkillName.Meditation].Value) * 0.5;
@@ -233,14 +241,14 @@ namespace Server.Misc
                     rate = 0.5;
                 else if (rate > 7.0)
                     rate = 7.0;
-            }
+            }*/
 
             return TimeSpan.FromSeconds(rate);
         }
 
         private static double GetArmorMeditationValue(BaseArmor ar)
         {
-            if (ar == null || ar.ArmorAttributes.MageArmor != 0 || ar.Attributes.SpellChanneling != 0)
+            if (ar == null)
                 return 0.0;
 
             switch ( ar.MeditationAllowance )
@@ -249,9 +257,9 @@ namespace Server.Misc
                 case ArmorMeditationAllowance.None:
                     return ar.BaseArmorRatingScaled;
                 case ArmorMeditationAllowance.Half:
-                    return ar.BaseArmorRatingScaled / 2.0;
+                    return ar.BaseArmorRatingScaled;
                 case ArmorMeditationAllowance.All:
-                    return 0.0;
+                    return ar.BaseArmorRatingScaled;
             }
         }
     }

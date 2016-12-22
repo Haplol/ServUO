@@ -449,16 +449,9 @@ namespace Server.Items
 
 				#region Heritage Items
 				healing += EnhancedBandage.HealingBonus;
-                #endregion
+				#endregion
 
-                #region Exodus Items
-                Item item = m_Healer.FindItemOnLayer(Layer.TwoHanded);
-
-                if (item is Asclepius || item is GargishAsclepius)
-                    healing += 15;
-                #endregion
-
-                if (chance > Utility.RandomDouble())
+				if (chance > Utility.RandomDouble())
 				{
 					healerNumber = 500969; // You finish applying the bandages.
 
@@ -491,16 +484,11 @@ namespace Server.Items
 						toHeal -= m_Slips * 4;
 					}
 
-                    #region City Loyalty
-                    if (Server.Engines.CityLoyalty.CityLoyaltySystem.HasTradeDeal(m_Healer, Server.Engines.CityLoyalty.TradeDeal.GuildOfHealers))
-                        toHeal += (int)Math.Ceiling(toHeal * 0.05);
-                    #endregion
-
-                    if (toHeal < 1)
-                    {
-                        toHeal = 1;
-                        healerNumber = 500968; // You apply the bandages, but they barely help.
-                    }
+					if (toHeal < 1)
+					{
+						toHeal = 1;
+						healerNumber = 500968; // You apply the bandages, but they barely help.
+					}
 
 					m_Patient.Heal((int)toHeal, m_Healer, false);
 				}
@@ -531,11 +519,6 @@ namespace Server.Items
 				m_Healer.CheckSkill(secondarySkill, 0.0, 120.0);
 				m_Healer.CheckSkill(primarySkill, 0.0, 120.0);
 			}
-			
-			if (m_Patient is PlayerMobile)
-                		BuffInfo.RemoveBuff(m_Healer, BuffIcon.Healing);
-            		else
-                		BuffInfo.RemoveBuff(m_Healer, BuffIcon.Veterinary);
 		}
 
 		private class InternalTimer : Timer
@@ -595,7 +578,7 @@ namespace Server.Items
 					if (Core.AOS)
 					{
 						seconds = Math.Ceiling((double)11 - healer.Dex / 20);
-						seconds = Math.Max(seconds, 4);
+						seconds = Math.Max(seconds, 2);
 					}
 					else
 					{
@@ -636,12 +619,6 @@ namespace Server.Items
 				{
 					context.StopHeal();
 				}
-				
-				if (patient is PlayerMobile)
-                    			BuffInfo.AddBuff(healer, new BuffInfo(BuffIcon.Healing, 1002082, 1151400, TimeSpan.FromSeconds(seconds), healer, String.Format("{0}", patient.Name)));
-                		else
-                    			BuffInfo.AddBuff(healer, new BuffInfo(BuffIcon.Veterinary, 1002167, 1151400, TimeSpan.FromSeconds(seconds), healer, String.Format("{0}", patient.Name)));
-		    
 				seconds *= 1000;
 
 				context = new BandageContext(healer, patient, TimeSpan.FromMilliseconds(seconds), enhanced);

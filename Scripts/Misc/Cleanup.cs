@@ -100,9 +100,6 @@ namespace Server.Misc
                 if (!IsBuggable(item))
                     continue;
 
-                if (item is BaseBoat || item is BaseDockedBoat)
-                    continue;
-
                 items.Add(item);
             }
 

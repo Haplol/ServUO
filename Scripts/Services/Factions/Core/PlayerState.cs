@@ -347,7 +347,7 @@ namespace Server.Factions
 
         public void Attach()
         {
-            if (Settings.Enabled && this.m_Mobile is PlayerMobile)
+            if (this.m_Mobile is PlayerMobile)
                 ((PlayerMobile)this.m_Mobile).FactionPlayerState = this;
         }
 

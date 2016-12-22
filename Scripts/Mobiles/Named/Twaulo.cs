@@ -74,7 +74,7 @@ namespace Server.Mobiles
         {
             get
             {
-                return new Type[] { typeof(TheMostKnowledgePerson), typeof(OblivionsNeedle), typeof(BraveKnightOfTheBritannia) };
+                return new Type[] { typeof(TheMostKnowledgePerson), typeof(OblivionsNeedle) };
             }
         }
         public override Type[] DecorativeList

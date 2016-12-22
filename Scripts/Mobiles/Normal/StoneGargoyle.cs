@@ -41,8 +41,8 @@ namespace Server.Mobiles
 
             this.PackItem(new IronIngot(12));
 
-            if (0.05 > Utility.RandomDouble())
-                this.PackItem(new GargoylesPickaxe());
+            if (0.25 > Utility.RandomDouble())
+                this.PackItem(new GargoylesKnife());
         }
 
         public StoneGargoyle(Serial serial)

@@ -11,6 +11,8 @@ namespace Server.Items
             SkillName.Fencing,
             SkillName.Macing,
             SkillName.Archery,
+			SkillName.Throwing,
+			SkillName.Mysticism,
             SkillName.Wrestling,
             SkillName.Parry,
             SkillName.Tactics,
@@ -38,6 +40,9 @@ namespace Server.Items
         };
         private static readonly SkillName[] m_PossibleSpellbookSkills = new SkillName[]
         {
+			SkillName.Mysticism,
+			SkillName.Necromancy,
+			SkillName.SpiritSpeak,
             SkillName.Magery,
             SkillName.Meditation,
             SkillName.EvalInt,
@@ -131,65 +136,6 @@ namespace Server.Items
 
             return v;
         }
-
-        #region High Seas
-        public void ApplyAttributesTo(FishingPole pole)
-        {
-            CraftResourceInfo resInfo = CraftResources.GetInfo(m_Resource);
-
-            if (resInfo == null)
-                return;
-
-            CraftAttributeInfo attrs = resInfo.AttributeInfo;
-
-            int attributeCount = Utility.RandomMinMax(attrs.RunicMinAttributes, attrs.RunicMaxAttributes);
-            int min = attrs.RunicMinIntensity;
-            int max = attrs.RunicMaxIntensity;
-
-            ApplyAttributesTo(pole, true, 0, attributeCount, min, max);
-        }
-
-        public static void ApplyAttributesTo(FishingPole pole, bool isRunicTool, int luckChance, int attributeCount, int min, int max)
-        {
-            m_IsRunicTool = isRunicTool;
-            m_LuckChance = luckChance;
-
-            AosAttributes primary = pole.Attributes;
-            AosSkillBonuses skills = pole.SkillBonuses;
-
-            m_Props.SetAll(false);
-
-            for (int i = 0; i < attributeCount; ++i)
-            {
-                int random = GetUniqueRandom(21);
-
-                switch (random)
-                {
-                    case 0: ApplyAttribute(primary, min, max, AosAttribute.DefendChance, 1, 15); break;
-                    case 1: ApplyAttribute(primary, min, max, AosAttribute.CastSpeed, 1, 1); break;
-                    case 2: ApplyAttribute(primary, min, max, AosAttribute.CastRecovery, 1, 1); break;
-                    case 3: ApplyAttribute(primary, min, max, AosAttribute.AttackChance, 1, 15); break;
-                    case 4: ApplyAttribute(primary, min, max, AosAttribute.Luck, 1, 100); break;
-                    case 5: ApplyAttribute(primary, min, max, AosAttribute.SpellChanneling, 1, 1); break;
-                    case 6: ApplyAttribute(primary, min, max, AosAttribute.RegenHits, 1, 2); break;
-                    case 7: ApplyAttribute(primary, min, max, AosAttribute.RegenMana, 1, 2); break;
-                    case 8: ApplyAttribute(primary, min, max, AosAttribute.RegenStam, 1, 3); break;
-                    case 9: ApplyAttribute(primary, min, max, AosAttribute.BonusHits, 1, 8); break;
-                    case 10: ApplyAttribute(primary, min, max, AosAttribute.BonusMana, 1, 8); break;
-                    case 11: ApplyAttribute(primary, min, max, AosAttribute.BonusStam, 1, 8); break;
-                    case 12: ApplyAttribute(primary, min, max, AosAttribute.BonusStr, 1, 8); break;
-                    case 13: ApplyAttribute(primary, min, max, AosAttribute.BonusDex, 1, 8); break;
-                    case 14: ApplyAttribute(primary, min, max, AosAttribute.BonusInt, 1, 8); break;
-                    case 15: ApplyAttribute(primary, min, max, AosAttribute.SpellDamage, 1, 12); break;
-                    case 16: ApplySkillBonus(skills, min, max, 0, 1, 15); break;
-                    case 17: ApplySkillBonus(skills, min, max, 1, 1, 15); break;
-                    case 18: ApplySkillBonus(skills, min, max, 2, 1, 15); break;
-                    case 19: ApplySkillBonus(skills, min, max, 3, 1, 15); break;
-                    case 20: ApplySkillBonus(skills, min, max, 4, 1, 15); break;
-                }
-            }
-        }
-        #endregion
 
         public static void ApplyAttributesTo(BaseWeapon weapon, int attributeCount, int min, int max)
         {
@@ -310,7 +256,7 @@ namespace Server.Items
                         ApplyAttribute(secondary, min, max, AosWeaponAttribute.HitDispel, 2, 50, 2);
                         break;
                     case 11:
-                        ApplyAttribute(secondary, min, max, AosWeaponAttribute.HitLeechHits, 2, Server.SkillHandlers.Imbuing.GetPropRange(weapon, AosWeaponAttribute.HitLeechHits)[1], 2);
+                        ApplyAttribute(secondary, min, max, AosWeaponAttribute.HitLeechHits, 2, 50, 2);
                         break;
                     case 12:
                         ApplyAttribute(secondary, min, max, AosWeaponAttribute.HitLowerAttack, 2, 50, 2);
@@ -319,7 +265,7 @@ namespace Server.Items
                         ApplyAttribute(secondary, min, max, AosWeaponAttribute.HitLowerDefend, 2, 50, 2);
                         break;
                     case 14:
-                        ApplyAttribute(secondary, min, max, AosWeaponAttribute.HitLeechMana, 2, Server.SkillHandlers.Imbuing.GetPropRange(weapon, AosWeaponAttribute.HitLeechMana)[1], 2);
+                        ApplyAttribute(secondary, min, max, AosWeaponAttribute.HitLeechMana, 2, 50, 2);
                         break;
                     case 15:
                         ApplyAttribute(secondary, min, max, AosWeaponAttribute.HitLeechStam, 2, 50, 2);
@@ -454,7 +400,7 @@ namespace Server.Items
             m_Props.SetAll(false);
 
             bool isShield = (armor is BaseShield);
-            int baseCount = (isShield ? 7 : 20);
+            int baseCount = (isShield ? 7 : 19);
             int baseOffset = (isShield ? 0 : 4);
 
             if (!isShield && armor.MeditationAllowance == ArmorMeditationAllowance.All)
@@ -510,54 +456,51 @@ namespace Server.Items
                         break;
                         /* End Shields */
                     case 7:
-                        ApplyAttribute(secondary, min, max, AosArmorAttribute.MageArmor, 1, 1);
-                        break;
-                    case 8:
                         ApplyAttribute(primary, min, max, AosAttribute.RegenHits, 1, 2);
                         break;
-                    case 9:
+                    case 8:
                         ApplyAttribute(primary, min, max, AosAttribute.RegenStam, 1, 3);
                         break;
-                    case 10:
+                    case 9:
                         ApplyAttribute(primary, min, max, AosAttribute.RegenMana, 1, 2);
                         break;
-                    case 11:
+                    case 10:
                         ApplyAttribute(primary, min, max, AosAttribute.NightSight, 1, 1);
                         break;
-                    case 12:
+                    case 11:
                         ApplyAttribute(primary, min, max, AosAttribute.BonusHits, 1, 5);
                         break;
-                    case 13:
+                    case 12:
                         ApplyAttribute(primary, min, max, AosAttribute.BonusStam, 1, 8);
                         break;
-                    case 14:
+                    case 13:
                         ApplyAttribute(primary, min, max, AosAttribute.BonusMana, 1, 8);
                         break;
-                    case 15:
+                    case 14:
                         ApplyAttribute(primary, min, max, AosAttribute.LowerManaCost, 1, 8);
                         break;
-                    case 16:
+                    case 15:
                         ApplyAttribute(primary, min, max, AosAttribute.LowerRegCost, 1, 20);
                         break;
-                    case 17:
+                    case 16:
                         ApplyAttribute(primary, min, max, AosAttribute.Luck, 1, 100);
                         break;
-                    case 18:
+                    case 17:
                         ApplyAttribute(primary, min, max, AosAttribute.ReflectPhysical, 1, 15);
                         break;
-                    case 19:
+                    case 18:
                         ApplyResistance(armor, min, max, ResistanceType.Physical, 1, 15);
                         break;
-                    case 20:
+                    case 19:
                         ApplyResistance(armor, min, max, ResistanceType.Fire, 1, 15);
                         break;
-                    case 21:
+                    case 20:
                         ApplyResistance(armor, min, max, ResistanceType.Cold, 1, 15);
                         break;
-                    case 22:
+                    case 21:
                         ApplyResistance(armor, min, max, ResistanceType.Poison, 1, 15);
                         break;
-                    case 23:
+                    case 22:
                         ApplyResistance(armor, min, max, ResistanceType.Energy, 1, 15);
                         break;
                 /* End Armor */
@@ -650,7 +593,26 @@ namespace Server.Items
                 }
             }
         }
+//daat99 OWLTR start - Jewlery resources
+        public void ApplyAttributesTo(BaseJewel jewelry)
+        {
+            CraftResourceInfo resInfo = CraftResources.GetInfo(m_Resource);
 
+            if (resInfo == null)
+                return;
+
+            CraftAttributeInfo attrs = resInfo.AttributeInfo;
+
+            if (attrs == null)
+                return;
+
+            int attributeCount = Utility.RandomMinMax(attrs.RunicMinAttributes, attrs.RunicMaxAttributes);
+            int min = attrs.RunicMinIntensity;
+            int max = attrs.RunicMaxIntensity;
+
+            ApplyAttributesTo(jewelry, true, 0, attributeCount, min, max);
+        }
+        //daat99 OWLTR end - Jewlery resources
         public static void ApplyAttributesTo(BaseJewel jewelry, int attributeCount, int min, int max)
         {
             ApplyAttributesTo(jewelry, false, 0, attributeCount, min, max);
@@ -1027,5 +989,11 @@ namespace Server.Items
 
             return (totalDamage - random);
         }
+//daat99 OWTLR start - runic storage
+        public virtual Type GetCraftableType()
+        {
+            return null;
+        }
+        //daat99 OWTLR end - runic storage 
     }
 }

@@ -193,22 +193,22 @@ namespace Server.Mobiles
             if (this.Combatant == null)
                 return;
 
-            if (this.Combatant is Mobile && this.Name != this.Combatant.Name)
-                this.Morph((Mobile)Combatant);
+            if (this.Combatant.Player && this.Name != this.Combatant.Name)
+                this.Morph();
         }
 
-        public virtual void Morph(Mobile combatant)
+        public virtual void Morph()
         {
             this.m_Name = this.Name;
             this.m_Hue = this.Hue;
 
-            this.Body = combatant.Body;
-            this.Hue = combatant.Hue;
-            this.Name = combatant.Name;
-            this.Female = combatant.Female;
-            this.Title = combatant.Title;
+            this.Body = this.Combatant.Body; 
+            this.Hue = this.Combatant.Hue; 
+            this.Name = this.Combatant.Name;
+            this.Female = this.Combatant.Female;
+            this.Title = this.Combatant.Title;
 
-            foreach (Item item in combatant.Items)
+            foreach (Item item in this.Combatant.Items)
             {
                 if (item.Layer != Layer.Backpack && item.Layer != Layer.Mount && item.Layer != Layer.Bank)
                     if (this.FindItemOnLayer(item.Layer) == null)
@@ -251,9 +251,9 @@ namespace Server.Mobiles
                 this.m_Timer = null;	
             }
 
-            if (this.Combatant is Mobile)
+            if (this.Combatant != null)
             {
-                this.Morph((Mobile)Combatant);
+                this.Morph();
                 return;
             }
 

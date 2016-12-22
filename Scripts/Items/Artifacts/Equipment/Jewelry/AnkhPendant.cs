@@ -5,7 +5,7 @@ namespace Server.Items
 {
 	public class AnkhPendant : BaseNecklace
 	{
-		private static bool AllowIlshenarShrines = false;
+		private const bool AllowIlshenarShrines = false;
 		private bool m_IsUseful;
         public override bool IsArtifact { get { return true; } }
 

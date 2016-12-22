@@ -17,9 +17,10 @@ namespace Server.Spells.Mystic
 				"Sleep", "In Zu",
 				230,
 				9022,
-				Reagent.Nightshade,
-				Reagent.SpidersSilk,
-				Reagent.BlackPearl
+				Reagent.Bloodmoss,
+				Reagent.Garlic,
+				Reagent.SulfurousAsh,
+				Reagent.DragonBlood
 			);
 
 		public SleepSpell( Mobile caster, Item scroll ) : base( caster, scroll, m_Info )
@@ -76,12 +77,13 @@ namespace Server.Spells.Mystic
             target.FixedParticles(0x374A, 1, 15, 9502, 97, 3, (EffectLayer)255);
             target.FixedParticles(0x376A, 1, 15, 9502, 97, 3, (EffectLayer)255);
 
+            
+            BuffInfo.AddBuff(target, new BuffInfo(BuffIcon.Sleep, 1080139));
+
             if (m_Table.ContainsKey(target))
                 m_Table[target].Stop();
 
             m_Table[target] = new SleepTimer(target, duration);
-	    
-	        BuffInfo.AddBuff(target, new BuffInfo(BuffIcon.Sleep, 1080139, 1080140, duration, target));
 
             target.Delta(MobileDelta.WeaponDamage);
         }

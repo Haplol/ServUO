@@ -107,16 +107,14 @@ namespace Server.Mobiles
                 if ((master.Combatant !=null) && (!InRange(master.Combatant, 1)))
                 {
                     Warmode = false;
-                    FocusMob = null;
-                    Combatant = null;
+                    FocusMob = Combatant = null;
                     CurrentSpeed = 0.01;
                 }
 
                 if (master.Combatant == null)
                 {
                     Warmode = false;
-                    FocusMob = null;
-                    Combatant = null;
+                    FocusMob = Combatant = null;
                     CurrentSpeed = 0.01;
                 }
  
@@ -124,8 +122,7 @@ namespace Server.Mobiles
 			else
 			{
 				Warmode = false;
-				FocusMob = null;
-                Combatant = null;
+				FocusMob = Combatant = null;
 
 				CurrentSpeed = .01;
 			}

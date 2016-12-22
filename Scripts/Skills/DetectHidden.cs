@@ -3,7 +3,6 @@ using Server.Factions;
 using Server.Mobiles;
 using Server.Multis;
 using Server.Targeting;
-using Server.Engines.VvV;
 
 namespace Server.SkillHandlers
 {
@@ -81,16 +80,13 @@ namespace Server.SkillHandlers
 
                     inRange.Free();
 
-                    bool faction = Faction.Find(src) != null;
-                    bool vvv = ViceVsVirtueSystem.IsVvV(src);
-
-                    if (faction || vvv)
+                    if (Faction.Find(src) != null)
                     {
                         IPooledEnumerable itemsInRange = src.Map.GetItemsInRange(p, range);
 
                         foreach (Item item in itemsInRange)
                         {
-                            if (faction && item is BaseFactionTrap)
+                            if (item is BaseFactionTrap)
                             {
                                 BaseFactionTrap trap = (BaseFactionTrap)item;
 
@@ -103,13 +99,6 @@ namespace Server.SkillHandlers
 
                                     foundAnyone = true;
                                 }
-                            }
-                            else if (vvv && (item is VvVSigil || item is VvVTrap) && Utility.Random(100) <= srcSkill)
-                            {
-                                if (item is VvVTrap && item.ItemID == VvVTrap.HiddenID)
-                                    ((VvVTrap)item).OnRevealed(src);
-                                else if (!item.Visible)
-                                    item.Visible = true;
                             }
                         }
 
@@ -126,7 +115,7 @@ namespace Server.SkillHandlers
 
         public static void DoPassiveDetect(Mobile src)
         {
-			if (src == null || src.Map == null || src.Location == Point3D.Zero || src.IsStaff())
+			if (src == null || src.Map == null || src.Location == Point3D.Zero)
 				return;
 
             double ss = src.Skills[SkillName.DetectHidden].Value;

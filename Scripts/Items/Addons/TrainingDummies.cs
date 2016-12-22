@@ -59,14 +59,14 @@ namespace Server.Items
                 return (this.m_Timer != null);
             }
         }
-        public virtual void UpdateItemID()
+        public void UpdateItemID()
         {
             int baseItemID = (this.ItemID / 2) * 2;
 
             this.ItemID = baseItemID + (this.Swinging ? 1 : 0);
         }
 
-        public virtual void BeginSwing()
+        public void BeginSwing()
         {
             if (this.m_Timer != null)
                 this.m_Timer.Stop();
@@ -75,7 +75,7 @@ namespace Server.Items
             this.m_Timer.Start();
         }
 
-        public virtual void EndSwing()
+        public void EndSwing()
         {
             if (this.m_Timer != null)
                 this.m_Timer.Stop();

@@ -4,9 +4,9 @@ using Server.Targeting;
 using Server.Network;
 using System.Collections;
 using Server.ContextMenus;
-using Server.Items;
+using Server.Engines.XmlSpawner2;
 
-namespace Server.Engines.XmlSpawner2
+namespace Server.Items
 {
 	public abstract class SiegeCannonball : BaseSiegeProjectile
 	{

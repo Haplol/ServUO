@@ -58,10 +58,7 @@ namespace Server.Mobiles
         {
             base.OnDeath(c);
 
-	        if (Controlled)
-		        return;
-			
-			if (Utility.RandomDouble() < 0.03)            
+            if (Utility.RandomDouble() < 0.03)            
                 c.DropItem(new LuckyCoin());
            
             if (Utility.RandomDouble() < 0.15)

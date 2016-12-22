@@ -97,7 +97,7 @@ namespace Server.Mobiles
 		{
 			base.OnDeath(c);
 
-			if(!Controlled && Core.ML)
+			if(Core.ML)
 				c.AddItem(Loot.Construct(typeof(GamanHorns)));
 		}
 

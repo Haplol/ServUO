@@ -18,8 +18,7 @@ namespace Server.Items
         Fireball,
         GreaterHealing,
         Lightning,
-        ManaDraining,
-        None
+        ManaDraining
     }
 
     public abstract class BaseWand : BaseBashing, ITokunoDyable
@@ -32,13 +31,9 @@ namespace Server.Items
             this.Weight = 1.0;
             this.Effect = effect;
             this.Charges = Utility.RandomMinMax(minCharges, maxCharges);
-
-            if (Core.AOS && m_WandEffect < WandEffect.None)
-            {
-                this.Attributes.SpellChanneling = 1;
-                this.Attributes.CastSpeed = -1;
-                this.WeaponAttributes.MageWeapon = Utility.RandomMinMax(1, 10);
-            }
+            this.Attributes.SpellChanneling = 1;
+            this.Attributes.CastSpeed = -1;
+            this.WeaponAttributes.MageWeapon = Utility.RandomMinMax(1, 10);
         }
 
         public BaseWand(Serial serial)

@@ -34,9 +34,6 @@ namespace Server.Mobiles
                 return false;
             }
         }
-
-        public virtual bool CanGivePowerscrolls { get { return true; } }
-
         public static void GivePowerScrollTo(Mobile m)
         {
             if (m == null)	//sanity
@@ -116,7 +113,7 @@ namespace Server.Mobiles
             int version = reader.ReadInt();
         }
 
-        public virtual Item GetArtifact()
+        public Item GetArtifact()
         {
             double random = Utility.RandomDouble();
             if (0.05 >= random)
@@ -148,13 +145,13 @@ namespace Server.Mobiles
             return artifact;
         }
 
-        public virtual void GivePowerScrolls()
+        public void GivePowerScrolls()
         {
-            if (this.Map != Map.Felucca)
-                return;
+            //if (this.Map != Map.Felucca)
+             //   return;
 
             List<Mobile> toGive = new List<Mobile>();
-            List<DamageStore> rights = GetLootingRights();
+            List<DamageStore> rights = BaseCreature.GetLootingRights(this.DamageEntries, this.HitsMax);
 
             for (int i = rights.Count - 1; i >= 0; --i)
             {
@@ -207,7 +204,7 @@ namespace Server.Mobiles
 
         public override bool OnBeforeDeath()
         {
-            if (CanGivePowerscrolls && !NoKillAwards)
+            if (!this.NoKillAwards)
             {
                 this.GivePowerScrolls();
 
@@ -222,10 +219,10 @@ namespace Server.Mobiles
 
         public override void OnDeath(Container c)
         {
-            if (this.Map == Map.Felucca)
-            {
+           // if (this.Map == Map.Felucca)
+           // {
                 //TODO: Confirm SE change or AoS one too?
-                List<DamageStore> rights = GetLootingRights();
+                List<DamageStore> rights = BaseCreature.GetLootingRights(this.DamageEntries, this.HitsMax);
                 List<Mobile> toGive = new List<Mobile>();
 
                 for (int i = rights.Count - 1; i >= 0; --i)
@@ -236,17 +233,11 @@ namespace Server.Mobiles
                         toGive.Add(ds.m_Mobile);
                 }
 
-                if (SkullType != ChampionSkullType.None)
-                {
-                    if (toGive.Count > 0)
-                        toGive[Utility.Random(toGive.Count)].AddToBackpack(new ChampionSkull(this.SkullType));
-                    else
-                        c.DropItem(new ChampionSkull(this.SkullType));
-                }
-
-                if(Core.SA)
-                    RefinementComponent.Roll(c, 3, 0.10);
-            }
+                if (toGive.Count > 0)
+                    toGive[Utility.Random(toGive.Count)].AddToBackpack(new ChampionSkull(this.SkullType));
+                else
+                    c.DropItem(new ChampionSkull(this.SkullType));
+          //  }
 
             base.OnDeath(c);
         }

@@ -26,9 +26,7 @@ namespace Server.Items
         {
             if (!this.Deleted && DespiseController.Instance != null)
             {
-                //DespiseController.Instance.AddDespisePoints(from, this);
-                Engines.Points.PointsSystem.DespiseCrystals.AwardPoints(from, this.Amount);
-                this.Delete();
+                DespiseController.Instance.AddDespisePoints(from, this);
             }
         }
 

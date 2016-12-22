@@ -10,17 +10,12 @@ namespace Server.Items
 {
     public class PublicMoongate : Item
     {
-        private static List<PublicMoongate> _Moongates = new List<PublicMoongate>();
-        public static List<PublicMoongate> Moongates { get { return _Moongates; } }
-
         [Constructable]
         public PublicMoongate()
             : base(0xF6C)
         {
             this.Movable = false;
             this.Light = LightType.Circle300;
-
-            _Moongates.Add(this);
         }
 
         public PublicMoongate(Serial serial)
@@ -148,29 +143,20 @@ namespace Server.Items
             base.Deserialize(reader);
 
             int version = reader.ReadInt();
-
-            _Moongates.Add(this);
-        }
-
-        public override void Delete()
-        {
-            base.Delete();
-
-            if (_Moongates.Contains(this))
-                _Moongates.Remove(this);
         }
 
         private static void DeleteAll()
         {
-            List<PublicMoongate> list = new List<PublicMoongate>();
+            List<Item> list = new List<Item>();
 
-            foreach (PublicMoongate item in _Moongates)
+            foreach (Item item in World.Items.Values)
             {
-                list.Add(item);
+                if (item is PublicMoongate)
+                    list.Add(item);
             }
 
-            foreach (PublicMoongate gate in list)
-                gate.Delete();
+            foreach (Item item in list)
+                item.Delete();
 
             if (list.Count > 0)
                 World.Broadcast(0x35, true, "{0} moongates removed.", list.Count);
@@ -484,8 +470,6 @@ namespace Server.Items
                 this.m_Mobile.MoveToWorld(entry.Location, list.Map);
 
                 Effects.PlaySound(entry.Location, list.Map, 0x1FE);
-
-                Server.Engines.CityLoyalty.CityTradeSystem.OnPublicMoongateUsed(m_Mobile);
             }
         }
 

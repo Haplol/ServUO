@@ -196,7 +196,7 @@ namespace Server.Spells.Seventh
             }
         }
 
-        public class InternalTarget : Target
+        private class InternalTarget : Target
         {
             private readonly EnergyFieldSpell m_Owner;
             public InternalTarget(EnergyFieldSpell owner)

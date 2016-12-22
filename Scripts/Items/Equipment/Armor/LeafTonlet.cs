@@ -1,9 +1,7 @@
 using System;
-using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefTailoring), typeof(GargishLeatherLegs))]
     [FlipableAttribute(0x2FCA, 0x3180)]
     public class LeafTonlet : BaseArmor
     {
@@ -19,13 +17,6 @@ namespace Server.Items
         {
         }
 
-        public override Race RequiredRace
-        {
-            get
-            {
-                return Race.Elf;
-            }
-        }
         public override int BasePhysicalResistance
         {
             get

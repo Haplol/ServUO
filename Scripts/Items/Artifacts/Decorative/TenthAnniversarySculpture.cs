@@ -29,50 +29,25 @@ namespace Server.Items
 
         public override void OnDoubleClick(Mobile from)
         {
-            if (!IsChildOf(from.Backpack))
-            {
+            if (!IsChildOf(from.Backpack) && from is PlayerMobile)
                 from.SendLocalizedMessage(1042001);
-                return;
-            }
 
             DefragTables();
 
             if (!IsCoolingDown(from))
-            {
+            {            
                 m_LuckTable[from] = DateTime.UtcNow + TimeSpan.FromMinutes(60);
-                from.SendLocalizedMessage(1079551); // Your luck just improved!
+                from.SendMessage("You Feel Your luck changing");
                 m_RewardCooldown[from] = DateTime.UtcNow + TimeSpan.FromHours(24);
             }
         }
 
         public bool IsCoolingDown(Mobile from)
         {
-            bool donemessage = false;
-
-            if (m_LuckTable.ContainsKey(from))
-            {
-                from.SendLocalizedMessage(1079534); // You're still feeling lucky from the last time you touched the sculpture.
-                donemessage = true;
-            }
-
             foreach (TenthAnniversarySculpture sculpture in m_sculptures)
             {
                 if (sculpture.RewardCooldown != null && sculpture.RewardCooldown.ContainsKey(from))
-                {
-                    if (!donemessage)
-                    {
-                        TimeSpan left = sculpture.RewardCooldown[from] - DateTime.UtcNow;
-
-                        if (left.TotalHours > 1)
-                            from.SendLocalizedMessage(1079550, ((int)left.TotalHours).ToString()); // You can improve your fortunes again in about ~1_TIME~ hours.
-                        else if (left.TotalMinutes > 1)
-                            from.SendLocalizedMessage(1079548, ((int)left.TotalMinutes).ToString()); // You can improve your fortunes in about ~1_TIME~ minutes.
-                        else
-                            from.SendLocalizedMessage(1079547); // Your fortunes are about to improve.
-                    }
-
                     return true;
-                }
             }
 
             return false;

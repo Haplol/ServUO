@@ -16,13 +16,6 @@ namespace Server.Items
         {
         }
 
-        public override Race RequiredRace
-        {
-            get
-            {
-                return Race.Elf;
-            }
-        }
         public override int BasePhysicalResistance
         {
             get

@@ -78,7 +78,7 @@ namespace Server.Mobiles
         {
 			base.DoActionCombat();
 			
-			Mobile c = m_Mobile.Combatant as Mobile;
+			Mobile c = m_Mobile.Combatant;
 			
 			if(c != null)
 			{

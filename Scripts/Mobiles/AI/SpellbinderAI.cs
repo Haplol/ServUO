@@ -150,7 +150,7 @@ namespace Server.Mobiles
             }
         }
 
-        public void RunFrom(IDamageable m)
+        public void RunFrom(Mobile m)
         {
             this.Run((Direction)((int)this.m_Mobile.GetDirectionTo(m) - 4) & Direction.Mask);
         }
@@ -251,20 +251,14 @@ namespace Server.Mobiles
             return this.ChooseSpell(toDispel);
         }
 
-        public virtual Spell ChooseSpell(IDamageable c)
+        public virtual Spell ChooseSpell(Mobile c)
         {
             Spell spell = this.CheckCastHealingSpell();
 
             if (spell != null)
                 return spell;
-
-            if(!(c is Mobile))
-            {
-                return null;
-            }
-
-            Mobile mob = c as Mobile;
-            double damage = ((this.m_Mobile.Skills[SkillName.SpiritSpeak].Value - mob.Skills[SkillName.MagicResist].Value) / 10) + (mob.Player ? 18 : 30);
+				
+            double damage = ((this.m_Mobile.Skills[SkillName.SpiritSpeak].Value - c.Skills[SkillName.MagicResist].Value) / 10) + (c.Player ? 18 : 30);
 			
             if (damage > c.Hits)
                 spell = new ManaDrainSpell(this.m_Mobile, null);
@@ -277,7 +271,7 @@ namespace Server.Mobiles
                     {
                         this.m_Mobile.DebugSay("Attempting to BloodOath");
 
-                        if (!mob.Poisoned)
+                        if (!c.Poisoned)
                             spell = new BloodOathSpell(this.m_Mobile, null);
 
                         break;
@@ -317,8 +311,8 @@ namespace Server.Mobiles
                 case 9: // Blood oath them
                     {
                         this.m_Mobile.DebugSay("Attempting to blood oath");
-
-                        if (this.m_Mobile.Skills[SkillName.Necromancy].Value > 30 && BloodOathSpell.GetBloodOath(mob) != this.m_Mobile)
+										
+                        if (this.m_Mobile.Skills[SkillName.Necromancy].Value > 30 && BloodOathSpell.GetBloodOath(c) != this.m_Mobile)
                             spell = new BloodOathSpell(this.m_Mobile, null);
 						
                         break;
@@ -330,10 +324,10 @@ namespace Server.Mobiles
 
         public override bool DoActionCombat()
         {
-            IDamageable c = this.m_Mobile.Combatant;
+            Mobile c = this.m_Mobile.Combatant;
             this.m_Mobile.Warmode = true;
 
-            if (c == null || c.Deleted || !c.Alive || (c is Mobile && ((Mobile)c).IsDeadBondedPet) || !this.m_Mobile.CanSee(c) || !this.m_Mobile.CanBeHarmful(c, false) || c.Map != this.m_Mobile.Map)
+            if (c == null || c.Deleted || !c.Alive || c.IsDeadBondedPet || !this.m_Mobile.CanSee(c) || !this.m_Mobile.CanBeHarmful(c, false) || c.Map != this.m_Mobile.Map)
             {
                 // Our combatant is deleted, dead, hidden, or we cannot hurt them
                 // Try to find another combatant
@@ -437,7 +431,7 @@ namespace Server.Mobiles
 
                     spell = this.DoDispel(toDispel);
                 }
-                else if (c is Mobile && (((Mobile)c).Spell is HealSpell || ((Mobile)c).Spell is GreaterHealSpell) && !((Mobile)c).Poisoned) // They have a heal spell out
+                else if ((c.Spell is HealSpell || c.Spell is GreaterHealSpell) && !c.Poisoned) // They have a heal spell out
                 {
                     spell = new BloodOathSpell(this.m_Mobile, null);
                 }
@@ -456,9 +450,9 @@ namespace Server.Mobiles
                     else if (!this.m_Mobile.InRange(toDispel, 12))
                         this.RunTo(toDispel);
                 }
-                else if(c is Mobile)
+                else
                 {
-                    this.RunTo((Mobile)c);
+                    this.RunTo(c);
                 }
 
                 if (spell != null)
@@ -473,9 +467,9 @@ namespace Server.Mobiles
 
                 this.m_NextCastTime = DateTime.UtcNow + delay;
             }
-            else if (c is Mobile && (this.m_Mobile.Spell == null || !this.m_Mobile.Spell.IsCasting))
+            else if (this.m_Mobile.Spell == null || !this.m_Mobile.Spell.IsCasting)
             {
-                this.RunTo((Mobile)c);
+                this.RunTo(c);
             }
 
             return true;
@@ -524,7 +518,7 @@ namespace Server.Mobiles
 
         public override bool DoActionFlee()
         {
-            Mobile c = this.m_Mobile.Combatant as Mobile;
+            Mobile c = this.m_Mobile.Combatant;
 
             if ((this.m_Mobile.Mana > 20 || this.m_Mobile.Mana == this.m_Mobile.ManaMax) && this.m_Mobile.Hits > (this.m_Mobile.HitsMax / 2))
             {
@@ -566,7 +560,7 @@ namespace Server.Mobiles
                 Mobile active = null;
                 double activePrio = 0.0;
 
-                Mobile comb = this.m_Mobile.Combatant as Mobile;
+                Mobile comb = this.m_Mobile.Combatant;
 
                 if (comb != null && !comb.Deleted && comb.Alive && !comb.IsDeadBondedPet && this.m_Mobile.InRange(comb, 12) && this.CanDispel(comb))
                 {
@@ -628,7 +622,7 @@ namespace Server.Mobiles
                     Mobile active = null, inactive = null;
                     double actPrio = 0.0, inactPrio = 0.0;
 
-                    Mobile comb = this.m_Mobile.Combatant as Mobile;
+                    Mobile comb = this.m_Mobile.Combatant;
 
                     if (comb != null && !comb.Deleted && comb.Alive && !comb.IsDeadBondedPet && this.CanDispel(comb))
                     {
@@ -744,7 +738,7 @@ namespace Server.Mobiles
 
                 if (toTarget == null)
                 {
-                    toTarget = this.m_Mobile.Combatant as Mobile;
+                    toTarget = this.m_Mobile.Combatant;
 
                     if (toTarget != null)
                         this.RunTo(toTarget);
@@ -761,7 +755,7 @@ namespace Server.Mobiles
             }
             else
             {
-                toTarget = this.m_Mobile.Combatant as Mobile;
+                toTarget = this.m_Mobile.Combatant;
 
                 if (toTarget != null)
                     this.RunTo(toTarget);

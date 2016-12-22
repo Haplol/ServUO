@@ -1,10 +1,8 @@
 using System;
 using Server.Guilds;
-using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefBlacksmithy), typeof(GargishChaosShield))]
     public class ChaosShield : BaseShield
     {
         [Constructable]

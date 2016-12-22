@@ -1,5 +1,4 @@
 using System;
-using Server.Engines.Craft;
 
 namespace Server.Items
 {
@@ -82,35 +81,6 @@ namespace Server.Items
                 return true;
             }
         }
-
-        public override int GetLuckBonus()
-        {
-            return 0;
-        }
-
-        public override int OnCraft(int quality, bool makersMark, Mobile from, CraftSystem craftSystem, Type typeRes, BaseTool tool, CraftItem craftItem, int resHue)
-        {
-            Quality = (ArmorQuality)quality;
-
-            if (makersMark)
-                Crafter = from;
-
-            Type resourceType = typeRes;
-
-            if (resourceType == null)
-                resourceType = craftItem.Resources.GetAt(0).ItemType;
-
-            Resource = CraftResources.GetFromType(resourceType);
-
-            PlayerConstructed = true;
-
-            CraftContext context = craftSystem.GetContext(from);
-
-            Hue = CraftResources.GetHue(Resource);
-
-            return quality;
-        }
-
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);

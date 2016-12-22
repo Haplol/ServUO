@@ -97,9 +97,9 @@ namespace Server.Items
                 return SkillName.Throwing;
             }
         }
-        public override TimeSpan OnSwing(Mobile attacker, IDamageable damageable)
+        public override TimeSpan OnSwing(Mobile attacker, Mobile defender)
         {
-            TimeSpan ts = base.OnSwing(attacker, damageable);
+            TimeSpan ts = base.OnSwing(attacker, defender);
 
             // time it takes to throw it around including mystic arc
             if (ts < TimeSpan.FromMilliseconds(1000))
@@ -108,37 +108,39 @@ namespace Server.Items
             return ts;
         }
 
-        public override bool OnFired(Mobile attacker, IDamageable damageable)
+        public override bool OnFired(Mobile attacker, Mobile defender)
         {
             this.m_Thrower = attacker;
 
-            if (!attacker.InRange(damageable, 1))
+            if (!attacker.InRange(defender, 1))
             {
+                //Internalize();
                 this.Visible = false;
-                attacker.MovingEffect(damageable, this.EffectID, 18, 1, false, false, this.Hue, 0);
+                attacker.MovingEffect(defender, this.EffectID, 18, 1, false, false, this.Hue, 0);
             }
 
             return true;
         }
 
-        public override void OnHit(Mobile attacker, IDamageable damageable, double damageBonus)
+        public override void OnHit(Mobile attacker, Mobile defender, double damageBonus)
         {
-            this.m_KillSave = damageable.Location;
+            this.m_Target = defender;
+            this.m_KillSave = defender.Location;
 
             if (!(WeaponAbility.GetCurrentAbility(attacker) is MysticArc))
                 Timer.DelayCall(TimeSpan.FromMilliseconds(333.0), new TimerCallback(ThrowBack));
 
-            base.OnHit(attacker, damageable, damageBonus);
+            base.OnHit(attacker, defender, damageBonus);
         }
 
-        public override void OnMiss(Mobile attacker, IDamageable damageable)
+        public override void OnMiss(Mobile attacker, Mobile defender)
         {
-            this.m_Target = damageable as Mobile;
+            this.m_Target = defender;
 
             if (!(WeaponAbility.GetCurrentAbility(attacker) is MysticArc))
                 Timer.DelayCall(TimeSpan.FromMilliseconds(333.0), new TimerCallback(ThrowBack));
 
-            base.OnMiss(attacker, damageable);
+            base.OnMiss(attacker, defender);
         }
 
         public virtual void ThrowBack()
@@ -155,6 +157,9 @@ namespace Server.Items
         {
             if (this != null)
                 this.Visible = true;
+            //if ( m_Thrower != null )
+            //if ( !m_Thrower.EquipItem( this ) )
+            //MoveToWorld( m_Thrower.Location, m_Thrower.Map );
         }
 
         public override void Serialize(GenericWriter writer)

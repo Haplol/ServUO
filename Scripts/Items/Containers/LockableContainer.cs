@@ -397,7 +397,29 @@ namespace Server.Items
 
         public int OnCraft(int quality, bool makersMark, Mobile from, CraftSystem craftSystem, Type typeRes, BaseTool tool, CraftItem craftItem, int resHue)
         {
-			if(makersMark)
+//this			
+CraftContext context = craftSystem.GetContext(from);
+
+            if (context != null && !context.DoNotColor)
+            {
+               Type resourceType = typeRes ?? craftItem.Resources.GetAt(0).ItemType;
+
+               CraftResource res = CraftResources.GetFromType(resourceType);
+
+                Hue = CraftResources.GetHue(res);
+}
+//this
+
+
+
+
+
+
+
+
+
+
+if(makersMark)
 			{
 				Crafter = from;
 			}

@@ -89,7 +89,7 @@ namespace Server.Mobiles
 		
 		public void DoRangedAttack()
 		{
-			Mobile c = m_Mobile.Combatant as Mobile;
+			Mobile c = m_Mobile.Combatant;
 			
 			if(c == null)
 				return;

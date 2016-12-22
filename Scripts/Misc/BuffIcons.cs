@@ -28,8 +28,6 @@ namespace Server
             }
         }
 
-        public static int Blank { get { return 1114057; } } // ~1_val~
-
         #region Properties
         private readonly BuffIcon m_ID;
         public BuffIcon ID
@@ -279,16 +277,18 @@ namespace Server
         Sleep,
         StoneForm,
         SpellPlague,
-        Berserk,
-        MassSleep,
+        SpellTrigger,
+        NetherBolt,
         Fly,
-        Inspire,
+          Inspire = 0x041F,
         Invigorate,
         Resilience,
         Perseverance,
+       Tribulation,
         TribulationTarget,
+        Despair,
         DespairTarget,
-        FishPie = 0x426,
+        MagicFish = 0x426,
         HitLowerAttack,
         HitLowerDefense,
         DualWield,
@@ -352,56 +352,7 @@ namespace Server
         SwingSpeedDebuff,
         WraithForm,
         CityTradeDeal = 0x466,
-        HumilityDebuff = 0x467,
-        Spirituality,
-        Humility,
-        // Skill Masteries
-        Rampage,
-        Stagger, // Debuff
-        Toughness,
-        Thrust,
-        Pierce,   // Debuff
-        PlayingTheOdds,
-        FocusedEye,
-        Onslaught, // Debuff
-        ElementalFury,
-        ElementalFuryDebuff, // Debuff
-        CalledShot,
-        Knockout,
-        SavingThrow,
-        Conduit,
-        EtherealBurst,
-        MysticWeapon,
-        ManaShield,
-        AnticipateHit,
-        Warcry,
-        Shadow,
-        WhiteTigerForm,
-        Bodyguard,
-        HeightenedSenses,
-        Tolerance,
-        DeathRay,
-        DeathRayDebuff,
-        Intuition,
-        EnchantedSummoning,
-        ShieldBash,
-        Whispering,
-        CombatTraining,
-        InjectedStrikeDebuff,
-        InjectedStrike,
-        UnknownTomato,
-        PlayingTheOddsDebuff,
-        DragonTurtleDebuff,
-        Boarding,
-        Potency,
-        ThrustDebuff,
-        FistsOfFury, // 1169
-        BarrabHemolymphConcentrate,
-        JukariBurnPoiltice,
-        KurakAmbushersEssence,
-        BarakoDraftOfMight,
-        UraliTranceTonic,
-        SakkhraProphylaxis
+        Humility = 0x467
     }
 
     public sealed class AddBuffPacket : Packet

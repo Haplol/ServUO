@@ -1,9 +1,7 @@
 using System;
-using Server.Engines.Craft;
 
 namespace Server.Items
 {
-    [Alterable(typeof(DefTinkering), typeof(DualShortAxes))]
     [FlipableAttribute(0xF43, 0xF44)]
     public class Hatchet : BaseAxe
     {

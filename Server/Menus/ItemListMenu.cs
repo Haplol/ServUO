@@ -62,7 +62,7 @@ namespace Server.Menus.ItemLists
 			}
 			while (m_Serial == 0);
 
-			m_Serial = (int)((uint)m_Serial | 0x80000000);
+			m_Serial = (int)((uint)m_Serial | 0x800000000);
 		}
 
 		public virtual void OnCancel(NetState state)

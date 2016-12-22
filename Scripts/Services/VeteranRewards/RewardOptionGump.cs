@@ -49,11 +49,7 @@ namespace Server.Gumps
             for (int i = 0; i < this.m_Options.Count; i++)
             {
                 this.AddButton(19, 49 + i * 24, 0x845, 0x846, this.m_Options[i].ID, GumpButtonType.Reply, 0);
-
-                if(this.m_Options[i].Cliloc.Number > 0)
-                    this.AddHtmlLocalized(44, 47 + i * 24, 213, 20, this.m_Options[i].Cliloc.Number, 0x7FFF, false, false);
-                else
-                    this.AddHtml(44, 47 + i * 24, 213, 20, String.Format("<basefont color=#FFFFFF>{0}", this.m_Options[i].Cliloc.String), false, false);
+                this.AddHtmlLocalized(44, 47 + i * 24, 213, 20, this.m_Options[i].Cliloc, 0x7FFF, false, false); 
             }
         }
 
@@ -81,9 +77,8 @@ namespace Server.Gumps
     public class RewardOption
     {
         private readonly int m_ID;
-        private readonly TextDefinition m_Cliloc;
-
-        public RewardOption(int id, TextDefinition cliloc)
+        private readonly int m_Cliloc;
+        public RewardOption(int id, int cliloc)
         {
             this.m_ID = id;
             this.m_Cliloc = cliloc;
@@ -96,7 +91,7 @@ namespace Server.Gumps
                 return this.m_ID;
             }
         }
-        public TextDefinition Cliloc
+        public int Cliloc
         {
             get
             {
@@ -112,7 +107,7 @@ namespace Server.Gumps
         {
         }
 
-        public void Add(int id, TextDefinition cliloc)
+        public void Add(int id, int cliloc)
         {
             this.Add(new RewardOption(id, cliloc));
         }

@@ -4,7 +4,6 @@ using Server.Engines.VeteranRewards;
 namespace Server.Items
 { 
     [Furniture]
-    [Flipable(0x9AA, 0xE7D)]
     public class CommodityDeedBox : BaseContainer, IRewardItem
     {
         private bool m_IsRewardItem;

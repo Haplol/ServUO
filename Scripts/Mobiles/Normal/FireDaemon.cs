@@ -11,16 +11,13 @@ namespace Server.Mobiles
             : base(AIType.AI_Mage, FightMode.Closest, 10, 1, 0.2, 0.4)
         {
             this.Name = "an fire daemon";
-            this.Body = 9;
+            this.Body = 0x310;
             this.BaseSoundID = 0x47D;
-            this.Hue = 0x664;
 
             this.SetStr(549, 1199);
             this.SetDex(136, 206);
             this.SetInt(202, 336);
 
-            this.SetMana(202, 336);
-            this.SetStam(136, 206);
             this.SetHits(1111, 1478);
 
             this.SetDamage(22, 29);
@@ -42,13 +39,11 @@ namespace Server.Mobiles
             this.SetSkill(SkillName.EvalInt, 91.1, 91.8);
             this.SetSkill(SkillName.Meditation, 45.4, 94.1);
 
-            this.Fame = 15000;
-            this.Karma = -15000;
+            this.Fame = 7000;
+            this.Karma = -10000;
 
-            this.VirtualArmor = 58;
+            this.VirtualArmor = 55;
         }
-
-        public override int TreasureMapLevel { get { return 4; } }
 
         public FireDaemon(Serial serial)
             : base(serial)
@@ -79,11 +74,11 @@ namespace Server.Mobiles
             if (1.0 > Utility.RandomDouble() && reg.Name == "Crimson Veins")
             {
                 if (Utility.RandomDouble() < 0.6)
-                    c.DropItem(new EssencePrecision());
+                    c.DropItem(new EssencePrecision());                
                 if (Utility.RandomDouble() < 0.6)
                     c.DropItem(new DaemonClaw());
             }
-
+            
             if (1.0 > Utility.RandomDouble() && reg.Name == "Fire Temple Ruins")
             {
                 if (Utility.RandomDouble() < 0.6)

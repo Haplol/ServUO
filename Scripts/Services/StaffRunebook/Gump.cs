@@ -252,9 +252,9 @@ namespace Joeku.SR
                         moongate = true;
                     }
                     SR_Rune rune = null;
-                    if (this.RuneAcc.ChildRune == null && button >= 0 && button < RuneAcc.Runes.Count)
+                    if (this.RuneAcc.ChildRune == null)
                         rune = this.RuneAcc.Runes[button];
-                    else if (button >= 0 && button < RuneAcc.ChildRune.Runes.Count)
+                    else
                         rune = this.RuneAcc.ChildRune.Runes[button];
 
                     if (rune.IsRunebook)

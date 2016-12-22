@@ -174,7 +174,7 @@ namespace Server.Items
 			foreach (object o in eable)
 			{
 				if (o is Mobile &&
-					(from == null || (SpellHelper.ValidIndirectTarget(from, (Mobile)o) && from.CanBeHarmful((Mobile)o, false) && from.InLOS((Mobile)o))))
+					(from == null || (SpellHelper.ValidIndirectTarget(from, (Mobile)o) && from.CanBeHarmful((Mobile)o, false))))
 				{
 					toExplode.Add(o);
 					++toDamage;
