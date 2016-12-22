@@ -2064,6 +2064,134 @@ namespace Server.Items
 			defender.PlaySound(GetHitDefendSound(attacker, defender));
 
 			int damage = ComputeDamage(attacker, defender);
+            int phys, fire, cold, pois, nrgy, chaos, direct;
+
+            GetDamageTypes(attacker, out phys, out fire, out cold, out pois, out nrgy, out chaos, out direct);
+
+            if (m_Consecrated)
+            {
+                phys = damageable.PhysicalResistance;
+                fire = damageable.FireResistance;
+                cold = damageable.ColdResistance;
+                pois = damageable.PoisonResistance;
+                nrgy = damageable.EnergyResistance;
+
+                int low = phys, type = 0;
+
+                if (fire < low)
+                {
+                    low = fire;
+                    type = 1;
+                }
+                if (cold < low)
+                {
+                    low = cold;
+                    type = 2;
+                }
+                if (pois < low)
+                {
+                    low = pois;
+                    type = 3;
+                }
+                if (nrgy < low)
+                {
+                    low = nrgy;
+                    type = 4;
+                }
+
+                phys = fire = cold = pois = nrgy = chaos = direct = 0;
+
+                if (type == 0)
+                {
+                    phys = 100;
+                }
+                else if (type == 1)
+                {
+                    fire = 100;
+                }
+                else if (type == 2)
+                {
+                    cold = 100;
+                }
+                else if (type == 3)
+                {
+                    pois = 100;
+                }
+                else if (type == 4)
+                {
+                    nrgy = 100;
+                }
+            }
+
+            bool splintering = false;
+            if (m_AosWeaponAttributes.SplinteringWeapon > 0 && m_AosWeaponAttributes.SplinteringWeapon > Utility.Random(100))
+            {
+                if (SplinteringWeaponContext.CheckHit(attacker, defender, this))
+                    splintering = true;
+            }
+
+            if (m_MaxHits > 0 && m_AosAttributes.SpellChanneling == 0 && 
+                ((MaxRange <= 1 && (defender is Slime || defender is ToxicElemental || defender is CorrosiveSlime)) || (defender != null && splintering) ||
+                 Utility.Random(250) == 0)) // Stratics says 50% chance, seems more like 4%..
+            {
+                if (MaxRange <= 1 && (defender is Slime || defender is ToxicElemental || defender is CorrosiveSlime))
+                {
+                    attacker.LocalOverheadMessage(MessageType.Regular, 0x3B2, 500263); // *Acid blood scars your weapon!*
+                }
+
+                if (Core.AOS &&
+                    m_AosWeaponAttributes.SelfRepair + (IsSetItem && m_SetEquipped ? m_SetSelfRepair : 0) > Utility.Random(10))
+                {
+                    HitPoints += 2;
+                }
+                else
+                {
+                    if (m_Hits > 0)
+                    {
+                        HitPoints -= NegativeAttributes.Antique > 0 ? 2 : 1;
+                    }
+                    else if (m_MaxHits > 1)
+                    {
+                        MaxHitPoints -= NegativeAttributes.Antique > 0 ? 2 : 1;
+
+                        if (Parent is Mobile)
+                        {
+                            ((Mobile)Parent).LocalOverheadMessage(MessageType.Regular, 0x3B2, 1061121);
+                            // Your equipment is severely damaged.
+                        }
+                    }
+                    else
+                    {
+                        Delete();
+                    }
+                }
+            }
+
+            WeaponAbility a = WeaponAbility.GetCurrentAbility(attacker);
+            SpecialMove move = SpecialMove.GetCurrentMove(attacker);
+
+            WeaponAbility weavabil;
+            bool bladeweaving = Bladeweave.BladeWeaving(attacker, out weavabil);
+            bool ignoreArmor = (a is ArmorIgnore || (move != null && move.IgnoreArmor(attacker)) || (bladeweaving && weavabil is ArmorIgnore));
+
+            // object is not a mobile, so we end here
+            if (defender == null)
+            {
+                AOS.Damage(damageable, attacker, damage, ignoreArmor, phys, fire, cold, pois, nrgy, chaos, direct, false, this is BaseRanged, false);
+
+                // TODO: WeaponAbility/SpecialMove OnHit(...) convert target to IDamageable
+                // Figure out which specials work on items. For now AI only.
+                if (ignoreArmor)
+                {
+                    Effects.PlaySound(damageable.Location, damageable.Map, 0x56);
+                    Effects.SendTargetParticles(damageable, 0x3728, 200, 25, 0, 0, 9942, EffectLayer.Waist, 0);
+                }
+
+                WeaponAbility.ClearCurrentAbility(attacker);
+                SpecialMove.ClearCurrentMove(attacker);
+
+                return;
+            }
 
 			#region Damage Multipliers
 			/*

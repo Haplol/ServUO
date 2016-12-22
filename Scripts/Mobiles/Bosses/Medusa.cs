@@ -172,9 +172,12 @@ namespace Server.Mobiles
 
             foreach (Mobile m in from.GetMobilesInRange(12))
             {
-                if (m != null && m != from && !(m is MedusaClone) && !(m is StoneMonster) && !(Medusa.AffectedMobiles.Contains(m)) && !(m is BaseCreature))
-                {
-                    Medusa.AffectedMobiles.Remove(m);
+                if ( m == null || m == this || m_TurnedToStone.Contains(m) || !CanBeHarmful(m) || !InLOS(m) || m.AccessLevel > AccessLevel.Player)
+                    continue;
+
+                //Pets
+                if (m is BaseCreature && (((BaseCreature)m).GetMaster() is PlayerMobile))
+
                     list.Add(m);
                 }
 
